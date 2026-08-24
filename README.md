@@ -1,23 +1,26 @@
 # 🔥 Prometheus: Enterprise Workstream Observability & Asynchronous Orchestration Platform
 
-[![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
-[![Architecture](https://img.shields.io/badge/architecture-Multi--Agent%20Fleet-orange.svg)]()
-[![Security](https://img.shields.io/badge/security-ABAC%20%7C%20PII%20Sanitized-green.svg)]()
-[![HITL](https://img.shields.io/badge/HITL-Propose%2C%20Don't%20Impose-purple.svg)]()
+[![All Things Agentic Hackathon](https://img.shields.io/badge/All_Things_Agentic_Hackathon-The_Fortified_Enterprise_Fleet-blueviolet.svg)](https://allthingsagentichackathon.devpost.com/)
+[![Google GenAI SDK](https://img.shields.io/badge/Google_GenAI-Gemini_3.7_Flash-4285F4.svg)](https://ai.google.dev/)
+[![Model Context Protocol](https://img.shields.io/badge/MCP-stdio_%7C_SSE-00C7B7.svg)]()
+[![Google Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-Ready-34A853.svg)](https://cloud.google.com/run)
+[![Security](https://img.shields.io/badge/security-ABAC_%7C_Model_Armor-critical.svg)]()
+[![HITL](https://img.shields.io/badge/HITL-Propose%2C_Don't_Impose-FF6F00.svg)]()
 
-Prometheus is an enterprise-grade, asynchronous **AI Chief of Staff** multi-agent platform. It continuously ingests cross-functional developer telemetry (GitHub, Jira, Slack, CI/CD), correlates delivery blockers, isolates data strictly via ABAC/Row-Level Security, and proposes contextual remediation actions for human sign-off (**"Propose, Don't Impose"**).
+> **Submission for All Things Agentic Hackathon: The Fortified Enterprise Fleet Track**  
+> *Autonomous AI Chief of Staff correlating cross-functional engineering telemetry (GitHub, Jira, Slack, CI/CD), isolating data via ABAC/RLS, and proposing contextual remediation actions for human sign-off ("Propose, Don't Impose").*
 
 ---
 
-## 🏛️ System Architecture & Sub-Agent Roster
+## 🏛️ System Architecture & Sub-Agent Fleet
 
 ```text
-                          [ User Query / 08:00 AM Cron / Event Webhook ]
+                          [ User Query / 08:00 AM Cron / Webhook / MCP ]
                                                 │
                                                 ▼
                                 ┌───────────────────────────────────┐
                                 │    Router & Guardrail Agent       │
-                                │   - ABAC & Scope Check            │
+                                │   - ABAC & Scope Perimeter Check  │
                                 │   - Prompt Defense / PII Filter   │
                                 └────────────────┬──────────────────┘
                                                  │
@@ -30,12 +33,12 @@ Prometheus is an enterprise-grade, asynchronous **AI Chief of Staff** multi-agen
              └──────────┬───────────┘ └─────────┬─────────┘ └──────────┬───────────┘
                          │                      │                      │
                          └──────────────────────┼──────────────────────┘
-                                                │ (Aggregated Telemetry)
+                                                │ (Aggregated Telemetry via MCP)
                                                 ▼
                                 ┌───────────────────────────────────┐
                                 │    Synthesis & Blocker Agent      │
-                                │    - Multi-domain Correlation     │
-                                │    - Gemini Reasoning Engine      │
+                                │    - Gemini 3.7 Flash Engine      │
+                                │    - Multi-Model Quota Cascade    │
                                 │    - Root-Cause Bottleneck Finder │
                                 └────────────────┬──────────────────┘
                                                  │
@@ -43,7 +46,7 @@ Prometheus is an enterprise-grade, asynchronous **AI Chief of Staff** multi-agen
                                 ┌───────────────────────────────────┐
                                 │     Action & Drafting Agent       │
                                 │     - "Propose, Don't Impose"     │
-                                │     - Prepares Action Drafts      │
+                                │     - Slack Block Kit Action Cards│
                                 └────────────────┬──────────────────┘
                                                  │
                                                  ▼
@@ -56,24 +59,27 @@ Prometheus is an enterprise-grade, asynchronous **AI Chief of Staff** multi-agen
                              - Slack DM / Jira SDK
 ```
 
-### The 6 Specialized Sub-Agents
+---
 
-1. **Router & Guardrail Agent (`router_agent.py`):** Validates incoming user queries, verifies org token scopes, and runs prompt sanitization and PII redaction.
-2. **Git & CI/CD Ingestion Agent (`git_agent.py`):** Scans PR review latency, stale branches (>48h unreviewed), and build pipeline failures.
-3. **Project Tracker Agent (`jira_agent.py`):** Tracks issue statuses, blocked epics, and sprint burndown deviations.
-4. **Workstream Ingestion Agent (`workstream_agent.py`):** Synthesizes public workstream chat context (Slack/Teams).
-5. **Synthesis & Blocker Agent (`synthesis_agent.py`):** Correlates multi-source telemetry via Gemini 2.5 / 3.7 to pinpoint root-cause delivery bottlenecks.
-6. **Action & Drafting Agent (`action_agent.py`):** Generates daily alignment digests and drafts action proposals (`require_confirmation=True`).
+## 🌟 Enterprise Fleet Architectural Pillars
+
+| Pillar | Platform Implementation | Capabilities |
+| :--- | :--- | :--- |
+| **Discovery & Lifecycle** | **Agent Registry** (`app/registry/`) | Central cataloging, schema validation, tool binding, and versioning for all 6 sub-agents. |
+| **Core Execution & State** | **Async DAG + Memory Bank** (`app/memory/`) | Checkpointing, multi-week blocker lifecycles, and human approval state machines. |
+| **Security & Governance** | **ABAC Perimeter & Model Armor** (`app/security/`) | Deterministic scope validation $P(U,R)$, PII redaction (tokens, emails, phone numbers), and prompt injection filters. |
+| **Observability & Protocols** | **Hybrid MCP + Structured Traces** (`app/mcp/`) | Dual `stdio` & `SSE` Model Context Protocol transports + OpenTelemetry trace headers. |
 
 ---
 
-## 🔒 Security & Operational Principles
+## ⚡ Multi-Model Rate-Limit Quota Cascade
 
-- **Zero Unilateral Mutations:** All tools mutating external systems require human sign-off.
-- **Deterministic ABAC Isolation:** Guarantees agents only access data within the requester's authorized organizational scope:
-  $$P(U, R) = \text{IsAuthenticated}(U) \land \text{WithinOrgScope}(U, R) \land \neg\text{IsRestricted}(R)$$
-- **PII & Prompt Defense:** Automatic redaction of secrets, tokens, emails, and jailbreak attempts before multi-agent reasoning.
-- **Cloud & Free-Tier Portability:** Zero proprietary cloud lock-in. Compatible with standard API keys (`GEMINI_API_KEY`), PostgreSQL/SQLite, Docker, Heroku, Azure, Render, and Railway.
+To bypass Gemini free-tier rate limits and maximize continuous execution, Prometheus implements a **5-tier dynamic model cascade**:
+
+$$\text{gemini-3.7-flash} \xrightarrow{429} \text{gemini-3.6-flash} \xrightarrow{429} \text{gemini-3.5-flash} \xrightarrow{429} \text{gemini-3.5-flash-lite} \xrightarrow{429} \text{gemini-3.1-flash-lite} \xrightarrow{} \text{Heuristic Fallback}$$
+
+- **Zero-Downtime Failover**: If any model returns `429 (ResourceExhausted)`, Prometheus immediately retries with the next tier.
+- **Telemetry Delta Caching**: Inputs are hashed (`SHA-256`) to return cached digests for unchanged telemetry, saving token quota.
 
 ---
 
@@ -83,16 +89,28 @@ Prometheus is an enterprise-grade, asynchronous **AI Chief of Staff** multi-agen
 prometheus/
 ├── app/
 │   ├── __init__.py
-│   ├── config.py                 # Pydantic settings & Gemini API configuration
-│   ├── main.py                   # FastAPI REST API & Interactive CLI runner
+│   ├── config.py                 # Gemini 3.x cascade, MCP & Cloud Run settings
+│   ├── main.py                   # FastAPI REST API, MCP SSE Stream & CLI runner
+│   ├── scheduler.py              # Background 08:00 AM async cron scheduler
 │   ├── agents/
 │   │   ├── __init__.py
 │   │   ├── router_agent.py       # ABAC & Guardrail security perimeter
 │   │   ├── git_agent.py          # GitHub/CI ingestion agent
 │   │   ├── jira_agent.py         # Jira/Linear project tracker agent
 │   │   ├── workstream_agent.py   # Slack & calendar ingestion agent
-│   │   ├── synthesis_agent.py    # Blocker correlation & Gemini reasoning engine
-│   │   └── action_agent.py       # Human-in-the-loop action drafter
+│   │   ├── synthesis_agent.py    # Multi-domain correlation (Gemini 3.7 Pool)
+│   │   └── action_agent.py       # HITL action drafter with Slack Block Kit
+│   ├── llm/
+│   │   ├── __init__.py
+│   │   └── gemini_pool.py        # Gemini 3.x multi-model cascade & keyring pool
+│   ├── mcp/
+│   │   ├── __init__.py
+│   │   ├── protocol.py           # MCP JSON-RPC 2.0 schemas
+│   │   ├── server.py             # Prometheus MCP Server (stdio & SSE)
+│   │   └── client.py             # MCP Client adapter for external tools
+│   ├── registry/
+│   │   ├── __init__.py
+│   │   └── agent_registry.py     # Sub-Agent cataloging & discovery
 │   ├── tools/
 │   │   ├── __init__.py
 │   │   ├── github_tools.py       # Git PR & CI status tools
@@ -110,9 +128,12 @@ prometheus/
 │       └── prometheus_flow.py    # Multi-agent asynchronous orchestration DAG
 ├── tests/
 │   ├── mock_telemetry.py         # Test fixtures & telemetry generators
-│   └── test_workflow.py          # End-to-end multi-agent execution & security tests
-├── Dockerfile                    # Multi-stage containerfile
-├── Procfile                      # Heroku / PaaS process definition
+│   └── test_workflow.py          # Hermetic multi-agent & security test suite
+├── .github/
+│   └── workflows/ci.yml          # GitHub Actions automated CI pipeline
+├── deploy_gcp.sh                 # 1-Click Google Cloud Run deployment script
+├── Dockerfile                    # Multi-stage production containerfile
+├── Procfile                      # PaaS process definition
 ├── requirements.txt              # Production & test dependencies
 ├── PROJECT_SPEC.md               # Detailed system design specification
 └── .env.example                  # Environment variables template
@@ -120,7 +141,7 @@ prometheus/
 
 ---
 
-## 🚀 Quickstart & Usage
+## 🚀 Quickstart & Setup
 
 ### 1. Installation
 
@@ -150,32 +171,49 @@ cp .env.example .env
 python app/main.py --cli
 ```
 
-### 4. Run the REST API Server
+### 4. Run the REST API & MCP Server
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-Interactive OpenAPI documentation will be available at [http://localhost:8000/docs](http://localhost:8000/docs).
+- **OpenAPI Interactive Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **MCP Server-Sent Events Endpoint**: `http://localhost:8000/mcp/sse`
+- **Agent Registry Discovery**: `http://localhost:8000/api/v1/registry/agents`
+
+---
+
+## 🔌 Connecting to Claude Desktop / Antigravity via MCP
+
+Add Prometheus to your MCP client configuration (e.g. `claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "prometheus": {
+      "command": "python",
+      "args": ["-m", "app.mcp.server"]
+    }
+  }
+}
+```
+
+---
+
+## ☁️ 1-Click Google Cloud Run Deployment
+
+Deploy Prometheus to Google Cloud Run (automatically scales to zero when idle):
+
+```bash
+chmod +x deploy_gcp.sh
+./deploy_gcp.sh
+```
 
 ---
 
 ## 🧪 Testing
 
-Run unit tests and end-to-end integration workflows:
+Run hermetic test suite:
 
 ```bash
 pytest tests/ -v
 ```
-
----
-
-## 🚢 Deployment
-
-### Docker
-```bash
-docker build -t prometheus:latest .
-docker run -p 8000:8000 -e GEMINI_API_KEY="your_api_key" prometheus:latest
-```
-
-### Heroku / Render / Railway
-Deploy directly using the provided `Dockerfile` or `Procfile`.

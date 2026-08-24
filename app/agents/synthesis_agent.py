@@ -1,7 +1,8 @@
 """
 Synthesis & Blocker Agent for Prometheus.
 Correlates multi-source operational telemetry to identify root-cause delivery bottlenecks.
-Integrates with Google GenAI SDK (Gemini) with deterministic heuristic fallback.
+Uses Gemini 3.x Multi-Model Pool (gemini-3.7-flash -> gemini-3.6-flash -> gemini-3.5-flash -> lite)
+with deterministic heuristic fallback.
 """
 
 from typing import List, Dict, Any, Optional
@@ -9,6 +10,7 @@ import json
 import logging
 from app.config import settings
 from app.memory.state_store import state_store, BlockerRecord
+from app.llm.gemini_pool import gemini_pool
 
 logger = logging.getLogger(__name__)
 
@@ -39,14 +41,16 @@ class SynthesisAgent:
         blocked_issues = jira_telemetry.get("blocked_issues", [])
         messages = slack_telemetry.get("messages", [])
 
-        # Try Gemini LLM Reasoning if API key is provided
-        if settings.gemini_api_key:
-            try:
-                from google import genai
-                from google.genai import types
+        # Construct normalized telemetry payload
+        telemetry_payload = {
+            "stale_prs": stale_prs,
+            "ci_failures": ci_failures,
+            "blocked_issues": blocked_issues,
+            "messages": messages,
+        }
+        cache_key = json.dumps(telemetry_payload, sort_keys=True, default=str)
 
-                client = genai.Client(api_key=settings.gemini_api_key)
-                prompt = f"""
+        prompt = f"""
 You are the Prometheus Synthesis & Blocker Agent.
 Analyze the following multi-domain engineering telemetry and identify root-cause delivery bottlenecks:
 
@@ -60,61 +64,58 @@ Blocked Issues: {json.dumps(blocked_issues, default=str)}
 Slack Telemetry:
 Messages: {json.dumps(messages, default=str)}
 
-Return a JSON array of objects with:
-- blocker_id: string (e.g. "BLK-01")
-- title: string (concise summary)
-- description: string (root cause and correlation detail)
-- severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"
-- source_artifacts: list of strings (e.g. ["PR-402", "PROJ-108"])
-- impacted_squads: list of strings (e.g. ["platform", "auth"])
+Return a JSON array of objects with the following schema:
+[
+  {{
+    "blocker_id": "BLK-01",
+    "title": "Concise summary of bottleneck",
+    "description": "In-depth root cause and correlation details across Git, Jira, and Slack",
+    "severity": "CRITICAL" | "HIGH" | "MEDIUM" | "LOW",
+    "source_artifacts": ["PR-402", "PROJ-108", "MSG-901"],
+    "impacted_squads": ["engineering", "platform"]
+  }}
+]
 """
-                response = client.models.generate_content(
-                    model=settings.gemini_model,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        response_mime_type="application/json",
-                        temperature=0.2,
-                    ),
+
+        # Invocate Gemini Pool Client (with multi-model rate-limit cascade)
+        pool_result = await gemini_pool.generate_structured_synthesis(
+            prompt=prompt,
+            cache_key=cache_key,
+        )
+
+        if pool_result and isinstance(pool_result, list):
+            for item in pool_result:
+                rec = BlockerRecord(
+                    blocker_id=item.get("blocker_id", f"BLK-{len(blockers)+1:02d}"),
+                    title=item.get("title", "Detected Blocker"),
+                    description=item.get("description", ""),
+                    severity=item.get("severity", "HIGH"),
+                    source_artifacts=item.get("source_artifacts", []),
+                    impacted_squads=item.get("impacted_squads", ["engineering"]),
+                    metadata={"engine": "gemini_3_pool"},
                 )
-                if response.text:
-                    parsed = json.loads(response.text)
-                    if isinstance(parsed, list):
-                        for item in parsed:
-                            rec = BlockerRecord(
-                                blocker_id=item.get("blocker_id", f"BLK-{len(blockers)+1:02d}"),
-                                title=item.get("title", "Detected Blocker"),
-                                description=item.get("description", ""),
-                                severity=item.get("severity", "HIGH"),
-                                source_artifacts=item.get("source_artifacts", []),
-                                impacted_squads=item.get("impacted_squads", ["engineering"]),
-                                metadata={"engine": "gemini"},
-                            )
-                            await state_store.save_blocker(rec)
-                            blockers.append(rec)
-                        return blockers
-            except Exception as e:
-                logger.warning("Gemini LLM synthesis fallback to heuristic correlation: %s", e)
+                await state_store.save_blocker(rec)
+                blockers.append(rec)
+            return blockers
 
         # Deterministic Heuristic Correlation Engine (Zero-dependency & offline reliable)
-        # Check cross-domain correlation: PR-402 is stale + blocks PROJ-108 + has Slack mention
+        logger.info("⚡ [SynthesisAgent] Executing deterministic heuristic correlation engine...")
         for pr in stale_prs:
             pr_id = pr.get("id")
             blocking = pr.get("blocking_downstream", [])
-            
-            # Find related Jira tickets
+
             related_jira = [
                 issue for issue in blocked_issues
                 if pr_id in issue.get("blocked_by", []) or issue.get("key") in blocking
             ]
-            
-            # Find related Slack mentions
+
             related_slack = [
                 m for m in messages
                 if pr_id in m.get("text", "")
             ]
 
             artifacts = [pr_id] + [j["key"] for j in related_jira] + [s["id"] for s in related_slack]
-            
+
             description = (
                 f"PR {pr_id} ('{pr.get('title')}') has been waiting for review for {pr.get('review_latency_hours')} hours "
                 f"from reviewer(s) {', '.join(pr.get('reviewers', []))}. "

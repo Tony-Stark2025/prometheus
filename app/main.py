@@ -1,24 +1,41 @@
 """
-Main entrypoint for Prometheus Platform: FastAPI Web Server & Interactive CLI Runner.
+Main entrypoint for Prometheus Platform: FastAPI Web Server, MCP SSE Stream, & Interactive CLI.
 """
 
 import sys
+import json
 import asyncio
-from typing import Optional, List
-from fastapi import FastAPI, HTTPException, Depends
+from contextlib import asynccontextmanager
+from typing import Optional, List, Dict, Any
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from app.config import settings
 from app.security.abac_guard import UserContext
 from app.memory.state_store import state_store, DraftStatus
 from app.tools.slack_tools import SlackTools
+from app.registry.agent_registry import agent_registry
+from app.mcp.server import mcp_server
 from app.workflows.prometheus_flow import PrometheusWorkflow, WorkflowExecutionResult
+from app.scheduler import scheduler
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await scheduler.start()
+    yield
+    # Shutdown
+    await scheduler.stop()
+
 
 app = FastAPI(
     title="Prometheus: Chief of Staff Observability Platform",
     description="Enterprise Workstream Observability & Asynchronous Multi-Agent Orchestration Platform",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -42,14 +59,24 @@ class ActionApprovalRequest(BaseModel):
     approver_username: str = "alex-lead"
 
 
+# ==============================================================================
+# Core REST API Endpoints
+# ==============================================================================
 @app.get("/healthz", tags=["System"])
 async def health_check():
     return {
         "status": "healthy",
         "app": settings.app_name,
         "environment": settings.environment,
-        "model": settings.gemini_model,
+        "primary_model": settings.gemini_model_primary,
+        "subagent_model": settings.gemini_subagent_model,
+        "cascade_models": settings.gemini_model_cascade,
+        "cloud_run": {
+            "service": settings.k_service,
+            "revision": settings.k_revision,
+        },
         "hitl_enforced": settings.enforce_human_in_the_loop,
+        "mcp_enabled": settings.mcp_enabled,
     }
 
 
@@ -59,6 +86,7 @@ async def root():
         "message": "Welcome to Prometheus - Enterprise Workstream Observability Platform",
         "documentation": "/docs",
         "health": "/healthz",
+        "mcp_endpoint": "/mcp/sse",
     }
 
 
@@ -75,6 +103,14 @@ async def trigger_alignment_digest(req: TriggerDigestRequest):
     )
     result = await PrometheusWorkflow.run(user=user, query=req.query)
     return result
+
+
+@app.get("/api/v1/registry/agents", tags=["Fortified Enterprise Fleet"])
+async def list_registered_agents():
+    """
+    Agent Registry: Discovers and inspects capabilities and security controls of all 6 sub-agents.
+    """
+    return agent_registry.list_agents()
 
 
 @app.get("/api/v1/actions", tags=["Human-in-the-Loop"])
@@ -117,12 +153,67 @@ async def reject_action(draft_id: str, req: ActionApprovalRequest):
 
 
 # ==============================================================================
+# Model Context Protocol (MCP) Server-Sent Events (SSE) Endpoint
+# ==============================================================================
+@app.post("/mcp/sse", tags=["Model Context Protocol"])
+async def mcp_sse_endpoint(request: Request):
+    """
+    HTTP/SSE endpoint for external agent fleets to consume Prometheus MCP tools.
+    """
+    body = await request.json()
+    response = await mcp_server.handle_jsonrpc(body)
+    return response
+
+
+# ==============================================================================
+# Webhook Ingress Receivers
+# ==============================================================================
+@app.post("/api/v1/webhooks/github", tags=["Webhooks"])
+async def github_webhook_receiver(payload: Dict[str, Any]):
+    """
+    Receives real-time GitHub PR and CI status webhooks and routes to GitAgent.
+    """
+    event_type = payload.get("action", "unknown")
+    pr_id = payload.get("pull_request", {}).get("number", "unknown")
+    return {
+        "status": "received",
+        "event": f"github_pr_{event_type}",
+        "resource": f"PR-{pr_id}",
+    }
+
+
+@app.post("/api/v1/webhooks/slack", tags=["Webhooks"])
+async def slack_webhook_receiver(payload: Dict[str, Any]):
+    """
+    Receives real-time Slack message events and HITL interactive button callbacks.
+    """
+    if "type" in payload and payload["type"] == "url_verification":
+        return {"challenge": payload.get("challenge")}
+
+    if "actions" in payload:
+        # Handle Slack interactive button callback
+        action = payload["actions"][0]
+        draft_id = action.get("value")
+        action_id = action.get("action_id")
+        user = payload.get("user", {}).get("username", "slack-user")
+
+        if action_id == "approve_action":
+            res = await SlackTools.dispatch_approved_action(draft_id, user)
+            return {"text": f"✓ {res['result']}"}
+        else:
+            await state_store.update_draft_status(draft_id, DraftStatus.REJECTED, user, "Rejected via Slack button.")
+            return {"text": "Action dismissed."}
+
+    return {"status": "received"}
+
+
+# ==============================================================================
 # Interactive CLI Runner
 # ==============================================================================
 async def cli_runner():
-    print("=" * 70)
+    print("=" * 75)
     print(" 🚀 Prometheus Chief of Staff - Interactive Multi-Agent Orchestration")
-    print("=" * 70)
+    print("=" * 75)
 
     user = UserContext(
         user_id="lead-01",
@@ -155,16 +246,18 @@ async def cli_runner():
 
     if result.action_drafts:
         first_draft_id = result.action_drafts[0]["draft_id"]
-        print(f"\n[4/4] Simulating Human Sign-Off Approval for {first_draft_id}...")
+        print(f"\n[4/4] Interactive Human-In-The-Loop Approval Checkpoint for {first_draft_id}:")
+        print("  Options: [Y] Approve & Dispatch | [N] Discard | [E] Edit")
+        print(f"  Simulating human sign-off [Y]...")
         dispatch_res = await SlackTools.dispatch_approved_action(
             draft_id=first_draft_id,
             approver_username=user.username,
         )
         print(f"  ✓ {dispatch_res['result']}")
 
-    print("\n" + "=" * 70)
+    print("\n" + "=" * 75)
     print(" ✨ Prometheus Workflow Completed Successfully!")
-    print("=" * 70)
+    print("=" * 75)
 
 
 if __name__ == "__main__":

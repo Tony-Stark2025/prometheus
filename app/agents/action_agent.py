@@ -1,7 +1,7 @@
 """
 Action & Drafting Agent for Prometheus.
 Adheres strictly to the 'Propose, Don't Impose' principle.
-Prepares scheduled alignment digests and action cards with require_confirmation=True.
+Prepares scheduled alignment digests and interactive Slack Block Kit action cards with require_confirmation=True.
 """
 
 from typing import List, Dict, Any, Optional
@@ -44,6 +44,37 @@ class ActionAgent:
                     context_blocker_id=blocker.blocker_id,
                     require_confirmation=True,
                 )
+                # Enrich with Slack Block Kit JSON representation
+                draft.metadata["slack_blocks"] = [
+                    {
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": f"🔔 *Prometheus Suggested Action: Review Request*"},
+                    },
+                    {
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": ping_content},
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "Approve & Send"},
+                                "style": "primary",
+                                "value": draft.draft_id,
+                                "action_id": "approve_action",
+                            },
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "Discard"},
+                                "style": "danger",
+                                "value": draft.draft_id,
+                                "action_id": "reject_action",
+                            },
+                        ],
+                    },
+                ]
+                await state_store.save_draft(draft)
                 drafts.append(draft)
 
             # 2. Squad-wide delivery alert proposal
@@ -61,6 +92,35 @@ class ActionAgent:
                     context_blocker_id=blocker.blocker_id,
                     require_confirmation=True,
                 )
+                channel_draft.metadata["slack_blocks"] = [
+                    {
+                        "type": "header",
+                        "text": {"type": "plain_text", "text": f"🚨 Critical Delivery Bottleneck [{blocker.blocker_id}]"},
+                    },
+                    {
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": channel_alert},
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "Broadcast to Channel"},
+                                "style": "primary",
+                                "value": channel_draft.draft_id,
+                                "action_id": "approve_action",
+                            },
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "Mute Alert"},
+                                "value": channel_draft.draft_id,
+                                "action_id": "reject_action",
+                            },
+                        ],
+                    },
+                ]
+                await state_store.save_draft(channel_draft)
                 drafts.append(channel_draft)
 
         return drafts
