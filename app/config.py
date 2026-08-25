@@ -1,10 +1,10 @@
 """
-Configuration module for Prometheus Enterprise Observability & Multi-Agent Platform.
-Supports Gemini 3.x Flash model tiers, multi-key keyring rotation, MCP, and Google Cloud Run.
+Configuration module for Prometheus Enterprise Observability Platform.
+Standardized on Gemini 3.7 Flash via Vertex AI & Gemini Enterprise Agent Platform (Agent Engine).
 """
 
-from typing import List, Optional, Set
-from pydantic import Field
+from typing import List, Optional, Union, Any
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,69 +15,82 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # Core Application & Google Cloud Run Settings
+    # Core Application Settings
     app_name: str = "Prometheus Chief of Staff"
-    environment: str = Field(default="development", env="ENVIRONMENT")
-    log_level: str = Field(default="INFO", env="LOG_LEVEL")
-    host: str = Field(default="0.0.0.0", env="HOST")
-    port: int = Field(default=8000, env="PORT")
-    k_service: Optional[str] = Field(default=None, env="K_SERVICE")  # Google Cloud Run Service
-    k_revision: Optional[str] = Field(default=None, env="K_REVISION")
+    environment: str = "development"
+    log_level: str = "INFO"
+    host: str = "0.0.0.0"
+    port: int = 8000
 
-    # Gemini 3.x Foundation Models & Rate-Limit Quota Pool
-    gemini_api_key: Optional[str] = Field(default=None, env="GEMINI_API_KEY")
-    gemini_api_keys: List[str] = Field(default_factory=list, env="GEMINI_API_KEYS")
-    
-    # Primary & Cascade Model Tiers
-    gemini_model_primary: str = Field(default="gemini-3.7-flash", env="GEMINI_MODEL_PRIMARY")
-    gemini_model_cascade: List[str] = Field(
-        default_factory=lambda: [
-            "gemini-3.7-flash",
-            "gemini-3.6-flash",
-            "gemini-3.5-flash",
-            "gemini-3.5-flash-lite",
-            "gemini-3.1-flash-lite",
-        ],
-        env="GEMINI_MODEL_CASCADE",
-    )
-    gemini_subagent_model: str = Field(default="gemini-3.5-flash-lite", env="GEMINI_SUBAGENT_MODEL")
+    # Google Cloud & Vertex AI / Gemini Enterprise Agent Platform (Agent Engine)
+    use_vertex_ai: bool = True
+    gcp_project_id: Optional[str] = None
+    gcp_location: str = "us-central1"
+    agent_engine_app_id: Optional[str] = None
+    agent_engine_location: str = "us-central1"
+    gemini_request_timeout_seconds: float = 8.0
+
+    # Unified Foundation Model (Standardized exclusively on Gemini 3.7 Flash)
+    gemini_model: str = "gemini-3.7-flash"
+    gemini_model_primary: str = "gemini-3.7-flash"
 
     # Telemetry Caching (TTL in seconds)
-    cache_ttl_seconds: int = Field(default=900, env="CACHE_TTL_SECONDS")  # 15 minutes
+    cache_ttl_seconds: int = 900  # 15 minutes
 
     # Model Context Protocol (MCP) Configuration
-    mcp_enabled: bool = Field(default=True, env="MCP_ENABLED")
-    mcp_transport: str = Field(default="stdio,sse", env="MCP_TRANSPORT")
+    mcp_enabled: bool = True
+    mcp_transport: str = "stdio,sse"
 
     # Persistence / Database (SQLite for local / free-tier; Cloud SQL / PostgreSQL for production)
-    database_url: str = Field(
-        default="sqlite+aiosqlite:///./prometheus_state.db",
-        env="DATABASE_URL",
-    )
+    database_url: str = "sqlite+aiosqlite:///./prometheus_state.db"
 
     # Observability & Thresholds
-    stale_pr_hours_threshold: int = Field(default=48, env="STALE_PR_HOURS_THRESHOLD")
-    ci_failure_threshold_count: int = Field(default=2, env="CI_FAILURE_THRESHOLD_COUNT")
-    default_org_scope: List[str] = Field(
-        default_factory=lambda: ["engineering", "platform"],
-        env="DEFAULT_ORG_SCOPE",
+    stale_pr_hours_threshold: int = 48
+    ci_failure_threshold_count: int = 2
+    default_org_scope: Union[List[str], str] = Field(
+        default_factory=lambda: ["engineering", "platform"]
     )
 
     # Human-in-the-Loop (HITL) Enforcement
-    enforce_human_in_the_loop: bool = Field(default=True, env="ENFORCE_HUMAN_IN_THE_LOOP")
+    enforce_human_in_the_loop: bool = True
 
     # External Integrations
-    github_token: Optional[str] = Field(default=None, env="GITHUB_TOKEN")
-    jira_api_token: Optional[str] = Field(default=None, env="JIRA_API_TOKEN")
-    jira_instance_url: Optional[str] = Field(default=None, env="JIRA_INSTANCE_URL")
-    slack_bot_token: Optional[str] = Field(default=None, env="SLACK_BOT_TOKEN")
+    github_token: Optional[str] = None
+    jira_api_token: Optional[str] = None
+    jira_instance_url: Optional[str] = None
+    slack_bot_token: Optional[str] = None
 
-    def get_all_api_keys(self) -> List[str]:
-        """Returns consolidated list of all provided Gemini API keys."""
-        keys = list(self.gemini_api_keys)
-        if self.gemini_api_key and self.gemini_api_key not in keys:
-            keys.insert(0, self.gemini_api_key)
-        return keys
+    @field_validator("default_org_scope", mode="after")
+    @classmethod
+    def normalize_list(cls, v: Any) -> List[str]:
+        if isinstance(v, str):
+            if not v.strip():
+                return []
+            if v.startswith("[") and v.endswith("]"):
+                import json
+                try:
+                    return json.loads(v)
+                except Exception:
+                    pass
+            return [item.strip() for item in v.split(",") if item.strip()]
+        elif isinstance(v, list):
+            return [str(item).strip() for item in v if str(item).strip()]
+        return []
+
+    @field_validator("github_token", "jira_api_token", "jira_instance_url", "slack_bot_token", mode="before")
+    @classmethod
+    def empty_str_to_none(cls, v: Any) -> Optional[str]:
+        if isinstance(v, str) and not v.strip():
+            return None
+        return v
+
+    def get_sqlite_db_path(self) -> str:
+        """Extracts the filesystem path from the database URL for SQLite."""
+        url = self.database_url
+        for prefix in ["sqlite+aiosqlite:///", "sqlite:///", "sqlite+asyncpg:///"]:
+            if url.startswith(prefix):
+                return url[len(prefix):]
+        return url
 
 
 settings = Settings()

@@ -1,9 +1,10 @@
 """
-Gemini Multi-Model Quota Pool & Rate-Limit Cascade Engine.
-Maximizes free-tier throughput by cascading across Gemini 3.x Flash and Flash-Lite models,
-rotating API keys, and semantically caching telemetry payloads.
+Vertex AI & Gemini Enterprise Agent Platform LLM Engine.
+Unified exclusively on Gemini 3.7 Flash for all agents with non-blocking async execution (client.aio),
+timeout protection, and SHA-256 telemetry delta caching. Zero model cascading.
 """
 
+import asyncio
 import hashlib
 import json
 import logging
@@ -37,23 +38,29 @@ class TelemetryCache:
         self._cache[hashed] = (time.time(), data)
 
 
-class GeminiPoolClient:
+class GeminiEnterpriseEngine:
     """
-    Manages API keyrings and a multi-model fallback cascade across the Gemini 3.x series:
-    gemini-3.7-flash -> gemini-3.6-flash -> gemini-3.5-flash -> gemini-3.5-flash-lite -> gemini-3.1-flash-lite
+    Enterprise Vertex AI LLM Engine for Prometheus.
+    Standardized exclusively on Gemini 3.7 Flash without multi-model cascades.
     """
 
     def __init__(self):
         self.cache = TelemetryCache(ttl_seconds=settings.cache_ttl_seconds)
-        self._key_index = 0
 
-    def _get_next_api_key(self) -> Optional[str]:
-        keys = settings.get_all_api_keys()
-        if not keys:
+    def _get_vertex_client(self) -> Optional[Any]:
+        """Initializes the unified Google GenAI client targeting Vertex AI / Agent Platform."""
+        try:
+            from google import genai
+            client_kwargs: Dict[str, Any] = {
+                "vertexai": True,
+                "location": settings.gcp_location,
+            }
+            if settings.gcp_project_id:
+                client_kwargs["project"] = settings.gcp_project_id
+            return genai.Client(**client_kwargs)
+        except Exception as e:
+            logger.info(f"ℹ️ [VertexAI] Google Cloud credentials not active locally ({e}). Using deterministic reasoning engine.")
             return None
-        key = keys[self._key_index % len(keys)]
-        self._key_index += 1
-        return key
 
     async def generate_structured_synthesis(
         self,
@@ -61,8 +68,8 @@ class GeminiPoolClient:
         cache_key: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
         """
-        Executes structured generation using the Gemini model cascade.
-        Automatically retries across model tiers upon rate-limiting (429).
+        Executes structured JSON reasoning using Gemini 3.7 Flash on Vertex AI.
+        Uses non-blocking asyncio with timeout guards.
         """
         # 1. Check Telemetry Cache
         if cache_key:
@@ -70,26 +77,19 @@ class GeminiPoolClient:
             if cached is not None:
                 return cached
 
-        keys = settings.get_all_api_keys()
-        if not keys:
-            logger.info("No GEMINI_API_KEY found; proceeding with deterministic heuristic engine.")
+        client = self._get_vertex_client()
+        if not client:
             return None
 
-        # 2. Iterate through Model Cascade Tiers
-        models_to_try = list(settings.gemini_model_cascade)
-        last_error = None
+        # 2. Execute Gemini 3.7 Flash
+        model_name = settings.gemini_model
+        from google.genai import types
 
-        for model_name in models_to_try:
-            api_key = self._get_next_api_key()
-            try:
-                logger.info(f"🤖 [GeminiPool] Invocating model tier '{model_name}'...")
-                
-                # Import Google GenAI SDK
-                from google import genai
-                from google.genai import types
-
-                client = genai.Client(api_key=api_key)
-                response = client.models.generate_content(
+        try:
+            logger.info(f"🤖 [VertexAI/AgentPlatform] Invoking '{model_name}' via client.aio...")
+            
+            async def _call_model():
+                return await client.aio.models.generate_content(
                     model=model_name,
                     contents=prompt,
                     config=types.GenerateContentConfig(
@@ -98,30 +98,28 @@ class GeminiPoolClient:
                     ),
                 )
 
-                if response.text:
-                    parsed = json.loads(response.text)
-                    logger.info(f"✓ [GeminiPool] Success from model tier '{model_name}'.")
-                    if cache_key:
-                        self.cache.set(cache_key, parsed)
-                    return parsed
+            response = await asyncio.wait_for(
+                _call_model(),
+                timeout=settings.gemini_request_timeout_seconds,
+            )
 
-            except Exception as e:
-                error_msg = str(e)
-                last_error = e
-                # Check for rate-limiting (429 or ResourceExhausted)
-                if "429" in error_msg or "ResourceExhausted" in error_msg or "quota" in error_msg.lower():
-                    logger.warning(
-                        f"⚠️ [GeminiPool] Rate limit (429) hit on '{model_name}'. "
-                        f"Cascading to next model tier..."
-                    )
-                    continue
-                else:
-                    logger.warning(f"⚠️ [GeminiPool] Model '{model_name}' encountered error: {e}. Cascading...")
-                    continue
+            if response and response.text:
+                parsed = json.loads(response.text)
+                logger.info(f"✓ [VertexAI/AgentPlatform] Synthesis completed with '{model_name}'.")
+                if cache_key:
+                    self.cache.set(cache_key, parsed)
+                return parsed
 
-        logger.error(f"❌ [GeminiPool] All model tiers exhausted. Falling back to heuristic reasoning. Last error: {last_error}")
+        except asyncio.TimeoutError:
+            logger.warning(f"⚠️ [VertexAI/AgentPlatform] Request timed out ({settings.gemini_request_timeout_seconds}s) on '{model_name}'.")
+        except Exception as e:
+            logger.warning(f"⚠️ [VertexAI/AgentPlatform] Error with '{model_name}': {e}.")
+
+        logger.info("⚡ [VertexAI/AgentPlatform] Falling back to deterministic heuristic correlation engine.")
         return None
 
 
-# Global singleton instance
-gemini_pool = GeminiPoolClient()
+# Global singleton instances and backward compatibility aliases
+GeminiPoolClient = GeminiEnterpriseEngine
+gemini_engine = GeminiEnterpriseEngine()
+gemini_pool = gemini_engine

@@ -1,5 +1,5 @@
 """
-Unit and integration tests for Prometheus multi-agent workflows, Gemini 3.x cascade, MCP, and security guards.
+Unit and integration tests for Prometheus multi-agent workflows, Vertex AI Gemini 3.7 Flash, MCP, and security guards.
 """
 
 import pytest
@@ -91,6 +91,34 @@ async def test_gemini_pool_cache():
 
     retrieved = gemini_pool.cache.get(cache_key)
     assert retrieved == test_data
+
+
+@pytest.mark.asyncio
+async def test_sqlite_state_store_persistence():
+    await state_store.init_db()
+    
+    # Test draft persistence
+    draft = await SlackTools.draft_action_card(
+        target="@alex-lead",
+        action_type="slack_dm",
+        content="Test SQLite persistence content",
+    )
+    
+    fetched = await state_store.get_draft(draft.draft_id)
+    assert fetched is not None
+    assert fetched.draft_id == draft.draft_id
+    assert fetched.content == "Test SQLite persistence content"
+
+    # Test update
+    await state_store.update_draft_status(
+        draft_id=draft.draft_id,
+        status=DraftStatus.APPROVED,
+        approver="test-admin",
+        result="Approved in test",
+    )
+    updated = await state_store.get_draft(draft.draft_id)
+    assert updated.status == DraftStatus.APPROVED
+    assert updated.approved_by == "test-admin"
 
 
 @pytest.mark.asyncio

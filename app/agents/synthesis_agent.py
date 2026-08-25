@@ -1,8 +1,7 @@
 """
 Synthesis & Blocker Agent for Prometheus.
 Correlates multi-source operational telemetry to identify root-cause delivery bottlenecks.
-Uses Gemini 3.x Multi-Model Pool (gemini-3.7-flash -> gemini-3.6-flash -> gemini-3.5-flash -> lite)
-with deterministic heuristic fallback.
+Uses Gemini 3.7 Flash Reasoning Engine on Vertex AI with deterministic heuristic fallback.
 """
 
 from typing import List, Dict, Any, Optional
@@ -10,7 +9,7 @@ import json
 import logging
 from app.config import settings
 from app.memory.state_store import state_store, BlockerRecord
-from app.llm.gemini_pool import gemini_pool
+from app.llm.gemini_pool import gemini_engine, gemini_pool
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +76,8 @@ Return a JSON array of objects with the following schema:
 ]
 """
 
-        # Invocate Gemini Pool Client (with multi-model rate-limit cascade)
-        pool_result = await gemini_pool.generate_structured_synthesis(
+        # Invocate Gemini 3.7 Flash on Vertex AI / Agent Platform
+        pool_result = await gemini_engine.generate_structured_synthesis(
             prompt=prompt,
             cache_key=cache_key,
         )
@@ -92,7 +91,7 @@ Return a JSON array of objects with the following schema:
                     severity=item.get("severity", "HIGH"),
                     source_artifacts=item.get("source_artifacts", []),
                     impacted_squads=item.get("impacted_squads", ["engineering"]),
-                    metadata={"engine": "gemini_3_pool"},
+                    metadata={"engine": "gemini_37_vertex"},
                 )
                 await state_store.save_blocker(rec)
                 blockers.append(rec)

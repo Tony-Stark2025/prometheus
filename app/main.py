@@ -2,7 +2,19 @@
 Main entrypoint for Prometheus Platform: FastAPI Web Server, MCP SSE Stream, & Interactive CLI.
 """
 
+import os
 import sys
+
+# Ensure project root is in sys.path for direct script execution
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Ensure UTF-8 output encoding across Windows terminals
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 import json
 import asyncio
 from contextlib import asynccontextmanager
@@ -24,7 +36,8 @@ from app.scheduler import scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup: Initialize persistent SQLite store and background scheduler
+    await state_store.init_db()
     await scheduler.start()
     yield
     # Shutdown
@@ -68,12 +81,12 @@ async def health_check():
         "status": "healthy",
         "app": settings.app_name,
         "environment": settings.environment,
-        "primary_model": settings.gemini_model_primary,
-        "subagent_model": settings.gemini_subagent_model,
-        "cascade_models": settings.gemini_model_cascade,
-        "cloud_run": {
-            "service": settings.k_service,
-            "revision": settings.k_revision,
+        "platform": "Gemini Enterprise Agent Platform (Agent Engine)",
+        "model": settings.gemini_model,
+        "location": settings.gcp_location,
+        "agent_engine": {
+            "app_id": settings.agent_engine_app_id,
+            "location": settings.agent_engine_location,
         },
         "hitl_enforced": settings.enforce_human_in_the_loop,
         "mcp_enabled": settings.mcp_enabled,
@@ -211,6 +224,7 @@ async def slack_webhook_receiver(payload: Dict[str, Any]):
 # Interactive CLI Runner
 # ==============================================================================
 async def cli_runner():
+    await state_store.init_db()
     print("=" * 75)
     print(" 🚀 Prometheus Chief of Staff - Interactive Multi-Agent Orchestration")
     print("=" * 75)

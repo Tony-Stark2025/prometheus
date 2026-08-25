@@ -1,8 +1,8 @@
 # PROJECT GOAL & SYSTEM SPECIFICATION: PROMETHEUS
 ## Enterprise Workstream Observability & Asynchronous Orchestration Platform
 
-> **Target Platform:** Cloud-Agnostic / Free-Tier Friendly (Heroku, Azure, Render, Railway, Docker)  
-> **Core Architecture:** Multi-Agent Fleet with Google ADK & Gemini API (`google-genai`)  
+> **Target Platform:** Gemini Enterprise Agent Platform (Agent Engine) & Cloud Native  
+> **Core Architecture:** Multi-Agent Fleet on Vertex AI with Gemini 3.7 Flash (`google-genai`)  
 > **Core Objective:** Build and deploy an enterprise-grade, asynchronous AI Chief of Staff agent system that ingests cross-functional developer telemetry (GitHub, Jira, Slack, CI/CD), correlates delivery blockers, isolates data strictly via ABAC/RLS, and proposes contextual remediation actions for human sign-off ("Propose, Don't Impose").
 
 ---
@@ -16,7 +16,7 @@ In modern, decentralized, and flat engineering organizations, delivery velocity 
 - **Status Reporting Overhead:** High-friction manual status standups, sprint updates, and fragmented Slack pings drain engineering focus.
 
 ### The Solution: Prometheus
-Prometheus functions as an autonomous **AI Chief of Staff** that continuously correlates objective work artifacts across enterprise systems, detects delivery blockers, and drafts high-value remediation actions for human approval.
+Prometheus functions as an autonomous **AI Chief of Staff** that continuously correlates objective work artifacts across enterprise systems, detects delivery blockers, and drafts high-value remediation actions for human approval on the Gemini Enterprise Agent Platform.
 
 ### Core Operational Principles
 1. **Focus on Objective Work Artifacts:** Evaluates PRs, commit velocity, deployment logs, and RFCs rather than subjective self-reporting.
@@ -32,9 +32,9 @@ Prometheus functions as an autonomous **AI Chief of Staff** that continuously co
 | Architectural Pillar | Platform Implementation | Tech Stack Component |
 | :--- | :--- | :--- |
 | **Discovery & Lifecycle** | Cataloging and versioning of 6 specialized sub-agents. | Google ADK / Modular Sub-Agent Registry |
-| **Core Execution & State** | Long-running asynchronous execution graph with durable checkpoints. | Google ADK 2.0 (`google.adk.Workflow`) + Heroku / Azure / Docker |
-| **Memory Bank** | Multi-week tracking of cross-squad blocker lifecycles and PR staleness. | PostgreSQL (Neon / Supabase / Heroku Postgres / SQLite + RLS) |
-| **Security & Governance** | Zero-trust IAM, deterministic ABAC scope enforcement, and inline prompt defense. | Modular Guardrails + Gemini Safety Filters + PII Sanitizer |
+| **Core Execution & State** | Long-running asynchronous execution graph with durable SQLite checkpoints. | FastAPI + aiosqlite / Async DAG + Agent Engine |
+| **Memory Bank** | Multi-week tracking of cross-squad blocker lifecycles and PR staleness. | Persistent SQLite (`aiosqlite`) / Cloud SQL |
+| **Security & Governance** | Zero-trust IAM (Google ADC), deterministic ABAC scope enforcement, and inline prompt defense. | Modular Guardrails + Gemini Safety Filters + PII Sanitizer |
 | **Telemetry & Observability** | Full trajectory logging of tool invocations, token usage, and sub-agent decision paths. | OpenTelemetry + Structured Logging & Tracing |
 
 ---
