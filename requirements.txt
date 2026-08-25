@@ -1,5 +1,6 @@
-# Core LLM SDK & Google Generative AI
+# Core LLM SDK & Google Cloud Vertex AI Agent Platform
 google-genai>=0.1.1
+google-cloud-aiplatform>=1.70.0
 
 # Web Framework & API Server
 fastapi>=0.110.0
