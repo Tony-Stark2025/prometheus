@@ -21,7 +21,7 @@ from contextlib import asynccontextmanager
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, HTMLResponse, FileResponse
 from pydantic import BaseModel, Field
 
 from app.config import settings
@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Prometheus: Chief of Staff Observability Platform",
     description="Enterprise Workstream Observability & Asynchronous Multi-Agent Orchestration Platform",
-    version="0.1.0",
+    version="1.1.0",
     lifespan=lifespan,
 )
 
@@ -60,9 +60,11 @@ app.add_middleware(
 )
 
 
-# Request & Response Schemas
+# ==============================================================================
+# Pydantic Request Models
+# ==============================================================================
 class TriggerDigestRequest(BaseModel):
-    user_id: str = "user-101"
+    user_id: str = "lead-01"
     username: str = "alex-lead"
     org_scopes: List[str] = Field(default_factory=lambda: ["engineering", "platform"])
     query: str = "Generate daily alignment briefing and identify delivery blockers"
@@ -73,8 +75,23 @@ class ActionApprovalRequest(BaseModel):
 
 
 # ==============================================================================
-# Core REST API Endpoints
+# Dashboard & Core REST API Endpoints
 # ==============================================================================
+DASHBOARD_PATH = os.path.join(os.path.dirname(__file__), "dashboard", "dashboard.html")
+
+
+@app.get("/", response_class=HTMLResponse, tags=["Dashboard"])
+@app.get("/dashboard", response_class=HTMLResponse, tags=["Dashboard"])
+async def serve_dashboard():
+    """
+    Renders the Prometheus Executive Chief of Staff Web Dashboard.
+    """
+    if os.path.exists(DASHBOARD_PATH):
+        with open(DASHBOARD_PATH, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>Prometheus Dashboard: dashboard.html not found.</h1>")
+
+
 @app.get("/healthz", tags=["System"])
 async def health_check():
     return {
@@ -93,14 +110,12 @@ async def health_check():
     }
 
 
-@app.get("/", tags=["System"])
-async def root():
-    return {
-        "message": "Welcome to Prometheus - Enterprise Workstream Observability Platform",
-        "documentation": "/docs",
-        "health": "/healthz",
-        "mcp_endpoint": "/mcp/sse",
-    }
+@app.get("/api/v1/blockers", tags=["Blockers"])
+async def list_blockers():
+    """
+    Returns all active correlated delivery blockers.
+    """
+    return await state_store.get_active_blockers()
 
 
 @app.post("/api/v1/digest", response_model=WorkflowExecutionResult, tags=["Workflows"])

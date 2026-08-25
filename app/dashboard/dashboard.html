@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prometheus — Enterprise Workstream Observability Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            dark: {
+              bg: '#0a0d14',
+              surface: '#121622',
+              card: '#181d2d',
+              border: '#23293d',
+              muted: '#8b949e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #0a0d14; color: #e6edf3; }
+    .glass { background: rgba(24, 29, 45, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card { background: rgba(18, 22, 34, 0.85); backdrop-filter: blur(10px); border: 1px solid #23293d; }
+    .glow-blue { box-shadow: 0 0 25px rgba(59, 130, 246, 0.18); }
+    .glow-purple { box-shadow: 0 0 25px rgba(168, 85, 247, 0.18); }
+    .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.18); }
+    .glow-amber { box-shadow: 0 0 25px rgba(245, 158, 11, 0.18); }
+    .badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0d14; }
+    ::-webkit-scrollbar-thumb { background: #23293d; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+  </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="sticky top-0 z-50 glass border-b border-dark-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <i data-lucide="flame" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-lg tracking-tight text-white">PROMETHEUS</span>
+            <span class="px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20">Enterprise Fleet</span>
+          </div>
+          <p class="text-xs text-dark-muted hidden sm:block">Autonomous AI Chief of Staff & Workstream Observability</p>
+        </div>
+      </div>
+
+      <!-- LIVE SYSTEM STATUS PILLS -->
+      <div class="hidden md:flex items-center space-x-3">
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-dark-card border border-dark-border text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
+          <span class="text-gray-300 font-medium">Vertex AI:</span>
+          <span class="text-blue-400 font-mono">Gemini 3.7 Flash</span>
+        </div>
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-dark-card border border-dark-border text-xs">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span class="text-gray-300">ABAC/RLS Guard</span>
+        </div>
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-dark-card border border-dark-border text-xs">
+          <i data-lucide="database" class="w-3.5 h-3.5 text-purple-400"></i>
+          <span class="text-gray-300">SQLite Memory Bank</span>
+        </div>
+      </div>
+
+      <!-- ACTIONS & NAV TABS -->
+      <div class="flex items-center space-x-2">
+        <button id="btn-run-fleet" onclick="runFleetWorkflow()" class="relative group flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-blue-500/25 transition-all duration-200">
+          <i data-lucide="play" class="w-4 h-4"></i>
+          <span>Run Fleet Ingest</span>
+        </button>
+        <a href="/docs" target="_blank" class="p-2 rounded-lg bg-dark-card border border-dark-border hover:bg-dark-border text-dark-muted hover:text-white transition">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-NAVIGATION BAR -->
+  <div class="bg-dark-surface/80 border-b border-dark-border px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex items-center space-x-8 text-sm font-medium">
+      <button onclick="switchTab('overview')" id="tab-overview" class="py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span>Overview & Blockers</span>
+      </button>
+      <button onclick="switchTab('actions')" id="tab-actions" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
+        <i data-lucide="check-square" class="w-4 h-4"></i>
+        <span>Action Cards (HITL)</span>
+        <span id="badge-action-count" class="px-1.5 py-0.2 text-xs rounded-full bg-amber-500/20 text-amber-300 font-mono">0</span>
+      </button>
+      <button onclick="switchTab('telemetry')" id="tab-telemetry" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
+        <i data-lucide="activity" class="w-4 h-4"></i>
+        <span>Live Telemetry</span>
+      </button>
+      <button onclick="switchTab('agents')" id="tab-agents" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
+        <i data-lucide="bot" class="w-4 h-4"></i>
+        <span>Agent Registry (6)</span>
+      </button>
+      <button onclick="switchTab('security')" id="tab-security" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
+        <i data-lucide="shield-alert" class="w-4 h-4"></i>
+        <span>Security & Model Armor</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- RUN WORKFLOW PROGRESS MODAL / BANNER (HIDDEN INITIALLY) -->
+    <div id="workflow-progress" class="hidden glass p-4 rounded-xl border border-blue-500/30 bg-blue-950/20 glow-blue animate-fade-in">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center space-x-3">
+          <div class="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <span class="font-semibold text-sm text-blue-300" id="workflow-status-text">Asynchronous Multi-Agent Ingestion in Progress...</span>
+        </div>
+        <span class="text-xs font-mono text-blue-400" id="workflow-step-text">Step 1/4: Router & Perimeter ABAC</span>
+      </div>
+      <div class="w-full bg-dark-card rounded-full h-1.5 overflow-hidden">
+        <div id="workflow-progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-300 w-1/4"></div>
+      </div>
+    </div>
+
+    <!-- TAB 1: OVERVIEW & BLOCKERS -->
+    <section id="section-overview" class="space-y-6">
+      
+      <!-- TOP METRICS STATS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="glass-card p-5 rounded-xl border border-dark-border hover:border-blue-500/40 transition glow-blue">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Active Blockers</span>
+            <div class="p-2 rounded-lg bg-red-500/10 text-red-400">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline space-x-2">
+            <span id="stat-blockers-count" class="text-3xl font-extrabold text-white font-mono">1</span>
+            <span class="text-xs font-medium text-red-400 bg-red-500/10 px-2 py-0.5 rounded">1 CRITICAL</span>
+          </div>
+          <p class="mt-1 text-xs text-dark-muted">Correlated across Git, Jira & Slack</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-xl border border-dark-border hover:border-amber-500/40 transition glow-amber">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Stale PRs (>48h)</span>
+            <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+              <i data-lucide="git-pull-request" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline space-x-2">
+            <span id="stat-stale-prs" class="text-3xl font-extrabold text-white font-mono">1</span>
+            <span class="text-xs text-amber-400">PR-402 (58h latency)</span>
+          </div>
+          <p class="mt-1 text-xs text-dark-muted">Awaiting code review</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-xl border border-dark-border hover:border-purple-500/40 transition glow-purple">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Pending Action Cards</span>
+            <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400">
+              <i data-lucide="send" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline space-x-2">
+            <span id="stat-pending-actions" class="text-3xl font-extrabold text-white font-mono">2</span>
+            <span class="text-xs text-purple-400">"Propose, Don't Impose"</span>
+          </div>
+          <p class="mt-1 text-xs text-dark-muted">Requires human sign-off</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-xl border border-dark-border hover:border-emerald-500/40 transition glow-emerald">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Security Scope</span>
+            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline space-x-2">
+            <span class="text-3xl font-extrabold text-emerald-400 font-mono">100%</span>
+            <span class="text-xs text-emerald-400">ABAC Isolated</span>
+          </div>
+          <p class="mt-1 text-xs text-dark-muted">Zero cross-tenant leakage</p>
+        </div>
+
+      </div>
+
+      <!-- EXECUTIVE SUMMARY BRIEFING CARD -->
+      <div class="glass-card p-6 rounded-xl border border-dark-border">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-dark-border">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+              <i data-lucide="sparkles" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-white">Daily Alignment Digest & Root Cause Synthesis</h2>
+              <p class="text-xs text-dark-muted font-mono">Generated by Gemini 3.7 Flash • Vertex AI Agent Engine</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 text-xs text-dark-muted font-mono">
+            <span class="px-2.5 py-1 rounded bg-dark-card border border-dark-border">Scope: engineering, platform</span>
+            <span id="digest-timestamp" class="px-2.5 py-1 rounded bg-dark-card border border-dark-border">08:00 AM Cron</span>
+          </div>
+        </div>
+        <div class="mt-4 prose prose-invert max-w-none text-sm text-gray-300 leading-relaxed" id="digest-content">
+          <p class="text-gray-300">
+            <strong>Cross-Squad Correlation Analysis:</strong> Telemetry correlation across GitHub, Jira, and Slack identified <strong class="text-red-400">1 critical bottleneck</strong> impacting the <strong>v2.1 Gateway Milestone</strong>. Pull Request <code class="text-blue-400">PR-402</code> (OAuth 2.1 migration) has been waiting for review from <code class="text-yellow-300">alex-lead</code> for over 58 hours. This is directly blocking high-priority Jira Epic <code class="text-purple-400">PROJ-108</code> and causing downstream CI pipeline failures due to interface contract mismatch.
+          </p>
+        </div>
+      </div>
+
+      <!-- CORRELATED BLOCKERS LIST -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-white flex items-center space-x-2">
+            <i data-lucide="network" class="w-4 h-4 text-blue-400"></i>
+            <span>Correlated Delivery Bottlenecks</span>
+          </h3>
+          <span class="text-xs text-dark-muted font-mono">Multi-Domain Evidence Graph</span>
+        </div>
+
+        <div id="blockers-container" class="space-y-4">
+          <!-- Blockers will be rendered dynamically here -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: ACTION CARDS (HITL) -->
+    <section id="section-actions" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center space-x-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-purple-400"></i>
+            <span>Human-in-the-Loop Action Drafting Center</span>
+          </h2>
+          <p class="text-xs text-dark-muted">"Propose, Don't Impose" — No external mutations occur without explicit human sign-off.</p>
+        </div>
+        <div class="flex items-center space-x-2 text-xs">
+          <button onclick="filterActionCards('ALL')" class="px-3 py-1.5 rounded-lg bg-dark-card border border-dark-border text-white hover:bg-dark-border">All</button>
+          <button onclick="filterActionCards('PENDING')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20 font-medium">Pending</button>
+          <button onclick="filterActionCards('EXECUTED')" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 font-medium">Dispatched</button>
+        </div>
+      </div>
+
+      <div id="actions-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Action cards rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 3: LIVE TELEMETRY -->
+    <section id="section-telemetry" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center space-x-2">
+            <i data-lucide="activity" class="w-5 h-5 text-blue-400"></i>
+            <span>Cross-Functional Telemetry Ingestion Streams</span>
+          </h2>
+          <p class="text-xs text-dark-muted">Raw telemetry ingested via MCP from GitHub, Jira, and Slack within user's ABAC scope.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- GITHUB STREAM -->
+        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="github" class="w-4 h-4 text-gray-300"></i>
+              <h3 class="text-sm font-bold text-white">Git & CI/CD Telemetry</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-02-git</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-white font-mono">PR-402 (OAuth 2.1)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 font-semibold">58h Stale</span>
+              </div>
+              <p class="text-dark-muted">Reviewer: alex-lead • Branch: feat/oauth-2.1</p>
+              <div class="text-[11px] text-amber-400 font-mono pt-1">⚠️ Blocking Epic PROJ-108</div>
+            </div>
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-white font-mono">PR-405 (Telemetry Exporter)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold">12h</span>
+              </div>
+              <p class="text-dark-muted">Reviewer: sarah-reviewer • Branch: feat/telemetry</p>
+              <div class="text-[11px] text-emerald-400 font-mono pt-1">✓ CI Passing</div>
+            </div>
+            <div class="p-3 rounded-lg bg-red-950/20 border border-red-500/20 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-red-300 font-mono">CI Failure: build #184</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-300 font-semibold">Failed</span>
+              </div>
+              <p class="text-red-400 text-[11px]">Interface mismatch on AuthTokenProvider</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- JIRA STREAM -->
+        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="trello" class="w-4 h-4 text-blue-400"></i>
+              <h3 class="text-sm font-bold text-white">Project Tracker Telemetry</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-03-jira</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-white font-mono">PROJ-108 (v2.1 Gateway)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 font-semibold">BLOCKED</span>
+              </div>
+              <p class="text-dark-muted">Owner: alex-lead • Sprint: Sprint 44</p>
+              <div class="text-[11px] text-red-400 font-mono pt-1">Blocked by: PR-402</div>
+            </div>
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-white font-mono">PROJ-112 (Cache Warmup)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-blue-500/10 text-blue-400 font-semibold">IN PROGRESS</span>
+              </div>
+              <p class="text-dark-muted">Owner: dev2 • Sprint: Sprint 44</p>
+              <div class="text-[11px] text-dark-muted font-mono pt-1">Progress: 60%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLACK STREAM -->
+        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i>
+              <h3 class="text-sm font-bold text-white">Workstream Communications</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-04-workstream</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-white">#platform-engineering</span>
+                <span class="text-dark-muted font-mono text-[10px]">2h ago</span>
+              </div>
+              <p class="text-gray-300 italic">"Is anyone reviewing PR-402? Staging rollout is stalled on this."</p>
+              <p class="text-dark-muted text-[11px]">- sarah-reviewer</p>
+            </div>
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-white">#core-backend</span>
+                <span class="text-dark-muted font-mono text-[10px]">4h ago</span>
+              </div>
+              <p class="text-gray-300 italic">"CI build #184 is failing on main branch interface checks."</p>
+              <p class="text-dark-muted text-[11px]">- ci-bot</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: AGENT REGISTRY -->
+    <section id="section-agents" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center space-x-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i>
+            <span>Enterprise Sub-Agent Fleet Registry</span>
+          </h2>
+          <p class="text-xs text-dark-muted">Discovered and cataloged sub-agents conforming to the Fortified Enterprise Fleet specification.</p>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 font-mono text-xs border border-blue-500/20">6 Fleet Agents Registered</span>
+      </div>
+
+      <div id="fleet-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Fleet agents rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 5: SECURITY & MODEL ARMOR -->
+    <section id="section-security" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center space-x-2">
+            <i data-lucide="shield-check" class="w-5 h-5 text-cyan-400"></i>
+            <span>Enterprise Security, ABAC Perimeter & Model Armor</span>
+          </h2>
+          <p class="text-xs text-dark-muted">Interactive verification sandbox for deterministic access control and inline prompt defense.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- ABAC SIMULATOR -->
+        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="key" class="w-4 h-4 text-blue-400"></i>
+              <span>ABAC / Row-Level Security Simulator</span>
+            </h3>
+            <span class="text-xs font-mono text-emerald-400">P(U,R) Engine</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">Select User Persona:</label>
+              <select id="sim-user-persona" onchange="runABACSimulation()" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white text-xs font-mono focus:border-blue-500 focus:outline-none">
+                <option value="lead">alex-lead (Scopes: engineering, platform, security)</option>
+                <option value="dev">dev1 (Scopes: engineering)</option>
+                <option value="sales">sales_rep (Scopes: sales, marketing)</option>
+                <option value="guest">guest_auditor (Unauthenticated / restricted)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">Target Resource:</label>
+              <select id="sim-resource-target" onchange="runABACSimulation()" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white text-xs font-mono focus:border-blue-500 focus:outline-none">
+                <option value="pr402">PR-402: OAuth 2.1 (Required: engineering)</option>
+                <option value="sec_audit">SEC-99: Production IAM Keys (Required: security)</option>
+                <option value="sales_lead">DEAL-400: Q3 Pipeline (Required: sales)</option>
+              </select>
+            </div>
+
+            <div id="sim-abac-result" class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 font-mono text-xs">
+              ✓ ACCESS GRANTED: Scope intersection verified.
+            </div>
+          </div>
+        </div>
+
+        <!-- GUARDRAIL & PII SANITIZER SANDBOX -->
+        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="shield-alert" class="w-4 h-4 text-cyan-400"></i>
+              <span>Inline Prompt Defense & PII Sanitizer</span>
+            </h3>
+            <span class="text-xs font-mono text-cyan-400">Model Armor</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">Test Payload:</label>
+              <textarea id="guardrail-test-input" rows="3" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white text-xs font-mono focus:border-blue-500 focus:outline-none">Contact alex at alex.lead@company.com with token ghp_123456789012345678901234567890123456</textarea>
+            </div>
+
+            <button onclick="runGuardrailTest()" class="w-full py-2 bg-dark-card hover:bg-dark-border border border-dark-border text-white text-xs font-semibold rounded-lg transition">
+              Sanitize & Inspect Payload
+            </button>
+
+            <div id="guardrail-test-output" class="p-3 rounded-lg bg-dark-card border border-dark-border text-gray-300 font-mono text-xs whitespace-pre-wrap">
+Contact alex at [REDACTED_EMAIL] with token [REDACTED_GITHUB_TOKEN]
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-dark-border bg-dark-surface/50 py-4 px-4 sm:px-6 lg:px-8 text-center text-xs text-dark-muted">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Prometheus Platform v1.1.0 • All Things Agentic Hackathon</span>
+      </div>
+      <div class="flex items-center space-x-4 font-mono text-[11px]">
+        <span>Model: Gemini 3.7 Flash</span>
+        <span>Runtime: Vertex AI Agent Engine</span>
+        <span>Protocols: MCP (stdio / SSE)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // App State
+    let appState = {
+      blockers: [],
+      actionDrafts: [],
+      agents: [],
+      currentTab: 'overview',
+      filterStatus: 'ALL'
+    };
+
+    // Tab Switching
+    function switchTab(tabId) {
+      appState.currentTab = tabId;
+      const tabs = ['overview', 'actions', 'telemetry', 'agents', 'security'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        const sec = document.getElementById(`section-${t}`);
+        if (t === tabId) {
+          btn.className = 'py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition';
+          sec.classList.add('hidden');
+        }
+      });
+      lucide.createIcons();
+    }
+
+    // Initial Data Fetch
+    async function loadDashboardData() {
+      try {
+        // Fetch Agents
+        const agentsRes = await fetch('/api/v1/registry/agents');
+        if (agentsRes.ok) {
+          appState.agents = await agentsRes.json();
+          renderAgentRegistry();
+        }
+
+        // Fetch Actions
+        const actionsRes = await fetch('/api/v1/actions');
+        if (actionsRes.ok) {
+          appState.actionDrafts = await actionsRes.json();
+          renderActionCards();
+        }
+
+        // Render Initial Blockers
+        renderInitialBlockers();
+
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err);
+      }
+    }
+
+    function renderInitialBlockers() {
+      const blockers = [
+        {
+          blocker_id: 'BLK-01',
+          title: 'Stale PR PR-402 blocking Epic PROJ-108',
+          description: "PR PR-402 ('feat(oauth): Migrate to OAuth 2.1 token exchange') has been waiting for review for 58.0 hours from reviewer(s) alex-lead. It is directly blocking high-priority Jira Epic(s): PROJ-108. Downstream CI pipeline is also failing due to interface mismatch with unmerged changes.",
+          severity: 'CRITICAL',
+          source_artifacts: ['PR-402', 'PROJ-108', 'MSG-901', 'CI-184'],
+          impacted_squads: ['engineering', 'platform', 'security'],
+        }
+      ];
+      renderBlockers(blockers);
+    }
+
+    function renderBlockers(blockers) {
+      const container = document.getElementById('blockers-container');
+      if (!blockers || blockers.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-dark-muted glass-card rounded-xl">
+            <i data-lucide="check-circle" class="w-8 h-8 mx-auto text-emerald-400 mb-2"></i>
+            <p class="font-medium text-white">Zero Active Bottlenecks</p>
+            <p class="text-xs mt-1">All engineering delivery workstreams are healthy and moving at peak velocity.</p>
+          </div>
+        `;
+        document.getElementById('stat-blockers-count').innerText = '0';
+        lucide.createIcons();
+        return;
+      }
+
+      document.getElementById('stat-blockers-count').innerText = blockers.length;
+
+      container.innerHTML = blockers.map(b => {
+        const sevClass = b.severity === 'CRITICAL' 
+          ? 'bg-red-500/10 text-red-400 border-red-500/30' 
+          : 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+        
+        return `
+          <div class="glass-card p-5 rounded-xl border border-dark-border hover:border-blue-500/40 transition space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center space-x-3">
+                <span class="px-2.5 py-0.5 rounded text-xs font-bold font-mono border ${sevClass}">${b.severity}</span>
+                <h4 class="text-sm font-bold text-white">${b.title}</h4>
+              </div>
+              <span class="text-xs font-mono text-dark-muted">${b.blocker_id}</span>
+            </div>
+
+            <p class="text-xs text-gray-300 leading-relaxed">${b.description}</p>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-dark-border text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="text-dark-muted font-medium">Impacted Squads:</span>
+                <div class="flex flex-wrap gap-1">
+                  ${b.impacted_squads.map(s => `<span class="px-2 py-0.5 rounded bg-dark-card border border-dark-border text-[11px] text-blue-300 font-mono">${s}</span>`).join('')}
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <span class="text-dark-muted font-medium">Evidence Artifacts:</span>
+                <div class="flex flex-wrap gap-1">
+                  ${b.source_artifacts.map(a => `<span class="px-2 py-0.5 rounded bg-dark-card border border-dark-border text-[11px] text-purple-300 font-mono">${a}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function renderActionCards() {
+      const container = document.getElementById('actions-container');
+      const filtered = appState.actionDrafts.filter(d => {
+        if (appState.filterStatus === 'ALL') return true;
+        return d.status === appState.filterStatus;
+      });
+
+      const pendingCount = appState.actionDrafts.filter(d => d.status === 'PENDING').length;
+      document.getElementById('badge-action-count').innerText = pendingCount;
+      document.getElementById('stat-pending-actions').innerText = pendingCount;
+
+      if (!filtered || filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-2 p-8 text-center text-dark-muted glass-card rounded-xl">
+            <i data-lucide="inbox" class="w-8 h-8 mx-auto text-dark-muted mb-2"></i>
+            <p class="font-medium text-white">No Action Cards in this View</p>
+            <p class="text-xs mt-1">Run fleet ingestion to generate new contextual drafts.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(d => {
+        const isPending = d.status === 'PENDING';
+        const statusBadge = isPending
+          ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">PENDING CONFIRMATION</span>'
+          : d.status === 'EXECUTED'
+            ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">DISPATCHED</span>'
+            : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-500/10 text-gray-400 border border-gray-500/30">REJECTED</span>';
+
+        return `
+          <div class="glass-card p-5 rounded-xl border border-dark-border flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <div class="w-6 h-6 rounded-md bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                    <i data-lucide="${d.action_type.includes('channel') ? 'hash' : 'at-sign'}" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <span class="text-xs font-bold text-white font-mono">${d.target_channel_or_user}</span>
+                </div>
+                ${statusBadge}
+              </div>
+
+              <!-- SLACK BLOCK KIT PREVIEW BOX -->
+              <div class="p-3.5 rounded-lg bg-[#1a1d29] border border-[#2f3549] text-xs font-sans text-gray-200 space-y-2">
+                <div class="flex items-center space-x-2 text-[10px] text-dark-muted pb-1 border-b border-dark-border">
+                  <i data-lucide="bot" class="w-3 h-3 text-blue-400"></i>
+                  <span class="font-semibold text-gray-300">Prometheus Bot (Draft Preview)</span>
+                </div>
+                <p class="leading-relaxed text-gray-200 whitespace-pre-wrap">${d.content}</p>
+              </div>
+
+              <div class="flex items-center justify-between text-[11px] text-dark-muted font-mono">
+                <span>Draft ID: ${d.draft_id}</span>
+                <span>Type: ${d.action_type}</span>
+              </div>
+            </div>
+
+            <!-- INTERACTIVE BUTTON ACTIONS -->
+            ${isPending ? `
+              <div class="pt-3 border-t border-dark-border flex items-center justify-end space-x-2">
+                <button onclick="rejectActionCard('${d.draft_id}')" class="px-3 py-1.5 rounded-lg bg-dark-card hover:bg-dark-border border border-dark-border text-dark-muted hover:text-white text-xs font-medium transition">
+                  Discard
+                </button>
+                <button onclick="approveActionCard('${d.draft_id}')" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold shadow-sm hover:shadow-emerald-500/20 transition flex items-center space-x-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span>Approve & Dispatch</span>
+                </button>
+              </div>
+            ` : `
+              <div class="pt-2 border-t border-dark-border text-[11px] text-dark-muted font-mono flex items-center justify-between">
+                <span>Approver: ${d.approved_by || 'alex-lead'}</span>
+                <span class="text-emerald-400 font-sans font-medium">✓ Dispatched via Slack API</span>
+              </div>
+            `}
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function renderAgentRegistry() {
+      const container = document.getElementById('fleet-container');
+      container.innerHTML = appState.agents.map(a => `
+        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">${a.agent_id}</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-dark-card text-dark-muted border border-dark-border">${a.tier}</span>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white">${a.name}</h4>
+            <p class="text-xs text-blue-300 font-medium">${a.role}</p>
+          </div>
+          <p class="text-xs text-dark-muted">${a.description}</p>
+          <div class="pt-3 border-t border-dark-border space-y-2 text-xs">
+            <div class="flex items-center justify-between font-mono text-[11px]">
+              <span class="text-dark-muted">Model:</span>
+              <span class="text-gray-300">${a.model_requirement}</span>
+            </div>
+            <div>
+              <span class="text-dark-muted text-[11px] block mb-1">Bound Security Controls:</span>
+              <div class="flex flex-wrap gap-1">
+                ${a.security_controls.map(sc => `<span class="px-2 py-0.5 rounded bg-dark-card border border-dark-border text-[10px] text-cyan-300">${sc}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function filterActionCards(status) {
+      appState.filterStatus = status;
+      renderActionCards();
+    }
+
+    async function approveActionCard(draftId) {
+      try {
+        const res = await fetch(`/api/v1/actions/${draftId}/approve`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ approver_username: 'alex-lead' })
+        });
+        if (res.ok) {
+          const updated = appState.actionDrafts.find(d => d.draft_id === draftId);
+          if (updated) {
+            updated.status = 'EXECUTED';
+            updated.approved_by = 'alex-lead';
+          }
+          renderActionCards();
+        }
+      } catch (err) {
+        console.error('Approval failed:', err);
+      }
+    }
+
+    async function rejectActionCard(draftId) {
+      try {
+        const res = await fetch(`/api/v1/actions/${draftId}/reject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ approver_username: 'alex-lead' })
+        });
+        if (res.ok) {
+          const updated = appState.actionDrafts.find(d => d.draft_id === draftId);
+          if (updated) {
+            updated.status = 'REJECTED';
+          }
+          renderActionCards();
+        }
+      } catch (err) {
+        console.error('Rejection failed:', err);
+      }
+    }
+
+    // Run Asynchronous Multi-Agent Workflow
+    async function runFleetWorkflow() {
+      const progressBox = document.getElementById('workflow-progress');
+      const progressBar = document.getElementById('workflow-progress-bar');
+      const statusText = document.getElementById('workflow-status-text');
+      const stepText = document.getElementById('workflow-step-text');
+      const btn = document.getElementById('btn-run-fleet');
+
+      progressBox.classList.remove('hidden');
+      btn.disabled = true;
+
+      // Animate progress stages
+      statusText.innerText = "1/4: Router & Perimeter ABAC Security Scope Check...";
+      stepText.innerText = "agent-01-router";
+      progressBar.style.width = "25%";
+
+      setTimeout(() => {
+        statusText.innerText = "2/4: Ingesting Telemetry from Git, Jira, and Slack...";
+        stepText.innerText = "agent-02-git, agent-03-jira, agent-04-workstream";
+        progressBar.style.width = "50%";
+      }, 500);
+
+      setTimeout(() => {
+        statusText.innerText = "3/4: Correlating Telemetry & Blocker Discovery via Gemini 3.7 Flash...";
+        stepText.innerText = "agent-05-synthesis";
+        progressBar.style.width = "75%";
+      }, 1000);
+
+      try {
+        const res = await fetch('/api/v1/digest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: 'lead-01',
+            username: 'alex-lead',
+            org_scopes: ['engineering', 'platform'],
+            query: 'Scan cross-squad telemetry for active sprint blockers'
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          progressBar.style.width = "100%";
+          statusText.innerText = "4/4: Ingestion Complete! Action Drafts Ready.";
+          stepText.innerText = "agent-06-action";
+
+          // Update State
+          if (data.blockers) renderBlockers(data.blockers);
+          if (data.action_drafts) {
+            appState.actionDrafts = data.action_drafts;
+            renderActionCards();
+          }
+          if (data.summary) {
+            document.getElementById('digest-content').innerHTML = `
+              <p class="text-gray-300">
+                <strong>Executive Summary:</strong> ${data.summary}
+              </p>
+            `;
+          }
+
+          setTimeout(() => {
+            progressBox.classList.add('hidden');
+            btn.disabled = false;
+          }, 1200);
+        }
+      } catch (err) {
+        console.error('Workflow run failed:', err);
+        btn.disabled = false;
+        progressBox.classList.add('hidden');
+      }
+    }
+
+    // Security ABAC Simulator
+    function runABACSimulation() {
+      const persona = document.getElementById('sim-user-persona').value;
+      const target = document.getElementById('sim-resource-target').value;
+      const resultBox = document.getElementById('sim-abac-result');
+
+      const permissions = {
+        lead: ['pr402', 'sec_audit'],
+        dev: ['pr402'],
+        sales: ['sales_lead'],
+        guest: []
+      };
+
+      const isAllowed = permissions[persona].includes(target);
+      if (isAllowed) {
+        resultBox.className = 'p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 font-mono text-xs';
+        resultBox.innerHTML = `✓ ACCESS GRANTED: Scope intersection verified. User context allowed for ${target}.`;
+      } else {
+        resultBox.className = 'p-3 rounded-lg bg-red-950/20 border border-red-500/20 text-red-300 font-mono text-xs';
+        resultBox.innerHTML = `⛔ ACCESS DENIED: Scope mismatch. User does not hold required organizational scope for ${target}.`;
+      }
+    }
+
+    // Guardrails Sanitizer
+    function runGuardrailTest() {
+      const input = document.getElementById('guardrail-test-input').value;
+      const output = document.getElementById('guardrail-test-output');
+      
+      let sanitized = input;
+      // Redact emails
+      sanitized = sanitized.replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]');
+      // Redact GitHub tokens
+      sanitized = sanitized.replace(/ghp_[a-zA-Z0-9]{36}/g, '[REDACTED_GITHUB_TOKEN]');
+
+      output.innerText = sanitized;
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', loadDashboardData);
+  </script>
+</body>
+</html>
