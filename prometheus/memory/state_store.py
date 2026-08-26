@@ -10,7 +10,7 @@ import json
 import logging
 import aiosqlite
 from pydantic import BaseModel, Field
-from app.config import settings
+from prometheus.config import settings
 
 logger = logging.getLogger(__name__)
 

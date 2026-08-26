@@ -8,17 +8,17 @@ import json
 import asyncio
 import logging
 from typing import Dict, Any, List, Optional
-from app.mcp.protocol import (
+from prometheus.mcp.protocol import (
     JSONRPCRequest,
     JSONRPCResponse,
     MCPToolDefinition,
     MCPToolParameter,
     MCPListToolsResponse,
 )
-from app.security.abac_guard import UserContext
-from app.memory.state_store import state_store, DraftStatus
-from app.tools.slack_tools import SlackTools
-from app.workflows.prometheus_flow import PrometheusWorkflow
+from prometheus.security.abac_guard import UserContext
+from prometheus.memory.state_store import state_store, DraftStatus
+from prometheus.tools.slack_tools import SlackTools
+from prometheus.workflows.prometheus_flow import PrometheusWorkflow
 
 logger = logging.getLogger(__name__)
 
