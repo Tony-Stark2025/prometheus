@@ -108,9 +108,13 @@ Return a JSON array of objects with the following schema:
                 if pr_id in issue.get("blocked_by", []) or issue.get("key") in blocking
             ]
 
+            pr_num = pr_id.replace("PR-", "")
             related_slack = [
                 m for m in messages
                 if pr_id in m.get("text", "")
+                or f"#{pr_num}" in m.get("text", "")
+                or f"PR #{pr_num}" in m.get("text", "")
+                or any(j["key"] in m.get("text", "") for j in related_jira)
             ]
 
             artifacts = [pr_id] + [j["key"] for j in related_jira] + [s["id"] for s in related_slack]

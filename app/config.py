@@ -56,11 +56,18 @@ class Settings(BaseSettings):
 
     # External Integrations
     github_token: Optional[str] = None
+    github_repos: Union[List[str], str] = Field(
+        default_factory=lambda: ["acme/auth-service", "acme/web-gateway", "acme/billing-core"]
+    )
     jira_api_token: Optional[str] = None
     jira_instance_url: Optional[str] = None
+    jira_user_email: Optional[str] = None
     slack_bot_token: Optional[str] = None
+    slack_channels: Union[List[str], str] = Field(
+        default_factory=lambda: ["platform-engineering", "billing-squad"]
+    )
 
-    @field_validator("default_org_scope", mode="after")
+    @field_validator("default_org_scope", "github_repos", "slack_channels", mode="after")
     @classmethod
     def normalize_list(cls, v: Any) -> List[str]:
         if isinstance(v, str):
@@ -77,11 +84,41 @@ class Settings(BaseSettings):
             return [str(item).strip() for item in v if str(item).strip()]
         return []
 
-    @field_validator("github_token", "jira_api_token", "jira_instance_url", "slack_bot_token", mode="before")
+    @classmethod
+    def resolve_secret_manager_uri(cls, value: Optional[str], project_id: Optional[str] = None) -> Optional[str]:
+        """Resolves secrets prefixed with sm:// or secretmanager:// using Google Secret Manager."""
+        if not value or not isinstance(value, str):
+            return value
+
+        prefixes = ("sm://", "secretmanager://")
+        matched_prefix = next((p for p in prefixes if value.startswith(p)), None)
+        if not matched_prefix:
+            return value
+
+        secret_path = value[len(matched_prefix):].strip()
+        try:
+            from google.cloud import secretmanager
+            client = secretmanager.SecretManagerServiceClient()
+            if "/" not in secret_path:
+                proj = project_id or "gen-lang-client-0942141479"
+                name = f"projects/{proj}/secrets/{secret_path}/versions/latest"
+            elif not secret_path.startswith("projects/"):
+                proj = project_id or "gen-lang-client-0942141479"
+                name = f"projects/{proj}/{secret_path}"
+            else:
+                name = secret_path
+            response = client.access_secret_version(request={"name": name})
+            return response.payload.data.decode("utf-8")
+        except Exception:
+            return value
+
+    @field_validator("github_token", "jira_api_token", "jira_instance_url", "jira_user_email", "slack_bot_token", mode="before")
     @classmethod
     def empty_str_to_none(cls, v: Any) -> Optional[str]:
         if isinstance(v, str) and not v.strip():
             return None
+        if isinstance(v, str) and (v.startswith("sm://") or v.startswith("secretmanager://")):
+            return cls.resolve_secret_manager_uri(v)
         return v
 
     def get_sqlite_db_path(self) -> str:

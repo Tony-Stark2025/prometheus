@@ -26,6 +26,7 @@ class WorkflowExecutionResult(BaseModel):
     blockers: List[Dict[str, Any]]
     action_drafts: List[Dict[str, Any]]
     daily_digest: Optional[Dict[str, Any]] = None
+    raw_telemetry: Dict[str, Any] = Field(default_factory=dict)
 
 
 class PrometheusWorkflow:
@@ -44,13 +45,15 @@ class PrometheusWorkflow:
         # Step 1: Perimeter Router & Security Guardrails
         router_res = await RouterAgent.process_request(user=user, raw_query=query)
         if router_res["status"] != "authorized":
+            status_val = "REJECTED_SECURITY" if router_res["status"] in ("rejected", "rejected_security") else router_res["status"].upper()
             return WorkflowExecutionResult(
                 session_id=session_id,
-                status=router_res["status"].upper(),
+                status=status_val,
                 summary=f"Execution halted: {router_res.get('reason', 'Security Policy')}",
                 router_envelope=router_res,
                 blockers=[],
                 action_drafts=[],
+                raw_telemetry={},
             )
 
         # Step 2: Concurrent Ingestion Fan-Out (Git, Jira, Workstream)
@@ -92,9 +95,25 @@ class PrometheusWorkflow:
         return WorkflowExecutionResult(
             session_id=session_id,
             status="COMPLETED",
-            summary=digest["summary_statement"],
+            summary=digest.get("summary_statement", "Summary available"),
             router_envelope=router_res,
             blockers=[b.model_dump() for b in blockers],
             action_drafts=[d.model_dump() for d in action_drafts],
             daily_digest=digest,
+            raw_telemetry={
+                "git": git_data,
+                "jira": jira_data,
+                "slack": workstream_data,
+                "agent_run_metadata": {
+                    "agents_executed": 6,
+                    "agents": [
+                        "RouterAndGuardrailAgent",
+                        "GitIngestionAgent",
+                        "ProjectTrackerAgent",
+                        "WorkstreamIngestionAgent",
+                        "SynthesisAndBlockerAgent",
+                        "ActionDrafterAgent",
+                    ],
+                },
+            },
         )

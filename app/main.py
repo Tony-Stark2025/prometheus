@@ -93,9 +93,12 @@ async def serve_dashboard():
 
 
 @app.get("/healthz", tags=["System"])
+@app.get("/health", tags=["System"])
+@app.get("/api/v1/health", tags=["System"])
 async def health_check():
     return {
         "status": "healthy",
+        "service": "prometheus-chief-of-staff",
         "app": settings.app_name,
         "environment": settings.environment,
         "platform": "Gemini Enterprise Agent Platform (Agent Engine)",
@@ -115,7 +118,9 @@ async def list_blockers():
     """
     Returns all active correlated delivery blockers.
     """
-    return await state_store.get_active_blockers()
+    blockers = await state_store.get_active_blockers()
+    items = [b.model_dump() for b in blockers]
+    return {"total": len(items), "blockers": items}
 
 
 @app.post("/api/v1/digest", response_model=WorkflowExecutionResult, tags=["Workflows"])
@@ -138,7 +143,8 @@ async def list_registered_agents():
     """
     Agent Registry: Discovers and inspects capabilities and security controls of all 6 sub-agents.
     """
-    return agent_registry.list_agents()
+    agents = [a.model_dump() for a in agent_registry.list_agents()]
+    return {"total_agents": len(agents), "agents": agents}
 
 
 @app.get("/api/v1/actions", tags=["Human-in-the-Loop"])
@@ -146,7 +152,9 @@ async def list_actions(status: Optional[DraftStatus] = None):
     """
     Lists proposed action cards waiting for human confirmation.
     """
-    return await state_store.list_drafts(status=status)
+    drafts = await state_store.list_drafts(status=status)
+    items = [d.model_dump() for d in drafts]
+    return {"total": len(items), "actions": items, "drafts": items}
 
 
 @app.post("/api/v1/actions/{draft_id}/approve", tags=["Human-in-the-Loop"])
@@ -169,14 +177,17 @@ async def reject_action(draft_id: str, req: ActionApprovalRequest):
     """
     Aborts a proposed action draft.
     """
-    updated = await state_store.update_draft_status(
+    draft = await state_store.get_draft(draft_id)
+    if not draft:
+        raise HTTPException(status_code=404, detail=f"Draft '{draft_id}' not found.")
+    if draft.status == DraftStatus.EXECUTED:
+        return {"status": "already_executed", "draft_id": draft_id}
+    await state_store.update_draft_status(
         draft_id=draft_id,
         status=DraftStatus.REJECTED,
         approver=req.approver_username,
         result="Action rejected by user.",
     )
-    if not updated:
-        raise HTTPException(status_code=404, detail=f"Draft '{draft_id}' not found.")
     return {"status": "rejected", "draft_id": draft_id}
 
 

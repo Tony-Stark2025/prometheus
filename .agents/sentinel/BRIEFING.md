@@ -1,21 +1,21 @@
-# BRIEFING — 2026-08-25T20:44:30Z
+# BRIEFING — 2026-08-26T20:12:42Z
 
 ## Mission
-Deploy Prometheus onto Vertex AI Agent Engine under project gen-lang-client-0942141479 in us-central1, verify live multi-agent execution, test endpoints, and ensure 100% pytest pass.
+Coordinate full multi-agent team to deploy the Prometheus platform to Google Cloud (Vertex AI Agent Engine & Cloud Run), replace mock telemetry with live API integrations (GitHub, Jira, Slack), and run automated end-to-end verification.
 
 ## 🔒 My Identity
 - Archetype: sentinel
 - Working directory: c:\Users\brigh\project\prometheus\.agents\sentinel
-- Orchestrator: bbceaa6c-6011-420d-a032-3da6eec58694
+- Orchestrator: 9de77694-aa75-40b4-8f22-b0abb6d16ba0
 - Victory Auditor: to be spawned on victory claim
 
 ## 🔒 Key Constraints
 - No technical decisions — relay only
 - Victory Audit is MANDATORY before reporting completion
-- Route: SWE Light (teamwork_preview_swe) due to explicit "single self-contained fix; keep it small and focused" request.
+- Route: General (teamwork_preview_orchestrator) - full multi-agent team requested for live API tools, cloud deployment, and E2E verification.
 
 ## User Context
-- **Last user request**: Deploy Prometheus to Vertex AI Agent Engine, run verification and dashboard finalization.
+- **Last user request**: Deploy Prometheus to GCP (Vertex AI Agent Engine & Cloud Run), replace mock tools with live GitHub/Jira/Slack API integrations, and run E2E programmatic verification.
 - **Pending clarifications**: none
 - **Delivered results**: none
 
@@ -29,3 +29,4 @@ Deploy Prometheus onto Vertex AI Agent Engine under project gen-lang-client-0942
 
 ## Artifact Index
 - c:\Users\brigh\project\prometheus\.agents\ORIGINAL_REQUEST.md — Authoritative record of user request
+

@@ -40,11 +40,11 @@ class ABACGuard:
         if not user.is_authenticated:
             return False
 
-        if user.is_admin:
-            return True
-
         if resource.is_restricted:
             return False
+
+        if user.is_admin:
+            return True
 
         # WithinOrgScope: User scopes must intersect with the required scopes of the resource
         if not (user.org_scopes & resource.required_scopes):

@@ -22,11 +22,12 @@ class GuardrailService:
 
     # Common injection & jailbreak patterns
     INJECTION_PATTERNS = [
-        re.compile(r"ignore\s+(all\s+)?previous\s+instructions", re.IGNORECASE),
-        re.compile(r"disregard\s+the\s+above", re.IGNORECASE),
+        re.compile(r"ignore\s+(all\s+)?(previous\s+)?instructions", re.IGNORECASE),
+        re.compile(r"disregard\s+(all\s+)?(the\s+)?(above|previous|instructions)", re.IGNORECASE),
         re.compile(r"you\s+are\s+now\s+in\s+developer\s+mode", re.IGNORECASE),
         re.compile(r"system\s*prompt\s*override", re.IGNORECASE),
         re.compile(r"show\s+me\s+your\s+(initial|system)\s+prompt", re.IGNORECASE),
+        re.compile(r"dump\s+(the\s+)?(sqlite|memory|database|credentials|secrets|tokens)", re.IGNORECASE),
         re.compile(r"<script.*?>.*?</script>", re.IGNORECASE | re.DOTALL),
     ]
 
@@ -34,8 +35,8 @@ class GuardrailService:
     PII_PATTERNS = [
         # API Keys & Secrets
         (re.compile(r"(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{82})"), "[REDACTED_GITHUB_TOKEN]"),
-        (re.compile(r"(AIza[0-9A-Za-z-_]{35})"), "[REDACTED_GEMINI_KEY]"),
-        (re.compile(r"(xox[baprs]-[0-9a-zA-Z]{10,48})"), "[REDACTED_SLACK_TOKEN]"),
+        (re.compile(r"(AIza[-0-9A-Za-z_]{30,40})"), "[REDACTED_GEMINI_KEY]"),
+        (re.compile(r"(xox[baprs]-[-0-9a-zA-Z]{10,64})"), "[REDACTED_SLACK_TOKEN]"),
         (re.compile(r"bearer\s+[a-zA-Z0-9_\-\.]{20,}", re.IGNORECASE), "Bearer [REDACTED_TOKEN]"),
         # Email Addresses
         (re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"), "[REDACTED_EMAIL]"),

@@ -134,10 +134,12 @@ class ActionAgent:
         """
         Generates the formatted 08:00 AM Daily Alignment Briefing.
         """
+        crit_count = len([b for b in blockers if b.severity == "CRITICAL"])
         return {
             "digest_title": "Daily Executive Workstream Alignment Digest",
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "critical_blockers_count": len([b for b in blockers if b.severity == "CRITICAL"]),
+            "critical_blocker_count": crit_count,
+            "critical_blockers_count": crit_count,
             "total_active_blockers": len(blockers),
             "pending_action_proposals": len([d for d in drafts if d.status == DraftStatus.PENDING]),
             "blockers": [b.model_dump() for b in blockers],

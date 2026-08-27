@@ -537,19 +537,32 @@ Contact alex at [REDACTED_EMAIL] with token [REDACTED_GITHUB_TOKEN]
         // Fetch Agents
         const agentsRes = await fetch('/api/v1/registry/agents');
         if (agentsRes.ok) {
-          appState.agents = await agentsRes.json();
+          const agentsData = await agentsRes.json();
+          appState.agents = Array.isArray(agentsData) ? agentsData : (agentsData.agents || []);
           renderAgentRegistry();
         }
 
         // Fetch Actions
         const actionsRes = await fetch('/api/v1/actions');
         if (actionsRes.ok) {
-          appState.actionDrafts = await actionsRes.json();
+          const actionsData = await actionsRes.json();
+          appState.actionDrafts = Array.isArray(actionsData) ? actionsData : (actionsData.actions || []);
           renderActionCards();
         }
 
-        // Render Initial Blockers
-        renderInitialBlockers();
+        // Fetch Blockers
+        const blockersRes = await fetch('/api/v1/blockers');
+        if (blockersRes.ok) {
+          const blockersData = await blockersRes.json();
+          appState.blockers = Array.isArray(blockersData) ? blockersData : (blockersData.blockers || []);
+          if (appState.blockers.length > 0) {
+            renderBlockers(appState.blockers);
+          } else {
+            renderInitialBlockers();
+          }
+        } else {
+          renderInitialBlockers();
+        }
 
       } catch (err) {
         console.error('Failed to load dashboard data:', err);

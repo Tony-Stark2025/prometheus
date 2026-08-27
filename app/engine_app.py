@@ -69,13 +69,15 @@ class PrometheusAgentEngineApp:
                 org_scopes=set(org_scopes),
             )
             result = await PrometheusWorkflow.run(user=user, query=prompt)
+            digest_val = result.daily_digest if isinstance(result.daily_digest, dict) else (result.daily_digest.model_dump() if result.daily_digest else {})
             return {
                 "session_id": result.session_id,
                 "status": result.status,
                 "summary": result.summary,
                 "blockers": result.blockers,
                 "action_drafts": result.action_drafts,
-                "daily_digest": result.daily_digest if isinstance(result.daily_digest, dict) else (result.daily_digest.model_dump() if result.daily_digest else None),
+                "daily_digest": digest_val,
+                "briefing": digest_val,
             }
 
         return run_async(_execute())

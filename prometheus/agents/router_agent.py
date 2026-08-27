@@ -30,7 +30,7 @@ class RouterAgent:
         guardrail_result: GuardrailResult = GuardrailService.sanitize(raw_query)
         if not guardrail_result.is_safe:
             return {
-                "status": "rejected",
+                "status": "rejected_security",
                 "reason": "Security guardrail violation",
                 "violations": guardrail_result.violations,
                 "sanitized_query": guardrail_result.sanitized_text,

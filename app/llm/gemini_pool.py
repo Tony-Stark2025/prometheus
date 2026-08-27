@@ -22,19 +22,26 @@ class TelemetryCache:
         self._ttl = ttl_seconds
         self._cache: Dict[str, Tuple[float, Any]] = {}
 
+    @classmethod
+    def _hash_key(cls, prompt: str, payload: Any) -> str:
+        content = prompt + str(payload)
+        return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
     def get(self, key_payload: str) -> Optional[Any]:
         hashed = hashlib.sha256(key_payload.encode("utf-8")).hexdigest()
-        if hashed in self._cache:
-            timestamp, data = self._cache[hashed]
-            if time.time() - timestamp < self._ttl:
-                logger.info(f"⚡ [TelemetryCache] Cache HIT for key {hashed[:8]} (saved 1 LLM call)")
-                return data
-            else:
-                del self._cache[hashed]
+        for k in (key_payload, hashed):
+            if k in self._cache:
+                timestamp, data = self._cache[k]
+                if time.time() - timestamp < self._ttl:
+                    logger.info(f"⚡ [TelemetryCache] Cache HIT for key {k[:8]} (saved 1 LLM call)")
+                    return data
+                else:
+                    del self._cache[k]
         return None
 
     def set(self, key_payload: str, data: Any) -> None:
         hashed = hashlib.sha256(key_payload.encode("utf-8")).hexdigest()
+        self._cache[key_payload] = (time.time(), data)
         self._cache[hashed] = (time.time(), data)
 
 
