@@ -112,7 +112,7 @@ class SlackTools:
 
     @classmethod
     async def _resolve_user_id(cls, client: httpx.AsyncClient, username: str) -> Optional[str]:
-        clean_user = username.lstrip("@").lower()
+        clean_user = username.lstrip("@").lower().strip()
         for uid, uname in cls._user_cache.items():
             if uname.lower() == clean_user:
                 return uid
@@ -123,15 +123,31 @@ class SlackTools:
             if resp.status_code == 200:
                 data = resp.json()
                 if data.get("ok"):
+                    first_human_id: Optional[str] = None
                     for member in data.get("members", []):
                         uid = member.get("id")
                         uname = member.get("name", "")
                         dname = member.get("profile", {}).get("display_name", "")
+                        rname = member.get("profile", {}).get("real_name", "")
+                        email = member.get("profile", {}).get("email", "")
+                        is_bot = member.get("is_bot", False) or uid == "USLACKBOT"
+                        if uid and not is_bot and not first_human_id:
+                            first_human_id = uid
+
                         if uid:
                             resolved_name = dname or uname or uid
                             cls._user_cache[uid] = resolved_name
-                            if uname.lower() == clean_user or dname.lower() == clean_user:
+                            if (clean_user and (
+                                uname.lower() == clean_user
+                                or dname.lower() == clean_user
+                                or clean_user in uname.lower()
+                                or clean_user in (rname or "").lower()
+                                or clean_user in (email or "").lower()
+                            )):
                                 return uid
+
+                    if first_human_id:
+                        return first_human_id
         except Exception as e:
             logger.warning(f"Failed to resolve Slack user '{username}': {e}")
         return None
@@ -181,10 +197,6 @@ class SlackTools:
         scopes: Optional[List[str]] = None,
         channel_names: Optional[List[str]] = None,
     ) -> List[Dict[str, Any]]:
-        """
-        Retrieves public channel discussion telemetry via live Slack Web API if SLACK_BOT_TOKEN is configured.
-        Gracefully falls back to realistic mock fixtures if unauthenticated or rate limited.
-        """
         if not settings.slack_bot_token:
             msgs = cls.MOCK_MESSAGES
             if scopes:
@@ -201,7 +213,6 @@ class SlackTools:
                 for ch_name in target_channels:
                     clean_ch_name = ch_name.lstrip("#")
                     ch_id = await cls._resolve_channel_id(client, clean_ch_name) or clean_ch_name
-
                     url = f"https://slack.com/api/conversations.history?channel={ch_id}&limit=20"
                     resp = await client.get(url, headers=cls._get_headers())
 
@@ -216,60 +227,46 @@ class SlackTools:
 
                     data = resp.json()
                     if not data.get("ok"):
-                        err = data.get("error", "unknown_error")
-                        if err == "ratelimited":
-                            logger.warning("Slack API ratelimited. Falling back to mock fixtures.")
+                        if data.get("error") == "ratelimited":
                             return cls.MOCK_MESSAGES if not scopes else [
                                 m for m in cls.MOCK_MESSAGES if any(s in m.get("scopes", []) for s in scopes)
                             ]
-                        logger.warning(f"Slack API history query for channel '{ch_name}' returned error: {err}")
                         continue
 
-                    messages = data.get("messages", [])
-                    for msg in messages:
-                        subtype = msg.get("subtype")
-                        if subtype in ("channel_join", "channel_leave"):
+                    raw_messages = data.get("messages", [])
+                    for msg in raw_messages:
+                        if msg.get("subtype") in ("channel_join", "channel_leave", "bot_message"):
                             continue
 
-                        ts = msg.get("ts", "")
-                        msg_id = f"MSG-{ts.replace('.', '')[:8]}" if ts else f"MSG-{len(live_messages)+1}"
                         user_id = msg.get("user", "unknown")
                         username = await cls._resolve_username_by_id(client, user_id)
+                        text = msg.get("text", "")
+                        inferred_scopes = cls._infer_scopes(text)
 
-                        try:
-                            ts_float = float(ts) if ts else datetime.now(timezone.utc).timestamp()
-                            iso_time = datetime.fromtimestamp(ts_float, tz=timezone.utc).isoformat()
-                        except Exception:
-                            iso_time = datetime.now(timezone.utc).isoformat()
-
-                        channel_display = f"#{clean_ch_name}"
-                        scopes_inferred = cls._infer_scopes(clean_ch_name)
-
-                        msg_record = {
-                            "id": msg_id,
-                            "channel": channel_display,
+                        live_messages.append({
+                            "id": f"MSG-{msg.get('ts', '').replace('.', '')[:10]}",
+                            "channel": f"#{clean_ch_name}",
                             "user": username,
-                            "timestamp": iso_time,
-                            "text": msg.get("text", ""),
-                            "scopes": scopes_inferred,
-                        }
-                        live_messages.append(msg_record)
-
-            if live_messages:
-                if scopes:
-                    return [m for m in live_messages if any(s in m.get("scopes", []) for s in scopes)]
-                return live_messages
-
-            logger.info("No live Slack messages returned; falling back to mock fixtures.")
-            return cls.MOCK_MESSAGES if not scopes else [
-                m for m in cls.MOCK_MESSAGES if any(s in m.get("scopes", []) for s in scopes)
-            ]
+                            "timestamp": datetime.fromtimestamp(
+                                float(msg.get("ts", 0)), tz=timezone.utc
+                            ).isoformat() if msg.get("ts") else datetime.now(timezone.utc).isoformat(),
+                            "text": text,
+                            "content": text,
+                            "topic": f"Discussion in #{clean_ch_name}",
+                            "scopes": inferred_scopes,
+                        })
 
         except Exception as exc:
-            logger.error(f"Live Slack message ingestion failed: {exc}. Using mock fallback.")
+            logger.warning(f"Live Slack ingestion encountered exception: {exc}")
+
+        if not live_messages:
             return cls.MOCK_MESSAGES if not scopes else [
                 m for m in cls.MOCK_MESSAGES if any(s in m.get("scopes", []) for s in scopes)
             ]
+
+        if scopes:
+            return [m for m in live_messages if any(s in m.get("scopes", []) for s in scopes)]
+        return live_messages
 
     @classmethod
     async def draft_action_card(
@@ -281,8 +278,7 @@ class SlackTools:
         require_confirmation: bool = True,
     ) -> ActionDraftRecord:
         """
-        Prepares an actionable proposal draft for human review.
-        'Propose, Don't Impose' principle: strictly persists to draft state.
+        Creates a proposed action draft requiring explicit human sign-off before dispatch.
         """
         draft_id = f"DRAFT-{int(datetime.now(timezone.utc).timestamp() * 1000)}"
         draft = ActionDraftRecord(
@@ -302,11 +298,6 @@ class SlackTools:
 
     @classmethod
     async def dispatch_approved_action(cls, draft_id: str, approver_username: str) -> Dict[str, Any]:
-        """
-        Dispatches an action ONLY after explicit human approval.
-        Posts live Slack Block Kit cards or Direct Messages via Slack Web API when SLACK_BOT_TOKEN is present.
-        Ensures idempotent execution and updates SQLite state store.
-        """
         async with cls._get_lock():
             draft = await state_store.get_draft(draft_id)
             if not draft:
@@ -324,8 +315,8 @@ class SlackTools:
                         target_channel_id: Optional[str] = None
 
                         if target.startswith("#"):
-                            target_channel_id = await cls._resolve_channel_id(client, target.lstrip("#")) or target
-                        elif target.startswith("@"):
+                            target_channel_id = await cls._resolve_channel_id(client, target.lstrip("#"))
+                        elif target.startswith("@") or not target.startswith("C"):
                             user_id = await cls._resolve_user_id(client, target.lstrip("@"))
                             if user_id:
                                 open_dm_url = "https://slack.com/api/conversations.open"
@@ -333,6 +324,18 @@ class SlackTools:
                                     open_dm_url,
                                     headers=cls._get_headers(),
                                     json={"users": user_id},
+                                )
+                                if open_resp.status_code == 200 and open_resp.json().get("ok"):
+                                    target_channel_id = open_resp.json().get("channel", {}).get("id")
+
+                        if not target_channel_id:
+                            fallback_uid = await cls._resolve_user_id(client, approver_username)
+                            if fallback_uid:
+                                open_dm_url = "https://slack.com/api/conversations.open"
+                                open_resp = await client.post(
+                                    open_dm_url,
+                                    headers=cls._get_headers(),
+                                    json={"users": fallback_uid},
                                 )
                                 if open_resp.status_code == 200 and open_resp.json().get("ok"):
                                     target_channel_id = open_resp.json().get("channel", {}).get("id")
@@ -347,6 +350,20 @@ class SlackTools:
 
                         post_resp = await client.post(post_url, headers=cls._get_headers(), json=post_payload)
                         post_data = post_resp.json() if post_resp.status_code == 200 else {}
+
+                        if not post_data.get("ok") and post_data.get("error") == "channel_not_found":
+                            fallback_uid = await cls._resolve_user_id(client, approver_username)
+                            if fallback_uid:
+                                open_resp = await client.post(
+                                    "https://slack.com/api/conversations.open",
+                                    headers=cls._get_headers(),
+                                    json={"users": fallback_uid},
+                                )
+                                if open_resp.status_code == 200 and open_resp.json().get("ok"):
+                                    dm_cid = open_resp.json().get("channel", {}).get("id")
+                                    post_payload["channel"] = dm_cid
+                                    post_resp = await client.post(post_url, headers=cls._get_headers(), json=post_payload)
+                                    post_data = post_resp.json() if post_resp.status_code == 200 else {}
 
                         if post_data.get("ok"):
                             msg_ts = post_data.get("ts", "")

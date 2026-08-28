@@ -794,7 +794,7 @@
             </div>
           ` : `
             <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-300 flex items-center justify-between">
-              <span>Approved by <strong>${pendingDraft.approved_by || 'alex-lead'}</strong></span>
+              <span>Approved by <strong>${pendingDraft.approved_by || 'Lead'}</strong></span>
               <span class="font-semibold">✓ Dispatched via Slack API</span>
             </div>
           `}
@@ -922,16 +922,18 @@
 
     async function approveActionCard(draftId) {
       try {
+        const username = appState.currentUser || 'brightonwe30';
         const res = await fetch(`/api/v1/actions/${draftId}/approve`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ approver_username: 'alex-lead' })
+          body: JSON.stringify({ approver_username: username })
         });
         if (res.ok) {
+          const resData = await res.json();
           const updated = appState.actionDrafts.find(d => d.draft_id === draftId);
           if (updated) {
             updated.status = 'EXECUTED';
-            updated.approved_by = 'alex-lead';
+            updated.approved_by = username;
           }
           renderActionCards();
           renderOverviewActionCard();
@@ -943,10 +945,11 @@
 
     async function rejectActionCard(draftId) {
       try {
+        const username = appState.currentUser || 'brightonwe30';
         const res = await fetch(`/api/v1/actions/${draftId}/reject`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ approver_username: 'alex-lead' })
+          body: JSON.stringify({ approver_username: username })
         });
         if (res.ok) {
           const updated = appState.actionDrafts.find(d => d.draft_id === draftId);

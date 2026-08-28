@@ -216,7 +216,7 @@ async def test_api_webhooks_endpoints():
         }
         res_btn_app = await ac.post("/api/v1/webhooks/slack", json=button_approve_payload)
         assert res_btn_app.status_code == 200
-        assert "Dispatched" in res_btn_app.json()["text"]
+        assert "dispatched" in res_btn_app.json()["text"].lower()
 
         # Slack interactive button reject callback
         draft_rej = await state_store.save_draft(

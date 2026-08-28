@@ -34,13 +34,24 @@ class ActionAgent:
             pr_art = next((a for a in blocker.source_artifacts if a.startswith("PR-") or "#" in a), None)
             if pr_art or blocker.severity in ("CRITICAL", "HIGH"):
                 pr_label = pr_art or "PR #1"
+                reviewer_target = "@brightbutler7"
+                if "reviewer(s)" in blocker.description:
+                    try:
+                        parts = blocker.description.split("reviewer(s)")
+                        if len(parts) > 1:
+                            r_name = parts[1].split(".")[0].strip().split()[0].strip(",")
+                            if r_name and not r_name.startswith("http"):
+                                reviewer_target = f"@{r_name}"
+                    except Exception:
+                        pass
+
                 ping_content = (
-                    f"Hi team, {pr_label} is awaiting review and is currently stalling delivery "
+                    f"Hi {reviewer_target}! 👋 {pr_label} is awaiting review and is currently stalling delivery "
                     f"({blocker.title}). Could you please complete the review today to unblock the milestone? 🚀"
                 )
                 draft = await SlackTools.draft_action_card(
-                    target="#general",
-                    action_type="slack_channel_alert",
+                    target=reviewer_target,
+                    action_type="slack_direct_message",
                     content=ping_content,
                     context_blocker_id=blocker.blocker_id,
                     require_confirmation=True,
