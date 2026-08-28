@@ -197,22 +197,31 @@ class JiraTools:
             return issues
 
         instance_url = settings.jira_instance_url.rstrip("/")
-        query_jql = jql or "sprint in openSprints() ORDER BY priority DESC, updated DESC"
+        if jql:
+            query_jql = jql
+        elif settings.jira_project_key:
+            query_jql = f"project = {settings.jira_project_key} ORDER BY updated DESC"
+        else:
+            query_jql = "sprint in openSprints() ORDER BY priority DESC, updated DESC"
 
         live_issues: List[Dict[str, Any]] = []
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                search_url = f"{instance_url}/rest/api/3/search"
                 params = {
                     "jql": query_jql,
                     "fields": "summary,status,issuetype,priority,sprint,assignee,reporter,issuelinks,duedate,labels,description",
                     "maxResults": 50,
                 }
+                search_url = f"{instance_url}/rest/api/3/search/jql"
                 resp = await client.get(search_url, headers=cls._get_auth_headers(), params=params)
 
-                if resp.status_code == 404:
-                    search_url = f"{instance_url}/rest/api/2/search"
+                # If search/jql returns 400, 404, or 410, fallback to legacy search endpoints
+                if resp.status_code in (400, 404, 410):
+                    search_url = f"{instance_url}/rest/api/3/search"
                     resp = await client.get(search_url, headers=cls._get_auth_headers(), params=params)
+                    if resp.status_code in (404, 410):
+                        search_url = f"{instance_url}/rest/api/2/search"
+                        resp = await client.get(search_url, headers=cls._get_auth_headers(), params=params)
 
                 if resp.status_code == 429:
                     retry_after = resp.headers.get("Retry-After", "unknown")
@@ -232,12 +241,16 @@ class JiraTools:
 
                 for issue in raw_issues:
                     key = issue.get("key", "UNKNOWN")
-                    fields = issue.get("fields", {})
+                    fields = issue.get("fields") or {}
 
                     summary = fields.get("summary", "")
-                    issue_type = fields.get("issuetype", {}).get("name", "Story")
-                    raw_status = fields.get("status", {}).get("name", "IN_PROGRESS").upper()
+                    issuetype_obj = fields.get("issuetype") or {}
+                    issue_type = issuetype_obj.get("name") or "Story"
 
+                    status_obj = fields.get("status") or {}
+                    raw_status = (status_obj.get("name") or "IN_PROGRESS").upper()
+
+                    # Normalize status
                     if "BLOCK" in raw_status:
                         status = "BLOCKED"
                     elif "PROGRESS" in raw_status or "DEVELOPMENT" in raw_status:
@@ -249,17 +262,20 @@ class JiraTools:
                     else:
                         status = raw_status.replace(" ", "_")
 
-                    priority = fields.get("priority", {}).get("name", "Medium")
+                    priority_obj = fields.get("priority") or {}
+                    priority = priority_obj.get("name") or "Medium"
                     sprint_name = cls._extract_sprint_name(fields)
 
+                    assignee_obj = fields.get("assignee") or {}
                     assignee = (
-                        fields.get("assignee", {}).get("displayName")
-                        or fields.get("assignee", {}).get("name")
+                        assignee_obj.get("displayName")
+                        or assignee_obj.get("name")
                         or "unassigned"
                     )
+                    reporter_obj = fields.get("reporter") or {}
                     reporter = (
-                        fields.get("reporter", {}).get("displayName")
-                        or fields.get("reporter", {}).get("name")
+                        reporter_obj.get("displayName")
+                        or reporter_obj.get("name")
                         or "unknown"
                     )
 

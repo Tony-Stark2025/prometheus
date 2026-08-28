@@ -62,6 +62,7 @@ class Settings(BaseSettings):
     jira_api_token: Optional[str] = None
     jira_instance_url: Optional[str] = None
     jira_user_email: Optional[str] = None
+    jira_project_key: Optional[str] = None
     slack_bot_token: Optional[str] = None
     slack_channels: Union[List[str], str] = Field(
         default_factory=lambda: ["platform-engineering", "billing-squad"]

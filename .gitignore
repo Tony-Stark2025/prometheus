@@ -27,6 +27,7 @@ wheels/
 # Environment & Secrets
 .env
 .env.local
+env_cloud_run.yaml
 *.pem
 *.key
 

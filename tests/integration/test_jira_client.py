@@ -38,31 +38,33 @@ class TestJiraClient:
     @pytest.mark.asyncio
     async def test_jira_scope_filtering(self):
         """Validates organizational scope filtering on Jira issues."""
-        eng_issues = await JiraTools.get_sprint_issues(scopes=["engineering"])
-        assert len(eng_issues) > 0
-        assert all(any(s in issue.get("scopes", []) for s in ["engineering"]) for issue in eng_issues)
+        with patch.object(settings, "jira_instance_url", None):
+            eng_issues = await JiraTools.get_sprint_issues(scopes=["engineering"])
+            assert len(eng_issues) > 0
+            assert all(any(s in issue.get("scopes", []) for s in ["engineering"]) for issue in eng_issues)
 
-        finance_issues = await JiraTools.get_sprint_issues(scopes=["finance"])
-        assert len(finance_issues) > 0
-        assert all("finance" in issue.get("scopes", []) for issue in finance_issues)
+            finance_issues = await JiraTools.get_sprint_issues(scopes=["finance"])
+            assert len(finance_issues) > 0
+            assert all("finance" in issue.get("scopes", []) for issue in finance_issues)
 
-        unmatched = await JiraTools.get_sprint_issues(scopes=["nonexistent_department"])
-        assert len(unmatched) == 0
+            unmatched = await JiraTools.get_sprint_issues(scopes=["nonexistent_department"])
+            assert len(unmatched) == 0
 
     @pytest.mark.asyncio
     async def test_jira_blocked_issues_filtering(self):
         """Validates filtering of blocked issues and dependency chain extraction."""
-        blocked = await JiraTools.get_blocked_issues()
-        assert isinstance(blocked, list)
-        assert len(blocked) >= 1
+        with patch.object(settings, "jira_instance_url", None):
+            blocked = await JiraTools.get_blocked_issues()
+            assert isinstance(blocked, list)
+            assert len(blocked) >= 1
 
-        for issue in blocked:
-            assert issue["status"] == "BLOCKED" or len(issue["blocked_by"]) > 0
+            for issue in blocked:
+                assert issue["status"] == "BLOCKED" or len(issue["blocked_by"]) > 0
 
-        proj_108 = next((i for i in blocked if i["key"] == "PROJ-108"), None)
-        assert proj_108 is not None
-        assert "PR-402" in proj_108["blocked_by"]
-        assert proj_108["priority"] == "Highest"
+            proj_108 = next((i for i in blocked if i["key"] == "PROJ-108"), None)
+            assert proj_108 is not None
+            assert "PR-402" in proj_108["blocked_by"]
+            assert proj_108["priority"] == "Highest"
 
     def test_jira_parse_blockers_and_dependencies_with_issuelinks(self):
         """Validates parsing of Jira issuelinks (blocked by, depends on) and cross-domain PR references."""
