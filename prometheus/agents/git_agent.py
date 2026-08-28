@@ -4,6 +4,7 @@ Scans PR review latency, stale branches (>48h unreviewed), and build failures ac
 """
 
 from typing import List, Dict, Any, Optional
+from prometheus.config import settings
 from prometheus.tools.github_tools import GitHubTools
 from prometheus.security.abac_guard import ABACGuard, UserContext
 
@@ -21,11 +22,12 @@ class GitAgent:
     async def collect_telemetry(
         cls,
         user: UserContext,
-        stale_threshold_hours: float = 48.0,
+        stale_threshold_hours: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
         Gathers PRs and CI status filtered by user org scope.
         """
+        threshold = stale_threshold_hours if stale_threshold_hours is not None else float(settings.stale_pr_hours_threshold)
         all_prs = await GitHubTools.get_open_pull_requests()
         # Enforce ABAC scope pre-filtering
         scoped_prs = ABACGuard.filter_resources(user, all_prs)
@@ -33,7 +35,7 @@ class GitAgent:
         # Identify stale PRs
         stale_prs = [
             pr for pr in scoped_prs
-            if pr.get("review_latency_hours", 0) >= stale_threshold_hours
+            if pr.get("review_latency_hours", 0) >= threshold
             and pr.get("review_status") == "WAITING_REVIEW"
         ]
 

@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./prometheus_state.db"
 
     # Observability & Thresholds
-    stale_pr_hours_threshold: int = 48
+    stale_pr_hours_threshold: int = 1
     ci_failure_threshold_count: int = 2
     default_org_scope: Union[List[str], str] = Field(
         default_factory=lambda: ["engineering", "platform"]
