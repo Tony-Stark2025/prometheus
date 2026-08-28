@@ -6,8 +6,8 @@ Prepares scheduled alignment digests and interactive Slack Block Kit action card
 
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
-from app.memory.state_store import state_store, ActionDraftRecord, BlockerRecord, DraftStatus
-from app.tools.slack_tools import SlackTools
+from prometheus.memory.state_store import state_store, ActionDraftRecord, BlockerRecord, DraftStatus
+from prometheus.tools.slack_tools import SlackTools
 
 
 class ActionAgent:
@@ -31,15 +31,16 @@ class ActionAgent:
 
         for blocker in blockers:
             # 1. Stale PR / reviewer ping proposal
-            if "PR-402" in blocker.source_artifacts:
+            pr_art = next((a for a in blocker.source_artifacts if a.startswith("PR-") or "#" in a), None)
+            if pr_art or blocker.severity in ("CRITICAL", "HIGH"):
+                pr_label = pr_art or "PR #1"
                 ping_content = (
-                    "Hi @alex-lead, PR #402 (OAuth 2.1) has been awaiting review for over 48 hours "
-                    "and is currently blocking Epic PROJ-108 (v2.1 Gateway). Could you complete the review "
-                    "or delegate to @sarah-reviewer today?"
+                    f"Hi team, {pr_label} is awaiting review and is currently stalling delivery "
+                    f"({blocker.title}). Could you please complete the review today to unblock the milestone? 🚀"
                 )
                 draft = await SlackTools.draft_action_card(
-                    target="@alex-lead",
-                    action_type="slack_dm",
+                    target="#general",
+                    action_type="slack_channel_alert",
                     content=ping_content,
                     context_blocker_id=blocker.blocker_id,
                     require_confirmation=True,

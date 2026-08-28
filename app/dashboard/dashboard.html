@@ -186,10 +186,10 @@
           <!-- STEP 2 -->
           <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1.5">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-purple-400">2. Correlate Graph</span>
+              <span class="font-bold text-white">2. Correlate Graph</span>
               <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
             </div>
-            <p class="text-gray-300 text-[11px]">Gemini 3.7 Flash links PR #402 review delay directly to Jira Epic PROJ-108.</p>
+            <p class="text-gray-300 text-[11px]">Gemini 3.7 Flash links PR review delays directly to active Jira milestones.</p>
             <div class="text-[10px] text-purple-300 font-mono">Vertex AI Reasoning Engine</div>
           </div>
 
@@ -199,8 +199,8 @@
               <span class="font-bold text-red-400">3. Blocker Triaged</span>
               <i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i>
             </div>
-            <p class="text-gray-300 text-[11px]">OAuth 2.1 PR stale (58h). Gateway release frozen without code review.</p>
-            <div class="text-[10px] text-red-400 font-mono font-semibold">1 Critical Bottleneck</div>
+            <p class="text-gray-300 text-[11px]">OAuth 2.1 PR #1 awaiting review. Gateway release frozen without code review.</p>
+            <div class="text-[10px] text-red-400 font-mono font-semibold" id="stepper-blocker-status">Active Triage</div>
           </div>
 
           <!-- STEP 4 -->
@@ -209,7 +209,7 @@
               <span class="font-bold text-emerald-400">4. HITL Resolution</span>
               <i data-lucide="send" class="w-4 h-4 text-emerald-400"></i>
             </div>
-            <p class="text-gray-300 text-[11px]">Action card drafted for alex-lead. Awaiting human click to dispatch to Slack.</p>
+            <p class="text-gray-300 text-[11px]">Action card drafted for reviewer. Awaiting human click to dispatch to Slack.</p>
             <div class="text-[10px] text-emerald-300 font-mono">Ready for 1-Click Approval</div>
           </div>
 
@@ -227,8 +227,8 @@
             </div>
           </div>
           <div class="mt-2 flex items-baseline space-x-2">
-            <span id="stat-blockers-count" class="text-2xl font-extrabold text-white font-mono">1</span>
-            <span class="text-[11px] font-semibold text-red-400 bg-red-500/10 px-2 py-0.5 rounded">1 CRITICAL</span>
+            <span id="stat-blockers-count" class="text-2xl font-extrabold text-white font-mono">0</span>
+            <span id="stat-blockers-badge" class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">All Clear</span>
           </div>
           <p class="mt-1 text-[11px] text-dark-muted">Correlated across Git, Jira & Slack</p>
         </div>
@@ -241,10 +241,10 @@
             </div>
           </div>
           <div class="mt-2 flex items-baseline space-x-2">
-            <span id="stat-stale-prs" class="text-2xl font-extrabold text-white font-mono">1</span>
-            <span class="text-[11px] text-amber-400">PR-402 (58h latency)</span>
+            <span id="stat-stale-prs" class="text-2xl font-extrabold text-white font-mono">0</span>
+            <span id="stat-stale-badge" class="text-[11px] text-amber-400">0 Stale PRs</span>
           </div>
-          <p class="mt-1 text-[11px] text-dark-muted">Waiting on alex-lead review</p>
+          <p id="stat-stale-desc" class="mt-1 text-[11px] text-dark-muted">Live review latency tracking</p>
         </div>
 
         <div class="glass-card p-4 rounded-xl border border-dark-border hover:border-purple-500/40 transition">
@@ -255,7 +255,7 @@
             </div>
           </div>
           <div class="mt-2 flex items-baseline space-x-2">
-            <span id="stat-pending-actions" class="text-2xl font-extrabold text-white font-mono">1</span>
+            <span id="stat-pending-actions" class="text-2xl font-extrabold text-white font-mono">0</span>
             <span class="text-[11px] text-purple-300">Ready on this page</span>
           </div>
           <p class="mt-1 text-[11px] text-dark-muted">Propose, Don't Impose</p>
@@ -301,10 +301,10 @@
             </div>
             <div class="text-xs text-gray-300 leading-relaxed space-y-2" id="digest-content">
               <p>
-                <strong>Cross-Domain Synthesis:</strong> Telemetry correlation across GitHub, Jira Cloud, and Slack identified <strong class="text-red-400">1 critical blocker</strong> stalling the <strong>v2.1 Gateway Milestone</strong>.
+                <strong>Autonomous Engineering Observatory:</strong> Actively monitoring connected workspaces <code class="text-blue-400 font-mono">Tony-Stark2025/ecommerce-platform</code>, Jira <code class="text-purple-400 font-mono">KAN</code>, and Slack <code class="text-emerald-400 font-mono">#general</code>.
               </p>
               <p class="text-dark-muted">
-                Pull Request <code class="text-blue-400 font-mono">PR-402</code> (OAuth 2.1) has been waiting for review from lead reviewer <code class="text-yellow-300 font-mono">alex-lead</code> for over 58 hours. This directly freezes high-priority Jira Epic <code class="text-purple-400 font-mono">PROJ-108 / KAN-2</code> and breaks downstream gateway CI tests.
+                Click <span class="text-blue-400 font-semibold">"Run Fleet Ingest"</span> to trigger Vertex AI Agent Engine and Gemini 3.7 Flash cross-tool correlation.
               </p>
             </div>
           </div>
@@ -670,30 +670,12 @@
     }
 
     function renderInitialBlockers() {
-      const blockers = [
-        {
-          blocker_id: 'BLK-01',
-          title: 'Stale PR #402 Blocking v2.1 Gateway Milestone (Epic PROJ-108 / KAN-2)',
-          description: "Pull Request PR-402 ('Migrate to OAuth 2.1 token exchange') has been waiting for review for 58.0 hours from lead reviewer alex-lead. It directly freezes Jira Epic PROJ-108 / KAN-2. Downstream CI build #184 is failing due to interface mismatch with unmerged changes.",
-          severity: 'CRITICAL',
-          source_artifacts: ['GitHub: PR-402', 'Jira: PROJ-108 (KAN-2)', 'Slack: MSG-901', 'CI: Build #184'],
-          impacted_squads: ['engineering', 'platform', 'security'],
-        }
-      ];
-      renderBlockers(blockers);
+      renderBlockers([]);
     }
 
     function renderDefaultActionDrafts() {
       if (!appState.actionDrafts || appState.actionDrafts.length === 0) {
-        appState.actionDrafts = [
-          {
-            draft_id: 'DRAFT-402-01',
-            target_channel_or_user: '@alex-lead',
-            action_type: 'slack_direct_message',
-            content: "Hey Alex! 👋 PR #402 ('feat(oauth): Migrate to OAuth 2.1') has been waiting for your review for 58h. It is currently blocking high-priority Jira Epic PROJ-108 (v2.1 Gateway) and causing CI build #184 failures downstream. Could you please take a look today to unblock the release? 🚀",
-            status: 'PENDING'
-          }
-        ];
+        appState.actionDrafts = [];
         renderActionCards();
         renderOverviewActionCard();
       }

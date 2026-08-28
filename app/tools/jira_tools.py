@@ -13,9 +13,9 @@ from typing import List, Dict, Any, Optional, Tuple
 import httpx
 
 try:
-    from app.config import settings
-except ImportError:
     from prometheus.config import settings
+except ImportError:
+    from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +146,7 @@ class JiraTools:
         summary = fields.get("summary", "")
         desc = fields.get("description", "")
         if isinstance(desc, dict):
+            # Atlassian Document Format (ADF) handling: extract string content
             desc = str(desc)
 
         combined_text = f"{summary} {desc}"
@@ -171,6 +172,7 @@ class JiraTools:
         elif isinstance(sprint_field, list) and sprint_field:
             return sprint_field[-1].get("name", "Active Sprint")
 
+        # Scan custom fields for sprint dict or string
         for k, v in fields.items():
             if k.startswith("customfield_") and v:
                 if isinstance(v, list) and len(v) > 0 and isinstance(v[0], dict) and "name" in v[0] and "sprint" in k.lower():
@@ -223,6 +225,7 @@ class JiraTools:
                         search_url = f"{instance_url}/rest/api/2/search"
                         resp = await client.get(search_url, headers=cls._get_auth_headers(), params=params)
 
+                # Rate Limit Handling (HTTP 429)
                 if resp.status_code == 429:
                     retry_after = resp.headers.get("Retry-After", "unknown")
                     logger.warning(f"Jira API 429 Rate Limit (Retry-After: {retry_after}s). Failing over to mock issues.")
@@ -306,6 +309,7 @@ class JiraTools:
                     return [i for i in live_issues if any(s in i.get("scopes", []) for s in scopes)]
                 return live_issues
 
+            logger.info("No live Jira issues returned; falling back to mock fixtures.")
             return cls.MOCK_ISSUES if not scopes else [
                 i for i in cls.MOCK_ISSUES if any(s in i.get("scopes", []) for s in scopes)
             ]

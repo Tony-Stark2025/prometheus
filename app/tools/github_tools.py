@@ -12,9 +12,9 @@ from typing import List, Dict, Any, Optional
 import httpx
 
 try:
-    from app.config import settings
-except ImportError:
     from prometheus.config import settings
+except ImportError:
+    from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +128,7 @@ class GitHubTools:
     def _extract_downstream_blockers(cls, title: str, body: Optional[str]) -> List[str]:
         text = f"{title} {body or ''}"
         found = set(re.findall(r"\b(PROJ-\d+|PR-\d+|#[0-9]+)\b", text, re.IGNORECASE))
+        # Format '#123' to 'PR-123' if found
         normalized = []
         for item in found:
             if item.startswith("#"):
@@ -200,6 +201,7 @@ class GitHubTools:
                     url = f"https://api.github.com/repos/{repo}/pulls?state=open&sort=created&direction=desc&per_page=30"
                     resp = await client.get(url, headers=cls._get_headers())
 
+                    # Rate Limit Handling (429 or X-RateLimit-Remaining: 0 or 403 secondary rate limits)
                     remaining = resp.headers.get("x-ratelimit-remaining")
                     if resp.status_code in (403, 429) or (remaining is not None and remaining == "0"):
                         logger.warning(
@@ -225,7 +227,10 @@ class GitHubTools:
                         created_dt = cls._parse_iso_to_utc(created_at_str)
                         review_latency = max(0.0, round((now_utc - created_dt).total_seconds() / 3600.0, 1))
 
+                        # Requested reviewers
                         req_reviewers = [r.get("login") for r in pr.get("requested_reviewers", []) if r.get("login")]
+
+                        # Detailed reviews
                         reviews = await cls._fetch_pr_reviews(client, repo, pr_num)
                         reviewer_set = set(req_reviewers)
                         review_status = "WAITING_REVIEW"
@@ -249,6 +254,7 @@ class GitHubTools:
                         else:
                             review_status = "WAITING_REVIEW"
 
+                        # Head commit CI status
                         head_sha = pr.get("head", {}).get("sha", "")
                         ci_status = "PASSED"
                         if head_sha:
@@ -280,12 +286,13 @@ class GitHubTools:
                     return [pr for pr in live_prs if any(s in pr.get("scopes", []) for s in scopes)]
                 return live_prs
 
+            logger.info("No live PRs returned from GitHub; falling back to mock fixtures.")
             return cls.MOCK_PRS if not scopes else [
                 pr for pr in cls.MOCK_PRS if any(s in pr.get("scopes", []) for s in scopes)
             ]
 
         except Exception as exc:
-            logger.error(f"Live GitHub telemetry query failed: {exc}. Using mock fallback.")
+            logger.error(f"Live GitHub telemetry query failed with exception: {exc}. Using mock fallback.")
             return cls.MOCK_PRS if not scopes else [
                 pr for pr in cls.MOCK_PRS if any(s in pr.get("scopes", []) for s in scopes)
             ]
@@ -297,6 +304,9 @@ class GitHubTools:
         scopes: Optional[List[str]] = None,
         repos: Optional[List[str]] = None,
     ) -> List[Dict[str, Any]]:
+        """
+        Filters pull requests with review latency exceeding the threshold (e.g. 48h) and pending review.
+        """
         all_prs = await cls.get_open_pull_requests(scopes=scopes, repos=repos)
         return [
             pr for pr in all_prs
@@ -309,6 +319,10 @@ class GitHubTools:
         scopes: Optional[List[str]] = None,
         repos: Optional[List[str]] = None,
     ) -> List[Dict[str, Any]]:
+        """
+        Retrieves failing CI/CD workflow runs across connected repositories via GitHub Actions API.
+        Extracts failed step names and log summaries with fallback to mock fixtures.
+        """
         if not settings.github_token:
             failures = cls.MOCK_CI_FAILURES
             if scopes:
@@ -343,6 +357,7 @@ class GitHubTools:
                         head_branch = run.get("head_branch", "main")
                         head_sha = (run.get("head_sha") or "")[:7]
 
+                        # Attempt to inspect failed jobs
                         failed_step = f"{workflow_name} / job_execution"
                         error_summary = run.get("display_title") or f"Run #{run.get('run_number')} failed on {head_branch}"
 
