@@ -107,28 +107,23 @@
 
   <!-- SUB-NAVIGATION BAR -->
   <div class="bg-dark-surface/80 border-b border-dark-border px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto flex items-center space-x-8 text-sm font-medium">
-      <button onclick="switchTab('overview')" id="tab-overview" class="py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition">
+    <div class="max-w-7xl mx-auto flex items-center space-x-8 text-xs font-medium">
+      <button onclick="switchTab('overview')" id="tab-overview" class="py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-        <span>Overview & Blockers</span>
-      </button>
-      <button onclick="switchTab('actions')" id="tab-actions" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
-        <i data-lucide="check-square" class="w-4 h-4"></i>
-        <span>Action Cards (HITL)</span>
-        <span id="badge-action-count" class="px-1.5 py-0.2 text-xs rounded-full bg-amber-500/20 text-amber-300 font-mono">0</span>
+        <span>Command Center</span>
       </button>
       <button onclick="switchTab('telemetry')" id="tab-telemetry" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
         <i data-lucide="activity" class="w-4 h-4"></i>
-        <span>Live Telemetry</span>
+        <span>Telemetry & Workstreams</span>
       </button>
-      <button onclick="switchTab('agents')" id="tab-agents" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
-        <i data-lucide="bot" class="w-4 h-4"></i>
-        <span>Agent Registry (6)</span>
+      <button onclick="switchTab('settings')" id="tab-settings" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span>Settings & Integrations</span>
       </button>
-      <button onclick="switchTab('security')" id="tab-security" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
-        <i data-lucide="shield-alert" class="w-4 h-4"></i>
-        <span>Security & Model Armor</span>
-      </button>
+      <a href="/documentation" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-blue-400 flex items-center space-x-2 transition">
+        <i data-lucide="book-open" class="w-4 h-4"></i>
+        <span>Documentation & Specs</span>
+      </a>
     </div>
   </div>
 
@@ -485,97 +480,97 @@
       </div>
     </section>
 
-    <!-- TAB 4: AGENT REGISTRY -->
-    <section id="section-agents" class="hidden space-y-6">
+    <!-- TAB 3: SETTINGS & INTEGRATIONS -->
+    <section id="section-settings" class="hidden space-y-6">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-base font-bold text-white flex items-center space-x-2">
-            <i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i>
-            <span>Enterprise Sub-Agent Fleet Registry</span>
+            <i data-lucide="settings" class="w-5 h-5 text-blue-400"></i>
+            <span>Enterprise Workspace Integrations</span>
           </h2>
-          <p class="text-xs text-dark-muted">Discovered and cataloged sub-agents conforming to the Fortified Enterprise Fleet specification.</p>
-        </div>
-        <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 font-mono text-xs border border-blue-500/20">6 Fleet Agents Registered</span>
-      </div>
-
-      <div id="fleet-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Fleet agents rendered dynamically -->
-      </div>
-    </section>
-
-    <!-- TAB 5: SECURITY & MODEL ARMOR -->
-    <section id="section-security" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-base font-bold text-white flex items-center space-x-2">
-            <i data-lucide="shield-check" class="w-5 h-5 text-cyan-400"></i>
-            <span>Enterprise Security, ABAC Perimeter & Model Armor</span>
-          </h2>
-          <p class="text-xs text-dark-muted">Interactive verification sandbox for deterministic access control and inline prompt defense.</p>
+          <p class="text-xs text-dark-muted">Manage your encrypted API tokens securely vaulted in Google Cloud Firestore.</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- ABAC SIMULATOR -->
+        <!-- GITHUB INTEGRATION CARD -->
         <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-dark-border">
-            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-              <i data-lucide="key" class="w-4 h-4 text-blue-400"></i>
-              <span>ABAC / Row-Level Security Simulator</span>
-            </h3>
-            <span class="text-xs font-mono text-emerald-400">P(U,R) Engine</span>
+            <div class="flex items-center space-x-2">
+              <i data-lucide="github" class="w-5 h-5 text-white"></i>
+              <h3 class="text-sm font-bold text-white">GitHub</h3>
+            </div>
+            <span id="badge-status-github" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
           </div>
-
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Select User Persona:</label>
-              <select id="sim-user-persona" onchange="runABACSimulation()" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white text-xs font-mono focus:border-blue-500 focus:outline-none">
-                <option value="lead">alex-lead (Scopes: engineering, platform, security)</option>
-                <option value="dev">dev1 (Scopes: engineering)</option>
-                <option value="sales">sales_rep (Scopes: sales, marketing)</option>
-                <option value="guest">guest_auditor (Unauthenticated / restricted)</option>
-              </select>
+              <label class="block text-dark-muted font-medium mb-1">Personal Access Token (PAT):</label>
+              <input type="password" id="input-github-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
             </div>
-
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Target Resource:</label>
-              <select id="sim-resource-target" onchange="runABACSimulation()" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white text-xs font-mono focus:border-blue-500 focus:outline-none">
-                <option value="pr402">PR-402: OAuth 2.1 (Required: engineering)</option>
-                <option value="sec_audit">SEC-99: Production IAM Keys (Required: security)</option>
-                <option value="sales_lead">DEAL-400: Q3 Pipeline (Required: sales)</option>
-              </select>
+              <label class="block text-dark-muted font-medium mb-1">Target Repositories (comma-separated):</label>
+              <input type="text" id="input-github-repos" placeholder="owner/repo" value="Tony-Stark2025/prometheus" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
             </div>
-
-            <div id="sim-abac-result" class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 font-mono text-xs">
-              ✓ ACCESS GRANTED: Scope intersection verified.
-            </div>
+            <button onclick="saveIntegration('github')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
+              Save GitHub Token to Firestore
+            </button>
           </div>
         </div>
 
-        <!-- GUARDRAIL & PII SANITIZER SANDBOX -->
+        <!-- JIRA CLOUD INTEGRATION CARD -->
         <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-dark-border">
-            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-              <i data-lucide="shield-alert" class="w-4 h-4 text-cyan-400"></i>
-              <span>Inline Prompt Defense & PII Sanitizer</span>
-            </h3>
-            <span class="text-xs font-mono text-cyan-400">Model Armor</span>
+            <div class="flex items-center space-x-2">
+              <i data-lucide="trello" class="w-5 h-5 text-blue-400"></i>
+              <h3 class="text-sm font-bold text-white">Jira Cloud</h3>
+            </div>
+            <span id="badge-status-jira" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
           </div>
-
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Test Payload:</label>
-              <textarea id="guardrail-test-input" rows="3" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white text-xs font-mono focus:border-blue-500 focus:outline-none">Contact alex at alex.lead@company.com with token ghp_123456789012345678901234567890123456</textarea>
+              <label class="block text-dark-muted font-medium mb-1">Instance URL:</label>
+              <input type="text" id="input-jira-url" placeholder="https://yourcompany.atlassian.net" value="https://brightonwe30.atlassian.net" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
             </div>
-
-            <button onclick="runGuardrailTest()" class="w-full py-2 bg-dark-card hover:bg-dark-border border border-dark-border text-white text-xs font-semibold rounded-lg transition">
-              Sanitize & Inspect Payload
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">User Email:</label>
+              <input type="email" id="input-jira-email" placeholder="user@company.com" value="brightonwe30@gmail.com" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">API Token:</label>
+              <input type="password" id="input-jira-token" placeholder="ATATT3xxxxxxxx" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">Project Key (e.g. KAN):</label>
+              <input type="text" id="input-jira-key" placeholder="KAN" value="KAN" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+            </div>
+            <button onclick="saveIntegration('jira')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
+              Save Jira Token to Firestore
             </button>
+          </div>
+        </div>
 
-            <div id="guardrail-test-output" class="p-3 rounded-lg bg-dark-card border border-dark-border text-gray-300 font-mono text-xs whitespace-pre-wrap">
-Contact alex at [REDACTED_EMAIL] with token [REDACTED_GITHUB_TOKEN]
+        <!-- SLACK INTEGRATION CARD -->
+        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="message-square" class="w-5 h-5 text-emerald-400"></i>
+              <h3 class="text-sm font-bold text-white">Slack</h3>
             </div>
+            <span id="badge-status-slack" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">Bot User OAuth Token:</label>
+              <input type="password" id="input-slack-token" placeholder="xoxb-xxxxxxxxxxxx" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-dark-muted font-medium mb-1">Monitored Channels (comma-separated):</label>
+              <input type="text" id="input-slack-channels" placeholder="general, platform-engineering" value="general, platform-engineering" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+            </div>
+            <button onclick="saveIntegration('slack')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
+              Save Slack Token to Firestore
+            </button>
           </div>
         </div>
 

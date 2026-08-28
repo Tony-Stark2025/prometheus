@@ -19,7 +19,7 @@ import json
 import asyncio
 from contextlib import asynccontextmanager
 from typing import Optional, List, Dict, Any
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, HTMLResponse, FileResponse
 from pydantic import BaseModel, Field
@@ -74,10 +74,15 @@ class ActionApprovalRequest(BaseModel):
     approver_username: str = "alex-lead"
 
 
+from prometheus.memory.firestore_store import firestore_store, UserProfile
+from prometheus.auth.oauth import create_session_token, get_google_auth_url, exchange_google_code
+from prometheus.auth.dependencies import get_current_user_optional, UserContext as AuthUserContext
+
 # ==============================================================================
 # Dashboard & Core REST API Endpoints
 # ==============================================================================
 DASHBOARD_PATH = os.path.join(os.path.dirname(__file__), "dashboard", "dashboard.html")
+DOCUMENTATION_PATH = os.path.join(os.path.dirname(__file__), "dashboard", "documentation.html")
 
 
 @app.get("/", response_class=HTMLResponse, tags=["Dashboard"])
@@ -90,6 +95,132 @@ async def serve_dashboard():
         with open(DASHBOARD_PATH, "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     return HTMLResponse(content="<h1>Prometheus Dashboard: dashboard.html not found.</h1>")
+
+
+@app.get("/documentation", response_class=HTMLResponse, tags=["Documentation"])
+@app.get("/docs-view", response_class=HTMLResponse, tags=["Documentation"])
+async def serve_documentation():
+    """
+    Renders the Prometheus Technical Architecture, Security & Whitepaper Reference.
+    """
+    if os.path.exists(DOCUMENTATION_PATH):
+        with open(DOCUMENTATION_PATH, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>Prometheus Documentation: documentation.html not found.</h1>")
+
+
+# ==============================================================================
+# Google OAuth 2.0 & Session Management Endpoints
+# ==============================================================================
+@app.get("/api/v1/auth/me", tags=["Authentication"])
+async def get_me(user: AuthUserContext = Depends(get_current_user_optional)):
+    """
+    Returns current authenticated user profile and active tenant organization.
+    """
+    return user.model_dump()
+
+
+@app.get("/api/v1/auth/google/login", tags=["Authentication"])
+async def google_login():
+    """
+    Initiates Google OAuth 2.0 flow or returns authorization URL.
+    """
+    url = get_google_auth_url()
+    return {"auth_url": url}
+
+
+@app.get("/api/v1/auth/google/callback", tags=["Authentication"])
+async def google_callback(code: str, response: Response):
+    """
+    Handles Google OAuth callback, verifies ID token, saves user in Firestore, and sets session cookie.
+    """
+    user_info = await exchange_google_code(code)
+    if not user_info:
+        raise HTTPException(status_code=400, detail="Google authentication failed.")
+    
+    user_id = f"google_{user_info.get('sub')}"
+    profile = UserProfile(
+        user_id=user_id,
+        email=user_info.get("email", "user@enterprise.io"),
+        name=user_info.get("name", "Google User"),
+        picture=user_info.get("picture"),
+        tenant_id="default_enterprise",
+    )
+    await firestore_store.save_user(profile)
+
+    token = create_session_token(
+        user_id=profile.user_id,
+        email=profile.email,
+        tenant_id=profile.tenant_id,
+        scopes=profile.org_scopes,
+    )
+    response.set_cookie(key="session_token", value=token, httponly=True, samesite="lax")
+    return HTMLResponse(content="<script>window.location.href='/dashboard';</script>")
+
+
+@app.post("/api/v1/auth/demo-login", tags=["Authentication"])
+async def demo_login(response: Response):
+    """
+    Provides instant one-click enterprise trial session.
+    """
+    profile = UserProfile(
+        user_id="lead-01",
+        email="alex.lead@enterprise.io",
+        name="Alex Rivera",
+        tenant_id="default_enterprise",
+        roles=["lead", "admin"],
+        org_scopes=["engineering", "platform"],
+    )
+    await firestore_store.save_user(profile)
+
+    token = create_session_token(
+        user_id=profile.user_id,
+        email=profile.email,
+        tenant_id=profile.tenant_id,
+        scopes=profile.org_scopes,
+    )
+    response.set_cookie(key="session_token", value=token, httponly=True, samesite="lax")
+    return {"status": "authenticated", "user": profile.model_dump(), "token": token}
+
+
+@app.post("/api/v1/auth/logout", tags=["Authentication"])
+async def logout(response: Response):
+    """
+    Clears active user session cookie.
+    """
+    response.delete_cookie("session_token")
+    return {"status": "logged_out"}
+
+
+# ==============================================================================
+# Enterprise Integrations API (Firestore Vaulted)
+# ==============================================================================
+@app.get("/api/v1/integrations", tags=["Integrations"])
+async def list_integrations(user: AuthUserContext = Depends(get_current_user_optional)):
+    """
+    Lists connected status and masked credentials of tenant tools (GitHub, Jira, Slack).
+    """
+    return await firestore_store.list_integrations(tenant_id=user.tenant_id)
+
+
+@app.post("/api/v1/integrations/{service}", tags=["Integrations"])
+async def save_integration(service: str, payload: Dict[str, Any], user: AuthUserContext = Depends(get_current_user_optional)):
+    """
+    Saves and vaults integration credentials into Google Cloud Firestore.
+    """
+    if service not in ("github", "jira", "slack"):
+        raise HTTPException(status_code=400, detail=f"Unsupported service: {service}")
+    saved = await firestore_store.save_integration(tenant_id=user.tenant_id, service=service, config=payload)
+    return {"status": "saved", "service": service, "updated_at": saved.updated_at}
+
+
+@app.delete("/api/v1/integrations/{service}", tags=["Integrations"])
+async def delete_integration(service: str, user: AuthUserContext = Depends(get_current_user_optional)):
+    """
+    Disconnects and purges an integration from Firestore.
+    """
+    deleted = await firestore_store.delete_integration(tenant_id=user.tenant_id, service=service)
+    return {"status": "deleted", "service": service}
 
 
 @app.get("/healthz", tags=["System"])

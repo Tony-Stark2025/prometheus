@@ -235,3 +235,56 @@ async def test_api_webhooks_endpoints():
         assert res_btn_rej.status_code == 200
         assert "dismissed" in res_btn_rej.json()["text"]
 
+
+@pytest.mark.asyncio
+async def test_documentation_and_auth_endpoints():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        # 1. Documentation endpoint
+        res_doc = await ac.get("/documentation")
+        assert res_doc.status_code == 200
+        assert "text/html" in res_doc.headers.get("content-type", "")
+        assert "Documentation" in res_doc.text
+
+        # 2. Auth me endpoint
+        res_me = await ac.get("/api/v1/auth/me")
+        assert res_me.status_code == 200
+        data_me = res_me.json()
+        assert "user_id" in data_me
+        assert "tenant_id" in data_me
+
+        # 3. Google login URL endpoint
+        res_glogin = await ac.get("/api/v1/auth/google/login")
+        assert res_glogin.status_code == 200
+        assert "auth_url" in res_glogin.json()
+
+        # 4. Demo login endpoint
+        res_demo = await ac.post("/api/v1/auth/demo-login")
+        assert res_demo.status_code == 200
+        data_demo = res_demo.json()
+        assert data_demo["status"] == "authenticated"
+        assert "token" in data_demo
+
+        # 5. Integrations API (list, save, delete)
+        res_int_list = await ac.get("/api/v1/integrations")
+        assert res_int_list.status_code == 200
+        int_data = res_int_list.json()
+        assert "github" in int_data
+        assert "jira" in int_data
+        assert "slack" in int_data
+
+        # Save GitHub integration
+        res_save_gh = await ac.post("/api/v1/integrations/github", json={"token": "ghp_mock123", "repos": ["org/repo"]})
+        assert res_save_gh.status_code == 200
+        assert res_save_gh.json()["status"] == "saved"
+
+        # Delete GitHub integration
+        res_del_gh = await ac.delete("/api/v1/integrations/github")
+        assert res_del_gh.status_code == 200
+        assert res_del_gh.json()["status"] == "deleted"
+
+        # 6. Logout
+        res_logout = await ac.post("/api/v1/auth/logout")
+        assert res_logout.status_code == 200
+        assert res_logout.json()["status"] == "logged_out"
+
+

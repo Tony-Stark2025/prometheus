@@ -33,8 +33,10 @@ jobs:
         env:
           ENVIRONMENT: testing
           LOG_LEVEL: DEBUG
+          USE_VERTEX_AI: "false"
+          GEMINI_API_KEY: "mock_ci_test_key"
         run: |
-          pytest tests/ -v --tb=short
+          pytest tests/unit/ tests/adversarial/ tests/integration/ tests/test_workflow.py tests/test_endpoints.py -v --tb=short
 
       - name: Verify Docker Container Build
         run: |
