@@ -262,6 +262,23 @@ class StateStore:
         await self.save_draft(draft)
         return draft
 
+    async def update_draft_content(
+        self, draft_id: str, content: str, target: Optional[str] = None
+    ) -> Optional[ActionDraftRecord]:
+        draft = await self.get_draft(draft_id)
+        if not draft:
+            return None
+        draft.content = content
+        if target:
+            draft.target_channel_or_user = target
+        if draft.metadata and "slack_blocks" in draft.metadata:
+            for block in draft.metadata.get("slack_blocks", []):
+                if block.get("type") == "section" and "text" in block and block["text"].get("type") == "mrkdwn":
+                    if not block["text"].get("text", "").startswith("🔔"):
+                        block["text"]["text"] = content
+        await self.save_draft(draft)
+        return draft
+
     async def save_checkpoint(self, session_id: str, state_data: Dict[str, Any]) -> None:
         ts = datetime.now(timezone.utc).isoformat()
         self._checkpoints[session_id] = {

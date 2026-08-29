@@ -7,9 +7,9 @@ from datetime import datetime, timedelta, timezone
 import jwt
 import httpx
 from pydantic import BaseModel
-from prometheus.memory.firestore_store import firestore_store, UserProfile
+from app.memory.firestore_store import firestore_store, UserProfile
 
-logger = logging.getLogger('prometheus.auth')
+logger = logging.getLogger('app.auth')
 
 JWT_SECRET = os.getenv('JWT_SECRET', 'prometheus_enterprise_jwt_secret_dev_key_12345')
 JWT_ALGORITHM = 'HS256'

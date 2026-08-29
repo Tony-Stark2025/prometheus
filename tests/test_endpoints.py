@@ -6,7 +6,7 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from prometheus.main import app
-from prometheus.memory.state_store import state_store, ActionDraftRecord
+from prometheus.memory.state_store import state_store, ActionDraftRecord, DraftStatus
 
 
 @pytest.mark.asyncio
@@ -159,6 +159,25 @@ async def test_api_digest_and_actions_workflow_endpoints():
         # 404 on nonexistent draft rejection
         res_404_rej = await ac.post("/api/v1/actions/NONEXISTENT-DRAFT/reject", json={"approver_username": "alex-lead"})
         assert res_404_rej.status_code == 404
+
+        # Edit action endpoint check
+        draft_to_edit = ActionDraftRecord(
+            draft_id="DRAFT-EDIT-TEST",
+            target_channel_or_user="@lead",
+            action_type="slack_dm",
+            content="Before edit",
+            status=DraftStatus.PENDING,
+        )
+        await state_store.save_draft(draft_to_edit)
+        res_edit = await ac.post("/api/v1/actions/DRAFT-EDIT-TEST/edit", json={"content": "After edit", "target": "@lead2"})
+        assert res_edit.status_code == 200
+        assert res_edit.json()["status"] == "updated"
+        assert res_edit.json()["draft"]["content"] == "After edit"
+        assert res_edit.json()["draft"]["target_channel_or_user"] == "@lead2"
+
+        # 404 on editing nonexistent draft
+        res_edit_404 = await ac.post("/api/v1/actions/NONEXISTENT/edit", json={"content": "Test"})
+        assert res_edit_404.status_code == 404
 
 
         # Prompt injection check via REST

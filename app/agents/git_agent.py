@@ -4,9 +4,9 @@ Scans PR review latency, stale branches (>48h unreviewed), and build failures ac
 """
 
 from typing import List, Dict, Any, Optional
-from prometheus.config import settings
-from prometheus.tools.github_tools import GitHubTools
-from prometheus.security.abac_guard import ABACGuard, UserContext
+from app.config import settings
+from app.tools.github_tools import GitHubTools
+from app.security.abac_guard import ABACGuard, UserContext
 
 
 class GitAgent:

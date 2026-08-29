@@ -12,8 +12,8 @@ from typing import List, Dict, Any, Optional
 import httpx
 
 try:
-    from prometheus.config import settings
-    from prometheus.memory.state_store import state_store, ActionDraftRecord, DraftStatus
+    from app.config import settings
+    from app.memory.state_store import state_store, ActionDraftRecord, DraftStatus
 except ImportError:
     from app.config import settings
     from app.memory.state_store import state_store, ActionDraftRecord, DraftStatus

@@ -6,8 +6,8 @@ Prepares scheduled alignment digests and interactive Slack Block Kit action card
 
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
-from prometheus.memory.state_store import state_store, ActionDraftRecord, BlockerRecord, DraftStatus
-from prometheus.tools.slack_tools import SlackTools
+from app.memory.state_store import state_store, ActionDraftRecord, BlockerRecord, DraftStatus
+from app.tools.slack_tools import SlackTools
 
 
 class ActionAgent:

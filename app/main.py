@@ -24,14 +24,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, HTMLResponse, FileResponse
 from pydantic import BaseModel, Field
 
-from prometheus.config import settings
-from prometheus.security.abac_guard import UserContext
-from prometheus.memory.state_store import state_store, DraftStatus
-from prometheus.tools.slack_tools import SlackTools
-from prometheus.registry.agent_registry import agent_registry
-from prometheus.mcp.server import mcp_server
-from prometheus.workflows.prometheus_flow import PrometheusWorkflow, WorkflowExecutionResult
-from prometheus.scheduler import scheduler
+from app.config import settings
+from app.security.abac_guard import UserContext
+from app.memory.state_store import state_store, DraftStatus
+from app.tools.slack_tools import SlackTools
+from app.registry.agent_registry import agent_registry
+from app.mcp.server import mcp_server
+from app.workflows.prometheus_flow import PrometheusWorkflow, WorkflowExecutionResult
+from app.scheduler import scheduler
 
 
 @asynccontextmanager
@@ -74,9 +74,15 @@ class ActionApprovalRequest(BaseModel):
     approver_username: str = "alex-lead"
 
 
-from prometheus.memory.firestore_store import firestore_store, UserProfile
-from prometheus.auth.oauth import create_session_token, get_google_auth_url, exchange_google_code
-from prometheus.auth.dependencies import get_current_user_optional, UserContext as AuthUserContext
+class ActionEditRequest(BaseModel):
+    content: str
+    target: Optional[str] = None
+    approver_username: str = "alex-lead"
+
+
+from app.memory.firestore_store import firestore_store, UserProfile
+from app.auth.oauth import create_session_token, get_google_auth_url, exchange_google_code
+from app.auth.dependencies import get_current_user_optional, UserContext as AuthUserContext
 
 # ==============================================================================
 # Dashboard & Core REST API Endpoints
@@ -335,6 +341,24 @@ async def reject_action(draft_id: str, req: ActionApprovalRequest):
     return {"status": "rejected", "draft_id": draft_id}
 
 
+@app.post("/api/v1/actions/{draft_id}/edit", tags=["Human-in-the-Loop"])
+async def edit_action(draft_id: str, req: ActionEditRequest):
+    """
+    Edits a proposed action draft content or target prior to sign-off.
+    """
+    draft = await state_store.get_draft(draft_id)
+    if not draft:
+        raise HTTPException(status_code=404, detail=f"Draft '{draft_id}' not found.")
+    if draft.status == DraftStatus.EXECUTED:
+        raise HTTPException(status_code=400, detail="Cannot edit an already executed action draft.")
+    updated = await state_store.update_draft_content(
+        draft_id=draft_id,
+        content=req.content,
+        target=req.target,
+    )
+    return {"status": "updated", "draft": updated.model_dump() if updated else None}
+
+
 # ==============================================================================
 # Model Context Protocol (MCP) Server-Sent Events (SSE) Endpoint
 # ==============================================================================
@@ -449,4 +473,4 @@ if __name__ == "__main__":
         asyncio.run(cli_runner())
     else:
         import uvicorn
-        uvicorn.run("prometheus.main:app", host=settings.host, port=settings.port, reload=True)
+        uvicorn.run("app.main:app", host=settings.host, port=settings.port, reload=True)

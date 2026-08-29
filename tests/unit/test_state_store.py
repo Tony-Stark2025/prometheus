@@ -183,6 +183,33 @@ class TestStateStore:
         assert len(checkpoint["data"]["sub_agents"]) == 6
 
     @pytest.mark.asyncio
+    async def test_update_draft_content(self, local_store):
+        """update_draft_content updates text content and target."""
+        draft = ActionDraftRecord(
+            draft_id="DRAFT-EDIT-001",
+            target_channel_or_user="@alex",
+            action_type="slack_dm",
+            content="Original content",
+            status=DraftStatus.PENDING,
+            metadata={"slack_blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": "Original content"}}]}
+        )
+        await local_store.save_draft(draft)
+
+        updated = await local_store.update_draft_content(
+            draft_id="DRAFT-EDIT-001",
+            content="Updated edited content",
+            target="@sarah",
+        )
+        assert updated is not None
+        assert updated.content == "Updated edited content"
+        assert updated.target_channel_or_user == "@sarah"
+        assert updated.metadata["slack_blocks"][0]["text"]["text"] == "Updated edited content"
+
+        reloaded = await local_store.get_draft("DRAFT-EDIT-001")
+        assert reloaded.content == "Updated edited content"
+        assert reloaded.target_channel_or_user == "@sarah"
+
+    @pytest.mark.asyncio
     async def test_get_nonexistent_checkpoint_returns_none(self, local_store):
         """Querying nonexistent session checkpoint returns None."""
         res = await local_store.get_checkpoint("sess_nonexistent_123")

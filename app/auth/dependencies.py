@@ -4,10 +4,10 @@ from typing import Optional, List
 from fastapi import Request, HTTPException, Security, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
-from prometheus.auth.oauth import decode_session_token
-from prometheus.memory.firestore_store import firestore_store, UserProfile
+from app.auth.oauth import decode_session_token
+from app.memory.firestore_store import firestore_store, UserProfile
 
-logger = logging.getLogger('prometheus.auth.dependencies')
+logger = logging.getLogger('app.auth.dependencies')
 security_bearer = HTTPBearer(auto_error=False)
 
 class UserContext(BaseModel):

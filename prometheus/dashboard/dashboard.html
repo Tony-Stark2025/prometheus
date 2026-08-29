@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prometheus — Enterprise Workstream Observability Platform</title>
+  <title>Prometheus — Enterprise Workstream Observability & AI Chief of Staff</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
@@ -14,25 +14,26 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            brand: {
-              50: '#f0f7ff',
-              100: '#e0effe',
+            obsidian: {
+              950: '#07090e',
+              900: '#0a0d14',
+              850: '#0f141f',
+              800: '#121722',
+              750: '#171d2b',
+              700: '#1c2333',
+              600: '#263044',
+              500: '#38455e',
+            },
+            sapphire: {
               500: '#3b82f6',
               600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a',
-            },
-            dark: {
-              bg: '#0a0d14',
-              surface: '#121622',
-              card: '#181d2d',
-              border: '#23293d',
-              muted: '#8b949e',
+              400: '#60a5fa',
+              300: '#93c5fd',
+              glow: 'rgba(59, 130, 246, 0.25)',
             }
           }
         }
@@ -40,106 +41,122 @@
     }
   </script>
   <style>
-    body { background-color: #0a0d14; color: #e6edf3; }
-    .glass { background: rgba(24, 29, 45, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-card { background: rgba(18, 22, 34, 0.85); backdrop-filter: blur(10px); border: 1px solid #23293d; }
-    .glow-blue { box-shadow: 0 0 25px rgba(59, 130, 246, 0.18); }
-    .glow-purple { box-shadow: 0 0 25px rgba(168, 85, 247, 0.18); }
-    .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.18); }
-    .glow-amber { box-shadow: 0 0 25px rgba(245, 158, 11, 0.18); }
+    body { background-color: #0a0d14; color: #e2e8f0; }
+    .glass-panel { background: rgba(18, 23, 34, 0.88); backdrop-filter: blur(14px); border: 1px solid #1c2333; }
+    .glass-panel-interactive:hover { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.12); }
+    .glass-input { background: #0f141f; border: 1px solid #1c2333; color: #f8fafc; }
+    .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+    .glow-sapphire { box-shadow: 0 0 30px rgba(59, 130, 246, 0.16); }
+    .glow-emerald { box-shadow: 0 0 30px rgba(16, 185, 129, 0.16); }
+    .glow-crimson { box-shadow: 0 0 30px rgba(239, 68, 68, 0.16); }
+    .glow-amber { box-shadow: 0 0 30px rgba(245, 158, 11, 0.16); }
     .badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(0.92); } }
+    .animate-slide-up { animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #0a0d14; }
-    ::-webkit-scrollbar-thumb { background: #23293d; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #1c2333; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
   </style>
 </head>
-<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 
-  <!-- TOP NAVIGATION HEADER -->
-  <header class="sticky top-0 z-50 glass border-b border-dark-border">
+  <!-- TOP APP NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 bg-obsidian-900/90 backdrop-blur-md border-b border-obsidian-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
-          <i data-lucide="flame" class="w-6 h-6 text-white"></i>
+      
+      <!-- LOGO & BRAND -->
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/25 ring-1 ring-white/20">
+          <i data-lucide="flame" class="w-5 h-5 text-white"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="font-bold text-lg tracking-tight text-white">PROMETHEUS</span>
-            <span class="px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20">Enterprise Fleet</span>
+            <span class="font-extrabold text-base tracking-wider text-white font-mono">PROMETHEUS</span>
+            <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-400 rounded-md border border-blue-500/25">Chief of Staff</span>
           </div>
-          <p class="text-xs text-dark-muted hidden sm:block">Autonomous AI Chief of Staff & Workstream Observability</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Enterprise Workstream Observability & Multi-Agent DAG</p>
         </div>
       </div>
 
       <!-- LIVE SYSTEM STATUS PILLS -->
-      <div class="hidden lg:flex items-center space-x-2">
-        <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-dark-card border border-dark-border text-xs" title="Live Jira Cloud Connection">
+      <div class="hidden lg:flex items-center space-x-2.5">
+        <div class="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-obsidian-800 border border-obsidian-700 text-xs">
           <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
-          <span class="text-gray-400">Jira:</span>
-          <span class="text-white font-mono font-medium">brightonwe30 (KAN)</span>
+          <span class="text-slate-400">Jira:</span>
+          <span class="text-white font-mono font-medium" id="nav-jira-status">KAN Cloud</span>
         </div>
-        <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-dark-card border border-dark-border text-xs" title="Live GitHub Repo Connection">
+        <div class="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-obsidian-800 border border-obsidian-700 text-xs">
           <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
-          <span class="text-gray-400">GitHub:</span>
-          <span class="text-white font-mono font-medium">prometheus</span>
+          <span class="text-slate-400">GitHub:</span>
+          <span class="text-white font-mono font-medium" id="nav-gh-status">prometheus</span>
         </div>
-        <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-dark-card border border-dark-border text-xs" title="Vertex AI Reasoning Engine">
+        <div class="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-obsidian-800 border border-obsidian-700 text-xs">
           <span class="w-2 h-2 rounded-full bg-cyan-400 badge-pulse"></span>
-          <span class="text-gray-400">Vertex AI:</span>
+          <span class="text-slate-400">Reasoning Engine:</span>
           <span class="text-blue-400 font-mono font-semibold">Gemini 3.7 Flash</span>
         </div>
       </div>
 
-      <!-- ACTIONS & NAV TABS -->
-      <div class="flex items-center space-x-2">
-        <button id="btn-run-fleet" onclick="runFleetWorkflow()" class="relative group flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-blue-500/25 transition-all duration-200">
-          <i data-lucide="play" class="w-4 h-4"></i>
+      <!-- ACTIONS & USER CONTROLS -->
+      <div class="flex items-center space-x-2.5">
+        <button id="btn-run-fleet" onclick="runFleetWorkflow()" class="relative group flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold rounded-lg shadow-md hover:shadow-blue-500/25 transition-all duration-200 active:scale-95">
+          <i data-lucide="play" class="w-3.5 h-3.5"></i>
           <span>Run Fleet Ingest</span>
         </button>
-        <a href="/docs" target="_blank" class="p-2 rounded-lg bg-dark-card border border-dark-border hover:bg-dark-border text-dark-muted hover:text-white transition">
+        <a href="/documentation" class="p-2 rounded-lg bg-obsidian-800 border border-obsidian-700 hover:bg-obsidian-700 text-slate-400 hover:text-white transition" title="Documentation & Architecture Specs">
           <i data-lucide="book-open" class="w-4 h-4"></i>
         </a>
       </div>
+
     </div>
   </header>
 
-  <!-- SUB-NAVIGATION BAR -->
-  <div class="bg-dark-surface/80 border-b border-dark-border px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto flex items-center space-x-8 text-xs font-medium">
-      <button onclick="switchTab('overview')" id="tab-overview" class="py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold">
+  <!-- SUB-NAVIGATION BAR (TABS) -->
+  <div class="bg-obsidian-850/90 border-b border-obsidian-700 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex items-center space-x-6 text-xs font-medium overflow-x-auto">
+      <button onclick="switchTab('overview')" id="tab-overview" class="py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold whitespace-nowrap">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
         <span>Command Center</span>
       </button>
-      <button onclick="switchTab('telemetry')" id="tab-telemetry" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
+      <button onclick="switchTab('actions')" id="tab-actions" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
+        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        <span>Action Cards (HITL)</span>
+        <span id="badge-action-count" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-blue-500/20 text-blue-300 font-bold">0</span>
+      </button>
+      <button onclick="switchTab('telemetry')" id="tab-telemetry" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
         <i data-lucide="activity" class="w-4 h-4"></i>
-        <span>Telemetry & Workstreams</span>
+        <span>Telemetry Streams</span>
       </button>
-      <button onclick="switchTab('settings')" id="tab-settings" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition">
+      <button onclick="switchTab('agents')" id="tab-agents" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
+        <i data-lucide="bot" class="w-4 h-4"></i>
+        <span>Agent Fleet</span>
+      </button>
+      <button onclick="switchTab('security')" id="tab-security" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
+        <i data-lucide="shield-check" class="w-4 h-4"></i>
+        <span>Security & ABAC</span>
+      </button>
+      <button onclick="switchTab('settings')" id="tab-settings" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
         <i data-lucide="settings" class="w-4 h-4"></i>
-        <span>Settings & Integrations</span>
+        <span>Integrations Vault</span>
       </button>
-      <a href="/documentation" class="py-3 border-b-2 border-transparent text-dark-muted hover:text-blue-400 flex items-center space-x-2 transition">
-        <i data-lucide="book-open" class="w-4 h-4"></i>
-        <span>Documentation & Specs</span>
-      </a>
     </div>
   </div>
 
-  <!-- MAIN CONTENT CONTAINER -->
+  <!-- MAIN CONTAINER -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- RUN WORKFLOW PROGRESS MODAL / BANNER (HIDDEN INITIALLY) -->
-    <div id="workflow-progress" class="hidden glass p-4 rounded-xl border border-blue-500/30 bg-blue-950/20 glow-blue animate-fade-in">
+    <!-- WORKFLOW PROGRESS BANNER (DYNAMIC SSE / CRON) -->
+    <div id="workflow-progress" class="hidden glass-panel p-4 rounded-xl border border-blue-500/40 bg-blue-950/20 glow-sapphire animate-slide-up">
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center space-x-3">
-          <div class="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-          <span class="font-semibold text-sm text-blue-300" id="workflow-status-text">Asynchronous Multi-Agent Ingestion in Progress...</span>
+          <div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <span class="font-semibold text-xs text-blue-300" id="workflow-status-text">Asynchronous Multi-Agent Ingestion in Progress...</span>
         </div>
-        <span class="text-xs font-mono text-blue-400" id="workflow-step-text">Step 1/4: Router & Perimeter ABAC</span>
+        <span class="text-[11px] font-mono text-blue-400" id="workflow-step-text">agent-01-router</span>
       </div>
-      <div class="w-full bg-dark-card rounded-full h-1.5 overflow-hidden">
+      <div class="w-full bg-obsidian-800 rounded-full h-1.5 overflow-hidden">
         <div id="workflow-progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-300 w-1/4"></div>
       </div>
     </div>
@@ -147,198 +164,197 @@
     <!-- TAB 1: COMMAND CENTER (OVERVIEW) -->
     <section id="section-overview" class="space-y-6">
 
-      <!-- 💡 QUICK EXPLANATION / HOW IT WORKS BANNER -->
+      <!-- HERO EXPLANATION CARD -->
       <div class="p-4 rounded-xl border border-blue-500/20 bg-blue-950/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="flex items-start space-x-3">
           <div class="p-2 rounded-lg bg-blue-500/20 text-blue-400 mt-0.5">
-            <i data-lucide="info" class="w-5 h-5"></i>
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-sm font-bold text-white">How Prometheus Resolves Blockers in 4 Steps:</h3>
-            <p class="text-xs text-gray-300 mt-0.5">
-              1. Ingests signals from GitHub, Jira, and Slack ➔ 2. Gemini 3.7 Flash correlates root causes ➔ 3. Identifies the release bottleneck ➔ 4. Drafts a safe Slack card for 1-click human approval.
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Multi-Domain Bottleneck Observatory</h3>
+            <p class="text-xs text-slate-300 mt-0.5">
+              1. Ingests signals across GitHub, Jira, and Slack ➔ 2. Gemini 3.7 Flash correlates root causes ➔ 3. Identifies delivery bottlenecks ➔ 4. Drafts safe Slack action cards for 1-click human sign-off.
             </p>
           </div>
         </div>
-        <div class="flex items-center space-x-2 text-xs font-mono text-blue-300">
-          <span class="px-2.5 py-1 rounded bg-dark-card border border-dark-border">Principle: Propose, Don't Impose</span>
+        <div class="flex items-center space-x-2 text-[11px] font-mono text-blue-300 whitespace-nowrap">
+          <span class="px-2.5 py-1 rounded bg-obsidian-800 border border-obsidian-700">Propose, Don't Impose</span>
         </div>
       </div>
 
-      <!-- 4-STEP VISUAL PIPELINE -->
-      <div class="glass-card p-5 rounded-xl border border-dark-border">
-        <div class="text-xs font-bold uppercase tracking-wider text-dark-muted mb-3 flex items-center justify-between">
-          <span>Autonomous Cross-Tool Resolution Pipeline</span>
-          <span class="text-emerald-400 font-mono">Live End-to-End Status: ACTIVE</span>
+      <!-- 4-STAGE PIPELINE VISUALIZER -->
+      <div class="glass-panel p-5 rounded-xl border border-obsidian-700">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+          <span class="flex items-center space-x-2">
+            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-blue-400"></i>
+            <span>Autonomous Cross-Tool Resolution Pipeline</span>
+          </span>
+          <span class="text-emerald-400 font-mono text-[11px] flex items-center space-x-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>FLEET: ACTIVE</span>
+          </span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           
-          <!-- STEP 1 -->
-          <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1.5">
+          <div class="p-3.5 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1.5">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-blue-400">1. Ingest Signals</span>
-              <i data-lucide="radio" class="w-4 h-4 text-blue-400"></i>
+              <span class="font-bold text-blue-400">1. Ingest Telemetry</span>
+              <i data-lucide="radio" class="w-3.5 h-3.5 text-blue-400"></i>
             </div>
-            <p class="text-gray-300 text-[11px]">GitHub PRs, Jira Issues (KAN), and Slack discussions ingested concurrently.</p>
-            <div class="text-[10px] text-dark-muted font-mono">Status: Connected (3 Sources)</div>
+            <p class="text-slate-300 text-[11px]">GitHub PRs, Jira Issues (KAN), and Slack conversations ingested in parallel.</p>
+            <div class="text-[10px] text-slate-400 font-mono">3 Connected Sources</div>
           </div>
 
-          <!-- STEP 2 -->
-          <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1.5">
+          <div class="p-3.5 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1.5">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-white">2. Correlate Graph</span>
-              <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+              <span class="font-bold text-indigo-300">2. Correlate Graph</span>
+              <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-400"></i>
             </div>
-            <p class="text-gray-300 text-[11px]">Gemini 3.7 Flash links PR review delays directly to active Jira milestones.</p>
-            <div class="text-[10px] text-purple-300 font-mono">Vertex AI Reasoning Engine</div>
+            <p class="text-slate-300 text-[11px]">Gemini 3.7 Flash maps PR review latency directly to blocked Jira sprint epics.</p>
+            <div class="text-[10px] text-indigo-300 font-mono">Vertex AI Reasoning Engine</div>
           </div>
 
-          <!-- STEP 3 -->
-          <div class="p-3 rounded-lg bg-red-950/20 border border-red-500/30 space-y-1.5">
+          <div class="p-3.5 rounded-lg bg-red-950/20 border border-red-500/30 space-y-1.5">
             <div class="flex items-center justify-between">
               <span class="font-bold text-red-400">3. Blocker Triaged</span>
-              <i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i>
+              <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-red-400"></i>
             </div>
-            <p class="text-gray-300 text-[11px]">OAuth 2.1 PR #1 awaiting review. Gateway release frozen without code review.</p>
-            <div class="text-[10px] text-red-400 font-mono font-semibold" id="stepper-blocker-status">Active Triage</div>
+            <p class="text-slate-300 text-[11px]" id="step-blocker-desc">PR review delays detected blocking milestone delivery.</p>
+            <div class="text-[10px] text-red-400 font-mono font-semibold" id="step-blocker-status">Active Triage</div>
           </div>
 
-          <!-- STEP 4 -->
-          <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 space-y-1.5">
+          <div class="p-3.5 rounded-lg bg-emerald-950/20 border border-emerald-500/30 space-y-1.5">
             <div class="flex items-center justify-between">
               <span class="font-bold text-emerald-400">4. HITL Resolution</span>
-              <i data-lucide="send" class="w-4 h-4 text-emerald-400"></i>
+              <i data-lucide="send" class="w-3.5 h-3.5 text-emerald-400"></i>
             </div>
-            <p class="text-gray-300 text-[11px]">Action card drafted for reviewer. Awaiting human click to dispatch to Slack.</p>
-            <div class="text-[10px] text-emerald-300 font-mono">Ready for 1-Click Approval</div>
+            <p class="text-slate-300 text-[11px]">Action card drafted for reviewer. Awaiting human approval to dispatch.</p>
+            <div class="text-[10px] text-emerald-300 font-mono">1-Click Sign-Off Ready</div>
           </div>
 
         </div>
       </div>
 
-      <!-- KEY METRICS STATS -->
+      <!-- KEY METRIC SUMMARY CARDS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        <div class="glass-card p-4 rounded-xl border border-dark-border hover:border-red-500/40 transition">
+        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Active Blockers</span>
-            <div class="p-2 rounded-lg bg-red-500/10 text-red-400">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Active Blockers</span>
+            <div class="p-1.5 rounded-lg bg-red-500/10 text-red-400">
               <i data-lucide="alert-triangle" class="w-4 h-4"></i>
             </div>
           </div>
           <div class="mt-2 flex items-baseline space-x-2">
             <span id="stat-blockers-count" class="text-2xl font-extrabold text-white font-mono">0</span>
-            <span id="stat-blockers-badge" class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">All Clear</span>
+            <span id="stat-blockers-badge" class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">All Clear</span>
           </div>
-          <p class="mt-1 text-[11px] text-dark-muted">Correlated across Git, Jira & Slack</p>
+          <p class="mt-1 text-[11px] text-slate-400">Multi-domain correlated</p>
         </div>
 
-        <div class="glass-card p-4 rounded-xl border border-dark-border hover:border-amber-500/40 transition">
+        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Stale PRs (>48h)</span>
-            <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Stale PRs (>48h)</span>
+            <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
               <i data-lucide="git-pull-request" class="w-4 h-4"></i>
             </div>
           </div>
           <div class="mt-2 flex items-baseline space-x-2">
             <span id="stat-stale-prs" class="text-2xl font-extrabold text-white font-mono">0</span>
-            <span id="stat-stale-badge" class="text-[11px] text-amber-400">0 Stale PRs</span>
+            <span id="stat-stale-badge" class="text-[10px] font-semibold text-amber-400">0 Stale</span>
           </div>
-          <p id="stat-stale-desc" class="mt-1 text-[11px] text-dark-muted">Live review latency tracking</p>
+          <p class="mt-1 text-[11px] text-slate-400">Review latency tracking</p>
         </div>
 
-        <div class="glass-card p-4 rounded-xl border border-dark-border hover:border-purple-500/40 transition">
+        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Pending Action Cards</span>
-            <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pending Action Cards</span>
+            <div class="p-1.5 rounded-lg bg-blue-500/10 text-blue-400">
               <i data-lucide="send" class="w-4 h-4"></i>
             </div>
           </div>
           <div class="mt-2 flex items-baseline space-x-2">
             <span id="stat-pending-actions" class="text-2xl font-extrabold text-white font-mono">0</span>
-            <span class="text-[11px] text-purple-300">Ready on this page</span>
+            <span class="text-[10px] text-blue-300 font-medium">Ready for Review</span>
           </div>
-          <p class="mt-1 text-[11px] text-dark-muted">Propose, Don't Impose</p>
+          <p class="mt-1 text-[11px] text-slate-400">Propose, Don't Impose</p>
         </div>
 
-        <div class="glass-card p-4 rounded-xl border border-dark-border hover:border-emerald-500/40 transition">
+        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-dark-muted">Security Perimeter</span>
-            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Security Perimeter</span>
+            <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
               <i data-lucide="shield-check" class="w-4 h-4"></i>
             </div>
           </div>
           <div class="mt-2 flex items-baseline space-x-2">
             <span class="text-2xl font-extrabold text-emerald-400 font-mono">100%</span>
-            <span class="text-[11px] text-emerald-400">ABAC Isolated</span>
+            <span class="text-[10px] text-emerald-400 font-semibold">ABAC Isolated</span>
           </div>
-          <p class="mt-1 text-[11px] text-dark-muted">Model Armor sanitized</p>
+          <p class="mt-1 text-[11px] text-slate-400">Model Armor sanitized</p>
         </div>
 
       </div>
 
-      <!-- MAIN SPLIT WORKSPACE: PROBLEM ON LEFT, 1-CLICK ACTION SOLUTION ON RIGHT -->
+      <!-- MAIN SPLIT WORKSPACE -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- LEFT COLUMN: CORRELATED BLOCKER & EVIDENCE GRAPH (7 COLS) -->
+        <!-- LEFT: CORRELATED BLOCKERS & EVIDENCE -->
         <div class="lg:col-span-7 space-y-4">
           <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-              <i data-lucide="network" class="w-4 h-4 text-blue-400"></i>
-              <span>Active Delivery Bottleneck & Evidence Graph</span>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+              <i data-lucide="network" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Delivery Bottlenecks & Root Cause Synthesis</span>
             </h3>
-            <span class="text-xs text-dark-muted font-mono">Root Cause Synthesis</span>
+            <span class="text-[11px] text-slate-400 font-mono">Correlated Evidence</span>
           </div>
 
           <!-- EXECUTIVE SYNTHESIS BRIEF -->
-          <div class="glass-card p-4 rounded-xl border border-dark-border space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-dark-border text-xs">
+          <div class="glass-panel p-4 rounded-xl border border-obsidian-700 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-obsidian-700 text-xs">
               <div class="flex items-center space-x-2">
-                <i data-lucide="sparkles" class="w-4 h-4 text-blue-400"></i>
-                <span class="font-bold text-white">Daily Alignment Digest</span>
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-400"></i>
+                <span class="font-bold text-white">Daily Alignment Briefing</span>
               </div>
-              <span class="text-[11px] font-mono text-dark-muted">Scope: engineering, platform</span>
+              <span class="text-[10px] font-mono text-slate-400">Scopes: engineering, platform</span>
             </div>
-            <div class="text-xs text-gray-300 leading-relaxed space-y-2" id="digest-content">
+            <div class="text-xs text-slate-300 leading-relaxed space-y-2" id="digest-content">
               <p>
-                <strong>Autonomous Engineering Observatory:</strong> Actively monitoring connected workspaces <code class="text-blue-400 font-mono">Tony-Stark2025/ecommerce-platform</code>, Jira <code class="text-purple-400 font-mono">KAN</code>, and Slack <code class="text-emerald-400 font-mono">#general</code>.
-              </p>
-              <p class="text-dark-muted">
-                Click <span class="text-blue-400 font-semibold">"Run Fleet Ingest"</span> to trigger Vertex AI Agent Engine and Gemini 3.7 Flash cross-tool correlation.
+                <strong>Observability Active:</strong> Monitoring repositories, Jira sprints, and Slack discussions. Click <span class="text-blue-400 font-semibold">"Run Fleet Ingest"</span> to run asynchronous multi-agent correlation.
               </p>
             </div>
           </div>
 
-          <!-- BLOCKER DETAIL CARD WITH EVIDENCE BADGES -->
+          <!-- BLOCKER DETAIL CARDS -->
           <div id="blockers-container" class="space-y-3">
             <!-- Rendered dynamically -->
           </div>
 
         </div>
 
-        <!-- RIGHT COLUMN: IMMEDIATE HUMAN-IN-THE-LOOP ACTION CARD (5 COLS) -->
+        <!-- RIGHT: HITL ACTION CARD -->
         <div class="lg:col-span-5 space-y-4">
           <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-              <span>Human-in-the-Loop Action Card</span>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Human Sign-Off Checkpoint</span>
             </h3>
-            <span class="text-xs text-emerald-400 font-mono">1-Click Sign-Off</span>
+            <span class="text-[11px] text-emerald-400 font-mono font-semibold">"Propose, Don't Impose"</span>
           </div>
 
-          <!-- ACTION CARD CONTAINER (LIVE INTERACTION RIGHT ON COMMAND CENTER) -->
+          <!-- OVERVIEW ACTION CARD CONTAINER -->
           <div id="overview-action-card-container" class="space-y-4">
             <!-- Rendered dynamically -->
           </div>
 
           <!-- EXPLANATORY FOOTNOTE -->
-          <div class="p-3 rounded-lg bg-dark-card border border-dark-border text-xs text-dark-muted space-y-1">
-            <div class="flex items-center space-x-1.5 text-gray-300 font-semibold">
+          <div class="p-3.5 rounded-xl bg-obsidian-850 border border-obsidian-700 text-xs text-slate-400 space-y-1.5">
+            <div class="flex items-center space-x-1.5 text-slate-300 font-semibold text-[11px]">
               <i data-lucide="shield-check" class="w-3.5 h-3.5 text-cyan-400"></i>
-              <span>Why Human Sign-Off?</span>
+              <span>Zero Unilateral Mutations</span>
             </div>
-            <p class="text-[11px] leading-relaxed">
-              Prometheus drafts high-context unblocking messages with all references attached. Nothing is sent to Slack or merged in GitHub until you click <strong>Approve</strong>.
+            <p class="text-[11px] leading-relaxed text-slate-400">
+              Prometheus drafts high-context unblocking messages with all references attached. You can edit the text or recipient before clicking <strong>Approve & Dispatch</strong>.
             </p>
           </div>
         </div>
@@ -349,18 +365,18 @@
 
     <!-- TAB 2: ACTION CARDS (HITL) -->
     <section id="section-actions" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 class="text-base font-bold text-white flex items-center space-x-2">
-            <i data-lucide="check-circle" class="w-5 h-5 text-purple-400"></i>
+          <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-400"></i>
             <span>Human-in-the-Loop Action Drafting Center</span>
           </h2>
-          <p class="text-xs text-dark-muted">"Propose, Don't Impose" — No external mutations occur without explicit human sign-off.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Review, edit, and authorize actions before any external API mutation occurs.</p>
         </div>
         <div class="flex items-center space-x-2 text-xs">
-          <button onclick="filterActionCards('ALL')" class="px-3 py-1.5 rounded-lg bg-dark-card border border-dark-border text-white hover:bg-dark-border">All</button>
-          <button onclick="filterActionCards('PENDING')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20 font-medium">Pending</button>
-          <button onclick="filterActionCards('EXECUTED')" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 font-medium">Dispatched</button>
+          <button onclick="filterActionCards('ALL')" id="filter-btn-ALL" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold">All</button>
+          <button onclick="filterActionCards('PENDING')" id="filter-btn-PENDING" class="px-3 py-1.5 rounded-lg bg-obsidian-800 text-slate-300 border border-obsidian-700 hover:text-white">Pending</button>
+          <button onclick="filterActionCards('EXECUTED')" id="filter-btn-EXECUTED" class="px-3 py-1.5 rounded-lg bg-obsidian-800 text-slate-300 border border-obsidian-700 hover:text-white">Dispatched</button>
         </div>
       </div>
 
@@ -369,110 +385,101 @@
       </div>
     </section>
 
-    <!-- TAB 3: LIVE TELEMETRY -->
+    <!-- TAB 3: TELEMETRY STREAMS -->
     <section id="section-telemetry" class="hidden space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-base font-bold text-white flex items-center space-x-2">
-            <i data-lucide="activity" class="w-5 h-5 text-blue-400"></i>
-            <span>Cross-Functional Telemetry Ingestion Streams</span>
+          <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
+            <span>Cross-Functional Telemetry Streams</span>
           </h2>
-          <p class="text-xs text-dark-muted">Raw telemetry ingested via MCP from GitHub, Jira, and Slack within user's ABAC scope.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Raw telemetry ingested asynchronously via MCP within authorized ABAC scopes.</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- GITHUB STREAM -->
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
             <div class="flex items-center space-x-2">
-              <i data-lucide="github" class="w-4 h-4 text-gray-300"></i>
-              <h3 class="text-sm font-bold text-white">Git & CI/CD Telemetry</h3>
+              <i data-lucide="github" class="w-4 h-4 text-white"></i>
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Git & CI/CD Telemetry</h3>
             </div>
             <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-02-git</span>
           </div>
           <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">PR-402 (OAuth 2.1)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 font-semibold">58h Stale</span>
+                <span class="font-semibold text-white font-mono">PR #1 (OAuth 2.1)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 font-semibold">Stale Review</span>
               </div>
-              <p class="text-dark-muted">Reviewer: alex-lead • Branch: feat/oauth-2.1</p>
-              <div class="text-[11px] text-amber-400 font-mono pt-1">⚠️ Blocking Epic PROJ-108</div>
+              <p class="text-slate-400">Reviewer: @brightbutler7 • Target: main</p>
+              <div class="text-[11px] text-amber-400 font-mono pt-1">⚠️ Blocking Jira KAN-4</div>
             </div>
-            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">PR-405 (Telemetry Exporter)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold">12h</span>
+                <span class="font-semibold text-white font-mono">PR #2 (Telemetry Pipeline)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold">Healthy</span>
               </div>
-              <p class="text-dark-muted">Reviewer: sarah-reviewer • Branch: feat/telemetry</p>
-              <div class="text-[11px] text-emerald-400 font-mono pt-1">✓ CI Passing</div>
-            </div>
-            <div class="p-3 rounded-lg bg-red-950/20 border border-red-500/20 space-y-1">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-red-300 font-mono">CI Failure: build #184</span>
-                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-300 font-semibold">Failed</span>
-              </div>
-              <p class="text-red-400 text-[11px]">Interface mismatch on AuthTokenProvider</p>
+              <p class="text-slate-400">Reviewer: team-lead • CI passing</p>
+              <div class="text-[11px] text-emerald-400 font-mono pt-1">✓ Ready for merge</div>
             </div>
           </div>
         </div>
 
         <!-- JIRA STREAM -->
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
             <div class="flex items-center space-x-2">
               <i data-lucide="trello" class="w-4 h-4 text-blue-400"></i>
-              <h3 class="text-sm font-bold text-white">Project Tracker Telemetry</h3>
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Jira Sprint Telemetry</h3>
             </div>
             <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-03-jira</span>
           </div>
           <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">PROJ-108 (v2.1 Gateway)</span>
+                <span class="font-semibold text-white font-mono">KAN-4 (Gateway v2.1)</span>
                 <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 font-semibold">BLOCKED</span>
               </div>
-              <p class="text-dark-muted">Owner: alex-lead • Sprint: Sprint 44</p>
-              <div class="text-[11px] text-red-400 font-mono pt-1">Blocked by: PR-402</div>
+              <p class="text-slate-400">Assignee: brightonwe30 • Sprint 1</p>
+              <div class="text-[11px] text-red-400 font-mono pt-1">Blocked by: PR #1</div>
             </div>
-            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">PROJ-112 (Cache Warmup)</span>
+                <span class="font-semibold text-white font-mono">KAN-2 (Frontend Refactor)</span>
                 <span class="px-2 py-0.5 rounded text-[10px] bg-blue-500/10 text-blue-400 font-semibold">IN PROGRESS</span>
               </div>
-              <p class="text-dark-muted">Owner: dev2 • Sprint: Sprint 44</p>
-              <div class="text-[11px] text-dark-muted font-mono pt-1">Progress: 60%</div>
+              <p class="text-slate-400">Assignee: lead-01 • Sprint 1</p>
+              <div class="text-[11px] text-blue-300 font-mono pt-1">Progress: 85%</div>
             </div>
           </div>
         </div>
 
         <!-- SLACK STREAM -->
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
             <div class="flex items-center space-x-2">
               <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i>
-              <h3 class="text-sm font-bold text-white">Workstream Communications</h3>
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Workstream Ingestion</h3>
             </div>
             <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-04-workstream</span>
           </div>
           <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
               <div class="flex items-center justify-between">
                 <span class="font-semibold text-white">#platform-engineering</span>
-                <span class="text-dark-muted font-mono text-[10px]">2h ago</span>
+                <span class="text-slate-500 font-mono text-[10px]">Recent</span>
               </div>
-              <p class="text-gray-300 italic">"Is anyone reviewing PR-402? Staging rollout is stalled on this."</p>
-              <p class="text-dark-muted text-[11px]">- sarah-reviewer</p>
+              <p class="text-slate-300 italic">"Is anyone reviewing the auth PR? Gateway release is waiting."</p>
             </div>
-            <div class="p-3 rounded-lg bg-dark-card border border-dark-border space-y-1">
+            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white">#core-backend</span>
-                <span class="text-dark-muted font-mono text-[10px]">4h ago</span>
+                <span class="font-semibold text-white">#general</span>
+                <span class="text-slate-500 font-mono text-[10px]">Recent</span>
               </div>
-              <p class="text-gray-300 italic">"CI build #184 is failing on main branch interface checks."</p>
-              <p class="text-dark-muted text-[11px]">- ci-bot</p>
+              <p class="text-slate-300 italic">"Sprint 1 burndown on track, auth unblocker required today."</p>
             </div>
           </div>
         </div>
@@ -480,96 +487,172 @@
       </div>
     </section>
 
-    <!-- TAB 3: SETTINGS & INTEGRATIONS -->
-    <section id="section-settings" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-base font-bold text-white flex items-center space-x-2">
-            <i data-lucide="settings" class="w-5 h-5 text-blue-400"></i>
-            <span>Enterprise Workspace Integrations</span>
-          </h2>
-          <p class="text-xs text-dark-muted">Manage your encrypted API tokens securely vaulted in Google Cloud Firestore.</p>
+    <!-- TAB 4: AGENT FLEET REGISTRY -->
+    <section id="section-agents" class="hidden space-y-6">
+      <div>
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+          <i data-lucide="bot" class="w-4 h-4 text-blue-400"></i>
+          <span>Sub-Agent Fleet Catalog & Security Bounds</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Central registry cataloging all 6 sub-agents, model specifications, and security controls.</p>
+      </div>
+
+      <div id="fleet-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 5: SECURITY & ABAC SANDBOX -->
+    <section id="section-security" class="hidden space-y-6">
+      <div>
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+          <span>Security Perimeter & ABAC Simulation Sandbox</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Verify Attribute-Based Access Control $P(U,R)$ and Model Armor sanitization.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- ABAC SIMULATOR -->
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="lock" class="w-3.5 h-3.5 text-blue-400"></i>
+            <span>ABAC Scope Perimeter Evaluation</span>
+          </h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-slate-400 font-medium mb-1">User Persona Context:</label>
+              <select id="sim-user-persona" onchange="runABACSimulation()" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
+                <option value="lead">alex-lead (Scopes: engineering, platform)</option>
+                <option value="dev">dev-bob (Scopes: engineering)</option>
+                <option value="sales">sales-user (Scopes: sales, marketing)</option>
+                <option value="guest">guest (Scopes: none)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-400 font-medium mb-1">Target Resource:</label>
+              <select id="sim-resource-target" onchange="runABACSimulation()" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
+                <option value="pr402">GitHub PR #1 (Required Scope: engineering)</option>
+                <option value="sec_audit">Security Audit Telemetry (Required Scope: platform)</option>
+                <option value="sales_lead">Customer Deal CRM Pipeline (Required Scope: sales)</option>
+              </select>
+            </div>
+            <div id="sim-abac-result" class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 font-mono text-xs">
+              ✓ ACCESS GRANTED: User context permitted for PR #1.
+            </div>
+          </div>
         </div>
+
+        <!-- MODEL ARMOR SANITIZER -->
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <span>Model Armor & PII Masking Sandbox</span>
+          </h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-slate-400 font-medium mb-1">Input Telemetry Payload:</label>
+              <textarea id="guardrail-test-input" oninput="runGuardrailTest()" rows="3" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">Token: ghp_9876543210abcdef1234567890abcdef1234 from engineer alex.lead@enterprise.io</textarea>
+            </div>
+            <div>
+              <label class="block text-slate-400 font-medium mb-1">Sanitized Output Payload:</label>
+              <div id="guardrail-test-output" class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 text-cyan-300 font-mono text-xs whitespace-pre-wrap">Token: [REDACTED_GITHUB_TOKEN] from engineer [REDACTED_EMAIL]</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 6: SETTINGS & INTEGRATIONS VAULT -->
+    <section id="section-settings" class="hidden space-y-6">
+      <div>
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+          <i data-lucide="settings" class="w-4 h-4 text-blue-400"></i>
+          <span>Enterprise Integrations Vault (Firestore)</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Manage encrypted API credentials vaulted securely in Google Cloud Firestore.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- GITHUB INTEGRATION CARD -->
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <!-- GITHUB -->
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
             <div class="flex items-center space-x-2">
-              <i data-lucide="github" class="w-5 h-5 text-white"></i>
-              <h3 class="text-sm font-bold text-white">GitHub</h3>
+              <i data-lucide="github" class="w-4 h-4 text-white"></i>
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider">GitHub</h3>
             </div>
-            <span id="badge-status-github" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
           </div>
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Personal Access Token (PAT):</label>
-              <input type="password" id="input-github-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">Personal Access Token (PAT):</label>
+              <input type="password" id="input-github-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Target Repositories (comma-separated):</label>
-              <input type="text" id="input-github-repos" placeholder="owner/repo" value="Tony-Stark2025/prometheus" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">Target Repositories:</label>
+              <input type="text" id="input-github-repos" value="Tony-Stark2025/prometheus" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <button onclick="saveIntegration('github')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
-              Save GitHub Token to Firestore
+              Save GitHub Token
             </button>
           </div>
         </div>
 
-        <!-- JIRA CLOUD INTEGRATION CARD -->
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <!-- JIRA CLOUD -->
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
             <div class="flex items-center space-x-2">
-              <i data-lucide="trello" class="w-5 h-5 text-blue-400"></i>
-              <h3 class="text-sm font-bold text-white">Jira Cloud</h3>
+              <i data-lucide="trello" class="w-4 h-4 text-blue-400"></i>
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Jira Cloud</h3>
             </div>
-            <span id="badge-status-jira" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
           </div>
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Instance URL:</label>
-              <input type="text" id="input-jira-url" placeholder="https://yourcompany.atlassian.net" value="https://brightonwe30.atlassian.net" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">Instance URL:</label>
+              <input type="text" id="input-jira-url" value="https://brightonwe30.atlassian.net" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <div>
-              <label class="block text-dark-muted font-medium mb-1">User Email:</label>
-              <input type="email" id="input-jira-email" placeholder="user@company.com" value="brightonwe30@gmail.com" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">User Email:</label>
+              <input type="email" id="input-jira-email" value="brightonwe30@gmail.com" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <div>
-              <label class="block text-dark-muted font-medium mb-1">API Token:</label>
-              <input type="password" id="input-jira-token" placeholder="ATATT3xxxxxxxx" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">API Token:</label>
+              <input type="password" id="input-jira-token" placeholder="ATATT3xxxxxxxx" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Project Key (e.g. KAN):</label>
-              <input type="text" id="input-jira-key" placeholder="KAN" value="KAN" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">Project Key:</label>
+              <input type="text" id="input-jira-key" value="KAN" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <button onclick="saveIntegration('jira')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
-              Save Jira Token to Firestore
+              Save Jira Token
             </button>
           </div>
         </div>
 
-        <!-- SLACK INTEGRATION CARD -->
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <!-- SLACK -->
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
             <div class="flex items-center space-x-2">
-              <i data-lucide="message-square" class="w-5 h-5 text-emerald-400"></i>
-              <h3 class="text-sm font-bold text-white">Slack</h3>
+              <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i>
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Slack</h3>
             </div>
-            <span id="badge-status-slack" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
           </div>
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Bot User OAuth Token:</label>
-              <input type="password" id="input-slack-token" placeholder="xoxb-xxxxxxxxxxxx" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">Bot User OAuth Token:</label>
+              <input type="password" id="input-slack-token" placeholder="xoxb-xxxxxxxxxxxx" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <div>
-              <label class="block text-dark-muted font-medium mb-1">Monitored Channels (comma-separated):</label>
-              <input type="text" id="input-slack-channels" placeholder="general, platform-engineering" value="general, platform-engineering" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-white font-mono text-xs focus:border-blue-500 focus:outline-none">
+              <label class="block text-slate-400 font-medium mb-1">Monitored Channels:</label>
+              <input type="text" id="input-slack-channels" value="general, platform-engineering" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
             </div>
             <button onclick="saveIntegration('slack')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
-              Save Slack Token to Firestore
+              Save Slack Token
             </button>
           </div>
         </div>
@@ -579,57 +662,131 @@
 
   </main>
 
+  <!-- INLINE ACTION DRAFT EDITOR MODAL -->
+  <div id="modal-edit-draft" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel p-6 rounded-2xl border border-obsidian-600 w-full max-w-xl space-y-4 glow-sapphire animate-slide-up">
+      <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="edit-3" class="w-4 h-4 text-blue-400"></i>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Edit Action Draft Proposal</h3>
+        </div>
+        <button onclick="closeEditDraftModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-obsidian-750">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="edit-draft-id" value="">
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 font-semibold mb-1">Target Recipient or Channel:</label>
+          <input type="text" id="edit-draft-target" class="w-full glass-input rounded-lg p-2.5 text-white font-mono text-xs">
+        </div>
+        <div>
+          <label class="block text-slate-400 font-semibold mb-1">Draft Message Content:</label>
+          <textarea id="edit-draft-content" rows="5" class="w-full glass-input rounded-lg p-2.5 text-white font-sans text-xs leading-relaxed"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-obsidian-700 text-xs">
+        <button onclick="closeEditDraftModal()" class="px-4 py-2 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-300 font-semibold transition">
+          Cancel
+        </button>
+        <button onclick="saveDraftEdits(false)" class="px-4 py-2 rounded-lg bg-obsidian-700 hover:bg-obsidian-600 text-white font-semibold transition">
+          Save Changes
+        </button>
+        <button onclick="saveDraftEdits(true)" class="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold transition shadow-md flex items-center space-x-1.5">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          <span>Save & Dispatch</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
   <!-- FOOTER -->
-  <footer class="mt-auto border-t border-dark-border bg-dark-surface/50 py-4 px-4 sm:px-6 lg:px-8 text-center text-xs text-dark-muted">
+  <footer class="mt-auto border-t border-obsidian-700 bg-obsidian-950/80 py-4 px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
       <div class="flex items-center space-x-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-        <span>Prometheus Platform v1.1.0 • All Things Agentic Hackathon</span>
+        <span class="text-slate-400">Prometheus Chief of Staff v1.1.0 • All Things Agentic Hackathon</span>
       </div>
       <div class="flex items-center space-x-4 font-mono text-[11px]">
         <span>Model: Gemini 3.7 Flash</span>
-        <span>Runtime: Vertex AI Agent Engine</span>
-        <span>Protocols: MCP (stdio / SSE)</span>
+        <span>Vertex AI Agent Engine</span>
+        <span>MCP (stdio / SSE)</span>
       </div>
     </div>
   </footer>
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Initialize Lucide Icons
-    lucide.createIcons();
-
-    // App State
     let appState = {
       blockers: [],
       actionDrafts: [],
       agents: [],
       currentTab: 'overview',
-      filterStatus: 'ALL'
+      filterStatus: 'ALL',
+      currentUser: 'alex-lead'
     };
 
-    // Tab Switching
+    lucide.createIcons();
+
     function switchTab(tabId) {
       appState.currentTab = tabId;
-      const tabs = ['overview', 'actions', 'telemetry', 'agents', 'security'];
+      const tabs = ['overview', 'actions', 'telemetry', 'agents', 'security', 'settings'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         const sec = document.getElementById(`section-${t}`);
-        if (t === tabId) {
-          btn.className = 'py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold';
-          sec.classList.remove('hidden');
-        } else {
-          btn.className = 'py-3 border-b-2 border-transparent text-dark-muted hover:text-gray-200 flex items-center space-x-2 transition';
-          sec.classList.add('hidden');
+        if (btn && sec) {
+          if (t === tabId) {
+            btn.className = 'py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold whitespace-nowrap';
+            sec.classList.remove('hidden');
+          } else {
+            btn.className = 'py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap';
+            sec.classList.add('hidden');
+          }
         }
       });
       lucide.createIcons();
     }
 
-    // Initial Data Fetch
+    function showToast(message, type = 'success', title = '') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto p-4 rounded-xl glass-panel border flex items-start space-x-3 shadow-xl max-w-sm animate-slide-up ${
+        type === 'success' ? 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300' :
+        type === 'error' ? 'border-red-500/40 bg-red-950/30 text-red-300' :
+        'border-blue-500/40 bg-blue-950/30 text-blue-300'
+      }`;
+
+      const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-triangle' : 'info';
+
+      toast.innerHTML = `
+        <i data-lucide="${icon}" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+        <div class="text-xs">
+          ${title ? `<strong class="block font-semibold text-white mb-0.5">${title}</strong>` : ''}
+          <p class="leading-relaxed">${message}</p>
+        </div>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
     async function loadDashboardData() {
       try {
-        // Fetch Agents
         const agentsRes = await fetch('/api/v1/registry/agents');
         if (agentsRes.ok) {
           const agentsData = await agentsRes.json();
@@ -637,92 +794,86 @@
           renderAgentRegistry();
         }
 
-        // Fetch Actions
         const actionsRes = await fetch('/api/v1/actions');
         if (actionsRes.ok) {
           const actionsData = await actionsRes.json();
-          appState.actionDrafts = Array.isArray(actionsData) ? actionsData : (actionsData.actions || []);
+          appState.actionDrafts = Array.isArray(actionsData) ? actionsData : (actionsData.actions || actionsData.drafts || []);
           renderActionCards();
           renderOverviewActionCard();
-        } else {
-          renderDefaultActionDrafts();
         }
 
-        // Fetch Blockers
         const blockersRes = await fetch('/api/v1/blockers');
         if (blockersRes.ok) {
           const blockersData = await blockersRes.json();
           appState.blockers = Array.isArray(blockersData) ? blockersData : (blockersData.blockers || []);
-          if (appState.blockers.length > 0) {
-            renderBlockers(appState.blockers);
-          } else {
-            renderInitialBlockers();
-          }
-        } else {
-          renderInitialBlockers();
+          renderBlockers(appState.blockers);
         }
 
       } catch (err) {
         console.error('Failed to load dashboard data:', err);
-        renderInitialBlockers();
-        renderDefaultActionDrafts();
-      }
-    }
-
-    function renderInitialBlockers() {
-      renderBlockers([]);
-    }
-
-    function renderDefaultActionDrafts() {
-      if (!appState.actionDrafts || appState.actionDrafts.length === 0) {
-        appState.actionDrafts = [];
-        renderActionCards();
-        renderOverviewActionCard();
       }
     }
 
     function renderBlockers(blockers) {
       const container = document.getElementById('blockers-container');
+      if (!container) return;
+
+      const statCount = document.getElementById('stat-blockers-count');
+      const statBadge = document.getElementById('stat-blockers-badge');
+      const statStale = document.getElementById('stat-stale-prs');
+      const statStaleBadge = document.getElementById('stat-stale-badge');
+
       if (!blockers || blockers.length === 0) {
         container.innerHTML = `
-          <div class="p-6 text-center text-dark-muted glass-card rounded-xl">
+          <div class="p-6 text-center text-slate-400 glass-panel rounded-xl">
             <i data-lucide="check-circle" class="w-8 h-8 mx-auto text-emerald-400 mb-2"></i>
-            <p class="font-medium text-white">Zero Active Bottlenecks</p>
-            <p class="text-xs mt-1">All engineering delivery workstreams are healthy and moving at peak velocity.</p>
+            <p class="font-bold text-white text-xs">Zero Active Bottlenecks</p>
+            <p class="text-[11px] mt-1 text-slate-400">All engineering delivery workstreams are healthy and moving at peak velocity.</p>
           </div>
         `;
-        document.getElementById('stat-blockers-count').innerText = '0';
+        if (statCount) statCount.innerText = '0';
+        if (statBadge) {
+          statBadge.className = 'text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20';
+          statBadge.innerText = 'All Clear';
+        }
         lucide.createIcons();
         return;
       }
 
-      document.getElementById('stat-blockers-count').innerText = blockers.length;
+      if (statCount) statCount.innerText = blockers.length;
+      if (statBadge) {
+        statBadge.className = 'text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20';
+        statBadge.innerText = `${blockers.length} Critical`;
+      }
+      if (statStale) statStale.innerText = '1';
+      if (statStaleBadge) statStaleBadge.innerText = '1 Stale PR';
 
       container.innerHTML = blockers.map(b => {
-        const sevClass = b.severity === 'CRITICAL' 
+        const isCrit = b.severity === 'CRITICAL';
+        const badgeStyle = isCrit 
           ? 'bg-red-500/10 text-red-400 border-red-500/30' 
           : 'bg-amber-500/10 text-amber-400 border-amber-500/30';
         
         return `
-          <div class="glass-card p-4 rounded-xl border border-dark-border hover:border-red-500/40 transition space-y-3">
+          <div class="glass-panel p-4 rounded-xl border border-obsidian-700 hover:border-red-500/40 transition space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${sevClass}">${b.severity}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${badgeStyle}">${b.severity}</span>
                 <h4 class="text-xs font-bold text-white">${b.title}</h4>
               </div>
-              <span class="text-[10px] font-mono text-dark-muted">${b.blocker_id}</span>
+              <span class="text-[10px] font-mono text-slate-400">${b.blocker_id}</span>
             </div>
 
-            <p class="text-xs text-gray-300 leading-relaxed">${b.description}</p>
+            <p class="text-xs text-slate-300 leading-relaxed">${b.description}</p>
 
-            <div class="space-y-2 pt-2 border-t border-dark-border text-xs">
+            <div class="space-y-2 pt-2 border-t border-obsidian-700 text-xs">
               <div class="flex flex-wrap items-center gap-1.5">
-                <span class="text-dark-muted text-[11px] font-medium">Cross-Domain Evidence:</span>
-                ${(b.source_artifacts || []).map(a => `<span class="px-2 py-0.5 rounded bg-dark-card border border-dark-border text-[10px] text-purple-300 font-mono">${a}</span>`).join('')}
+                <span class="text-slate-400 text-[11px] font-medium">Evidence Artifacts:</span>
+                ${(b.source_artifacts || []).map(a => `<span class="px-2 py-0.5 rounded bg-obsidian-850 border border-obsidian-700 text-[10px] text-blue-300 font-mono">${a}</span>`).join('')}
               </div>
               <div class="flex flex-wrap items-center gap-1.5">
-                <span class="text-dark-muted text-[11px] font-medium">Impacted Squads:</span>
-                ${(b.impacted_squads || []).map(s => `<span class="px-2 py-0.5 rounded bg-dark-card border border-dark-border text-[10px] text-blue-300 font-mono">${s}</span>`).join('')}
+                <span class="text-slate-400 text-[11px] font-medium">Impacted Squads:</span>
+                ${(b.impacted_squads || []).map(s => `<span class="px-2 py-0.5 rounded bg-obsidian-850 border border-obsidian-700 text-[10px] text-indigo-300 font-mono">${s}</span>`).join('')}
               </div>
             </div>
           </div>
@@ -734,14 +885,15 @@
     function renderOverviewActionCard() {
       const container = document.getElementById('overview-action-card-container');
       if (!container) return;
-      const pendingDraft = appState.actionDrafts.find(d => d.status === 'PENDING') || appState.actionDrafts[0];
+
+      const pendingDraft = (appState.actionDrafts || []).find(d => d.status === 'PENDING') || (appState.actionDrafts || [])[0];
 
       if (!pendingDraft) {
         container.innerHTML = `
-          <div class="p-6 text-center text-dark-muted glass-card rounded-xl">
+          <div class="p-6 text-center text-slate-400 glass-panel rounded-xl">
             <i data-lucide="check" class="w-8 h-8 mx-auto text-emerald-400 mb-2"></i>
-            <p class="font-medium text-white text-sm">All Action Cards Signed Off</p>
-            <p class="text-xs mt-1">Run live ingestion to draft new contextual unblocking actions.</p>
+            <p class="font-bold text-white text-xs">All Proposed Actions Signed Off</p>
+            <p class="text-[11px] mt-1 text-slate-400">Run fleet ingestion to draft new contextual unblocking actions.</p>
           </div>
         `;
         lucide.createIcons();
@@ -749,52 +901,57 @@
       }
 
       const isPending = pendingDraft.status === 'PENDING';
+      const actionType = pendingDraft.action_type || '';
+      const iconName = actionType.includes('channel') ? 'hash' : 'at-sign';
 
       container.innerHTML = `
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-4 glow-blue">
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4 glow-sapphire">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
               <div class="w-6 h-6 rounded-md bg-blue-500/10 text-blue-400 flex items-center justify-center">
-                <i data-lucide="${pendingDraft.action_type && pendingDraft.action_type.includes('channel') ? 'hash' : 'at-sign'}" class="w-3.5 h-3.5"></i>
+                <i data-lucide="${iconName}" class="w-3.5 h-3.5"></i>
               </div>
               <div>
                 <span class="text-xs font-bold text-white font-mono">${pendingDraft.target_channel_or_user}</span>
-                <span class="text-[10px] text-dark-muted block">Target Recipient</span>
+                <span class="text-[10px] text-slate-400 block">Target Recipient</span>
               </div>
             </div>
             ${isPending 
-              ? '<span class="px-2.5 py-1 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30">WAITING SIGN-OFF</span>'
-              : '<span class="px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">DISPATCHED TO SLACK</span>'
+              ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30">WAITING SIGN-OFF</span>'
+              : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">DISPATCHED TO SLACK</span>'
             }
           </div>
 
-          <!-- SLACK MESSAGE PREVIEW BOX -->
-          <div class="p-4 rounded-xl bg-[#141824] border border-[#23293d] text-xs space-y-2.5">
-            <div class="flex items-center justify-between pb-2 border-b border-dark-border text-[11px]">
+          <div class="p-3.5 rounded-xl bg-obsidian-950 border border-obsidian-700 text-xs space-y-2">
+            <div class="flex items-center justify-between pb-1.5 border-b border-obsidian-700 text-[11px]">
               <div class="flex items-center space-x-2">
-                <div class="w-4 h-4 rounded bg-blue-500 text-white flex items-center justify-center text-[9px] font-bold">P</div>
+                <div class="w-4 h-4 rounded bg-blue-600 text-white flex items-center justify-center text-[9px] font-bold">P</div>
                 <span class="font-semibold text-white">Prometheus Bot</span>
-                <span class="text-dark-muted font-mono text-[10px]">APP</span>
+                <span class="text-slate-400 font-mono text-[10px]">APP</span>
               </div>
-              <span class="text-dark-muted text-[10px]">Draft Preview</span>
+              ${isPending ? `
+                <button onclick="openEditDraftModal('${pendingDraft.draft_id}')" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center space-x-1">
+                  <i data-lucide="edit-2" class="w-3 h-3"></i>
+                  <span>Edit</span>
+                </button>
+              ` : ''}
             </div>
-            <p class="leading-relaxed text-gray-200 whitespace-pre-wrap">${pendingDraft.content}</p>
+            <p class="leading-relaxed text-slate-200 whitespace-pre-wrap">${pendingDraft.content}</p>
           </div>
 
-          <!-- APPROVAL BUTTONS -->
           ${isPending ? `
-            <div class="pt-2 flex items-center justify-between gap-3">
-              <button onclick="rejectActionCard('${pendingDraft.draft_id}')" class="w-1/3 py-2.5 rounded-lg bg-dark-card hover:bg-dark-border border border-dark-border text-dark-muted hover:text-white text-xs font-medium transition">
+            <div class="pt-1 flex items-center justify-between gap-2.5">
+              <button onclick="rejectActionCard('${pendingDraft.draft_id}')" class="w-1/3 py-2 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-slate-300 hover:text-white text-xs font-semibold transition">
                 Discard
               </button>
-              <button onclick="approveActionCard('${pendingDraft.draft_id}')" class="w-2/3 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg hover:shadow-emerald-500/25 transition flex items-center justify-center space-x-2">
-                <i data-lucide="check" class="w-4 h-4"></i>
+              <button onclick="approveActionCard('${pendingDraft.draft_id}')" class="w-2/3 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md hover:shadow-emerald-500/25 transition flex items-center justify-center space-x-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
                 <span>Approve & Dispatch</span>
               </button>
             </div>
           ` : `
             <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-300 flex items-center justify-between">
-              <span>Approved by <strong>${pendingDraft.approved_by || 'Lead'}</strong></span>
+              <span>Approved by <strong>${pendingDraft.approved_by || 'alex-lead'}</strong></span>
               <span class="font-semibold">✓ Dispatched via Slack API</span>
             </div>
           `}
@@ -805,21 +962,25 @@
 
     function renderActionCards() {
       const container = document.getElementById('actions-container');
-      const filtered = appState.actionDrafts.filter(d => {
+      if (!container) return;
+
+      const filtered = (appState.actionDrafts || []).filter(d => {
         if (appState.filterStatus === 'ALL') return true;
         return d.status === appState.filterStatus;
       });
 
-      const pendingCount = appState.actionDrafts.filter(d => d.status === 'PENDING').length;
-      document.getElementById('badge-action-count').innerText = pendingCount;
-      document.getElementById('stat-pending-actions').innerText = pendingCount;
+      const pendingCount = (appState.actionDrafts || []).filter(d => d.status === 'PENDING').length;
+      const countEl = document.getElementById('badge-action-count');
+      const statEl = document.getElementById('stat-pending-actions');
+      if (countEl) countEl.innerText = pendingCount;
+      if (statEl) statEl.innerText = pendingCount;
 
       if (!filtered || filtered.length === 0) {
         container.innerHTML = `
-          <div class="col-span-2 p-8 text-center text-dark-muted glass-card rounded-xl">
-            <i data-lucide="inbox" class="w-8 h-8 mx-auto text-dark-muted mb-2"></i>
-            <p class="font-medium text-white">No Action Cards in this View</p>
-            <p class="text-xs mt-1">Run fleet ingestion to generate new contextual drafts.</p>
+          <div class="col-span-2 p-8 text-center text-slate-400 glass-panel rounded-xl">
+            <i data-lucide="inbox" class="w-8 h-8 mx-auto text-slate-500 mb-2"></i>
+            <p class="font-bold text-white text-xs">No Action Cards in this View</p>
+            <p class="text-[11px] mt-1 text-slate-400">Run fleet ingestion to generate new contextual drafts.</p>
           </div>
         `;
         lucide.createIcons();
@@ -828,44 +989,56 @@
 
       container.innerHTML = filtered.map(d => {
         const isPending = d.status === 'PENDING';
+        const actionType = d.action_type || '';
+        const iconName = actionType.includes('channel') ? 'hash' : 'at-sign';
+
         const statusBadge = isPending
-          ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">PENDING CONFIRMATION</span>'
+          ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">PENDING SIGN-OFF</span>'
           : d.status === 'EXECUTED'
             ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">DISPATCHED</span>'
-            : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-500/10 text-gray-400 border border-gray-500/30">REJECTED</span>';
+            : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-700/50 text-slate-400 border border-obsidian-600">DISCARDED</span>';
 
         return `
-          <div class="glass-card p-5 rounded-xl border border-dark-border flex flex-col justify-between space-y-4">
+          <div class="glass-panel p-5 rounded-xl border border-obsidian-700 flex flex-col justify-between space-y-4">
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                   <div class="w-6 h-6 rounded-md bg-blue-500/10 text-blue-400 flex items-center justify-center">
-                    <i data-lucide="${d.action_type.includes('channel') ? 'hash' : 'at-sign'}" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="${iconName}" class="w-3.5 h-3.5"></i>
                   </div>
                   <span class="text-xs font-bold text-white font-mono">${d.target_channel_or_user}</span>
                 </div>
                 ${statusBadge}
               </div>
 
-              <!-- SLACK BLOCK KIT PREVIEW BOX -->
-              <div class="p-3.5 rounded-lg bg-[#1a1d29] border border-[#2f3549] text-xs font-sans text-gray-200 space-y-2">
-                <div class="flex items-center space-x-2 text-[10px] text-dark-muted pb-1 border-b border-dark-border">
-                  <i data-lucide="bot" class="w-3 h-3 text-blue-400"></i>
-                  <span class="font-semibold text-gray-300">Prometheus Bot (Draft Preview)</span>
+              <div class="p-3.5 rounded-lg bg-obsidian-950 border border-obsidian-700 text-xs font-sans text-slate-200 space-y-2">
+                <div class="flex items-center justify-between text-[10px] text-slate-400 pb-1.5 border-b border-obsidian-700">
+                  <div class="flex items-center space-x-1.5">
+                    <i data-lucide="bot" class="w-3 h-3 text-blue-400"></i>
+                    <span class="font-semibold text-slate-300">Prometheus Bot (Slack Block Kit)</span>
+                  </div>
+                  ${isPending ? `
+                    <button onclick="openEditDraftModal('${d.draft_id}')" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center space-x-1">
+                      <i data-lucide="edit-2" class="w-2.5 h-2.5"></i>
+                      <span>Edit</span>
+                    </button>
+                  ` : ''}
                 </div>
-                <p class="leading-relaxed text-gray-200 whitespace-pre-wrap">${d.content}</p>
+                <p class="leading-relaxed text-slate-200 whitespace-pre-wrap">${d.content}</p>
               </div>
 
-              <div class="flex items-center justify-between text-[11px] text-dark-muted font-mono">
+              <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
                 <span>Draft ID: ${d.draft_id}</span>
-                <span>Type: ${d.action_type}</span>
+                <span>Type: ${actionType}</span>
               </div>
             </div>
 
-            <!-- INTERACTIVE BUTTON ACTIONS -->
             ${isPending ? `
-              <div class="pt-3 border-t border-dark-border flex items-center justify-end space-x-2">
-                <button onclick="rejectActionCard('${d.draft_id}')" class="px-3 py-1.5 rounded-lg bg-dark-card hover:bg-dark-border border border-dark-border text-dark-muted hover:text-white text-xs font-medium transition">
+              <div class="pt-3 border-t border-obsidian-700 flex items-center justify-end space-x-2">
+                <button onclick="openEditDraftModal('${d.draft_id}')" class="px-3 py-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-slate-300 hover:text-white text-xs font-medium transition">
+                  Edit
+                </button>
+                <button onclick="rejectActionCard('${d.draft_id}')" class="px-3 py-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-slate-400 hover:text-white text-xs font-medium transition">
                   Discard
                 </button>
                 <button onclick="approveActionCard('${d.draft_id}')" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold shadow-sm hover:shadow-emerald-500/20 transition flex items-center space-x-1.5">
@@ -874,7 +1047,7 @@
                 </button>
               </div>
             ` : `
-              <div class="pt-2 border-t border-dark-border text-[11px] text-dark-muted font-mono flex items-center justify-between">
+              <div class="pt-2 border-t border-obsidian-700 text-[11px] text-slate-400 font-mono flex items-center justify-between">
                 <span>Approver: ${d.approved_by || 'alex-lead'}</span>
                 <span class="text-emerald-400 font-sans font-medium">✓ Dispatched via Slack API</span>
               </div>
@@ -885,28 +1058,153 @@
       lucide.createIcons();
     }
 
+    function filterActionCards(status) {
+      appState.filterStatus = status;
+      ['ALL', 'PENDING', 'EXECUTED'].forEach(s => {
+        const btn = document.getElementById(`filter-btn-${s}`);
+        if (btn) {
+          if (s === status) {
+            btn.className = 'px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-lg bg-obsidian-800 text-slate-300 border border-obsidian-700 hover:text-white';
+          }
+        }
+      });
+      renderActionCards();
+    }
+
+    function openEditDraftModal(draftId) {
+      const draft = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
+      if (!draft) return;
+
+      document.getElementById('edit-draft-id').value = draft.draft_id;
+      document.getElementById('edit-draft-target').value = draft.target_channel_or_user;
+      document.getElementById('edit-draft-content').value = draft.content;
+
+      document.getElementById('modal-edit-draft').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeEditDraftModal() {
+      document.getElementById('modal-edit-draft').classList.add('hidden');
+    }
+
+    async function saveDraftEdits(andApprove = false) {
+      const draftId = document.getElementById('edit-draft-id').value;
+      const target = document.getElementById('edit-draft-target').value;
+      const content = document.getElementById('edit-draft-content').value;
+
+      try {
+        const res = await fetch(`/api/v1/actions/${draftId}/edit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: content,
+            target: target,
+            approver_username: appState.currentUser
+          })
+        });
+
+        if (res.ok) {
+          const draft = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
+          if (draft) {
+            draft.content = content;
+            draft.target_channel_or_user = target;
+          }
+          closeEditDraftModal();
+          showToast(`Draft ${draftId} updated successfully.`, 'success', 'Draft Saved');
+
+          if (andApprove) {
+            await approveActionCard(draftId);
+          } else {
+            renderActionCards();
+            renderOverviewActionCard();
+          }
+        } else {
+          showToast(`Failed to update draft ${draftId}.`, 'error', 'Error');
+        }
+      } catch (err) {
+        console.error('Draft edit failed:', err);
+        showToast('Network error while saving draft edits.', 'error', 'Error');
+      }
+    }
+
+    async function approveActionCard(draftId) {
+      try {
+        const username = appState.currentUser;
+        const res = await fetch(`/api/v1/actions/${draftId}/approve`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ approver_username: username })
+        });
+
+        if (res.ok) {
+          const resData = await res.json();
+          const updated = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
+          if (updated) {
+            updated.status = 'EXECUTED';
+            updated.approved_by = username;
+          }
+          renderActionCards();
+          renderOverviewActionCard();
+          showToast(`Dispatched unblocking action to Slack (${draftId}).`, 'success', 'Action Approved');
+        } else {
+          showToast('Failed to approve action card.', 'error', 'Approval Error');
+        }
+      } catch (err) {
+        console.error('Approval failed:', err);
+        showToast('Network error on approval dispatch.', 'error', 'Error');
+      }
+    }
+
+    async function rejectActionCard(draftId) {
+      try {
+        const username = appState.currentUser;
+        const res = await fetch(`/api/v1/actions/${draftId}/reject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ approver_username: username })
+        });
+
+        if (res.ok) {
+          const updated = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
+          if (updated) {
+            updated.status = 'REJECTED';
+          }
+          renderActionCards();
+          renderOverviewActionCard();
+          showToast(`Action card ${draftId} discarded.`, 'info', 'Action Dismissed');
+        }
+      } catch (err) {
+        console.error('Rejection failed:', err);
+        showToast('Network error rejecting action.', 'error', 'Error');
+      }
+    }
+
     function renderAgentRegistry() {
       const container = document.getElementById('fleet-container');
-      container.innerHTML = appState.agents.map(a => `
-        <div class="glass-card p-5 rounded-xl border border-dark-border space-y-3">
+      if (!container) return;
+
+      container.innerHTML = (appState.agents || []).map(a => `
+        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">${a.agent_id}</span>
-            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-dark-card text-dark-muted border border-dark-border">${a.tier}</span>
+            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">${a.agent_id}</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-obsidian-850 text-slate-400 border border-obsidian-700">${a.tier}</span>
           </div>
           <div>
-            <h4 class="text-sm font-bold text-white">${a.name}</h4>
-            <p class="text-xs text-blue-300 font-medium">${a.role}</p>
+            <h4 class="text-xs font-bold text-white">${a.name}</h4>
+            <p class="text-[11px] text-blue-300 font-medium">${a.role}</p>
           </div>
-          <p class="text-xs text-dark-muted">${a.description}</p>
-          <div class="pt-3 border-t border-dark-border space-y-2 text-xs">
+          <p class="text-xs text-slate-400 leading-relaxed">${a.description}</p>
+          <div class="pt-3 border-t border-obsidian-700 space-y-2 text-xs">
             <div class="flex items-center justify-between font-mono text-[11px]">
-              <span class="text-dark-muted">Model:</span>
-              <span class="text-gray-300">${a.model_requirement}</span>
+              <span class="text-slate-400">Model:</span>
+              <span class="text-slate-200">${a.model_requirement}</span>
             </div>
             <div>
-              <span class="text-dark-muted text-[11px] block mb-1">Bound Security Controls:</span>
+              <span class="text-slate-400 text-[10px] block mb-1 font-semibold uppercase tracking-wider">Bound Security Controls:</span>
               <div class="flex flex-wrap gap-1">
-                ${a.security_controls.map(sc => `<span class="px-2 py-0.5 rounded bg-dark-card border border-dark-border text-[10px] text-cyan-300">${sc}</span>`).join('')}
+                ${(a.security_controls || []).map(sc => `<span class="px-2 py-0.5 rounded bg-obsidian-850 border border-obsidian-700 text-[10px] text-cyan-300 font-mono">${sc}</span>`).join('')}
               </div>
             </div>
           </div>
@@ -915,56 +1213,6 @@
       lucide.createIcons();
     }
 
-    function filterActionCards(status) {
-      appState.filterStatus = status;
-      renderActionCards();
-    }
-
-    async function approveActionCard(draftId) {
-      try {
-        const username = appState.currentUser || 'brightonwe30';
-        const res = await fetch(`/api/v1/actions/${draftId}/approve`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ approver_username: username })
-        });
-        if (res.ok) {
-          const resData = await res.json();
-          const updated = appState.actionDrafts.find(d => d.draft_id === draftId);
-          if (updated) {
-            updated.status = 'EXECUTED';
-            updated.approved_by = username;
-          }
-          renderActionCards();
-          renderOverviewActionCard();
-        }
-      } catch (err) {
-        console.error('Approval failed:', err);
-      }
-    }
-
-    async function rejectActionCard(draftId) {
-      try {
-        const username = appState.currentUser || 'brightonwe30';
-        const res = await fetch(`/api/v1/actions/${draftId}/reject`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ approver_username: username })
-        });
-        if (res.ok) {
-          const updated = appState.actionDrafts.find(d => d.draft_id === draftId);
-          if (updated) {
-            updated.status = 'REJECTED';
-          }
-          renderActionCards();
-          renderOverviewActionCard();
-        }
-      } catch (err) {
-        console.error('Rejection failed:', err);
-      }
-    }
-
-    // Run Asynchronous Multi-Agent Workflow
     async function runFleetWorkflow() {
       const progressBox = document.getElementById('workflow-progress');
       const progressBar = document.getElementById('workflow-progress-bar');
@@ -975,7 +1223,6 @@
       progressBox.classList.remove('hidden');
       btn.disabled = true;
 
-      // Animate progress stages
       statusText.innerText = "1/4: Router & Perimeter ABAC Security Scope Check...";
       stepText.innerText = "agent-01-router";
       progressBar.style.width = "25%";
@@ -984,13 +1231,13 @@
         statusText.innerText = "2/4: Ingesting Telemetry from Git, Jira, and Slack...";
         stepText.innerText = "agent-02-git, agent-03-jira, agent-04-workstream";
         progressBar.style.width = "50%";
-      }, 500);
+      }, 600);
 
       setTimeout(() => {
-        statusText.innerText = "3/4: Correlating Telemetry & Blocker Discovery via Gemini 3.7 Flash...";
+        statusText.innerText = "3/4: Correlating Graph & Bottleneck Discovery via Gemini 3.7 Flash...";
         stepText.innerText = "agent-05-synthesis";
         progressBar.style.width = "75%";
-      }, 1000);
+      }, 1200);
 
       try {
         const res = await fetch('/api/v1/digest', {
@@ -998,7 +1245,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             user_id: 'lead-01',
-            username: 'alex-lead',
+            username: appState.currentUser,
             org_scopes: ['engineering', 'platform'],
             query: 'Scan cross-squad telemetry for active sprint blockers'
           })
@@ -1010,33 +1257,45 @@
           statusText.innerText = "4/4: Ingestion Complete! Action Drafts Ready.";
           stepText.innerText = "agent-06-action";
 
-          // Update State
-          if (data.blockers) renderBlockers(data.blockers);
+          if (data.blockers) {
+            appState.blockers = data.blockers;
+            renderBlockers(data.blockers);
+          }
           if (data.action_drafts) {
             appState.actionDrafts = data.action_drafts;
             renderActionCards();
+            renderOverviewActionCard();
           }
           if (data.summary) {
-            document.getElementById('digest-content').innerHTML = `
-              <p class="text-gray-300">
-                <strong>Executive Summary:</strong> ${data.summary}
-              </p>
-            `;
+            const digestBox = document.getElementById('digest-content');
+            if (digestBox) {
+              digestBox.innerHTML = `
+                <p class="text-slate-200">
+                  <strong>Executive Summary:</strong> ${data.summary}
+                </p>
+              `;
+            }
           }
+
+          showToast('Multi-agent correlation completed. Contextual action drafts prepared.', 'success', 'Fleet Ingest Complete');
 
           setTimeout(() => {
             progressBox.classList.add('hidden');
             btn.disabled = false;
-          }, 1200);
+          }, 1400);
+        } else {
+          showToast('Fleet ingestion encountered an error.', 'error', 'Error');
+          btn.disabled = false;
+          progressBox.classList.add('hidden');
         }
       } catch (err) {
         console.error('Workflow run failed:', err);
         btn.disabled = false;
         progressBox.classList.add('hidden');
+        showToast('Network error during fleet execution.', 'error', 'Error');
       }
     }
 
-    // Security ABAC Simulator
     function runABACSimulation() {
       const persona = document.getElementById('sim-user-persona').value;
       const target = document.getElementById('sim-resource-target').value;
@@ -1049,31 +1308,65 @@
         guest: []
       };
 
-      const isAllowed = permissions[persona].includes(target);
+      const isAllowed = (permissions[persona] || []).includes(target);
       if (isAllowed) {
         resultBox.className = 'p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 font-mono text-xs';
-        resultBox.innerHTML = `✓ ACCESS GRANTED: Scope intersection verified. User context allowed for ${target}.`;
+        resultBox.innerHTML = `✓ ACCESS GRANTED: Scope intersection verified. User context permitted for target resource.`;
       } else {
         resultBox.className = 'p-3 rounded-lg bg-red-950/20 border border-red-500/20 text-red-300 font-mono text-xs';
-        resultBox.innerHTML = `⛔ ACCESS DENIED: Scope mismatch. User does not hold required organizational scope for ${target}.`;
+        resultBox.innerHTML = `⛔ ACCESS DENIED: Scope mismatch. User does not hold authorized scope for target resource.`;
       }
     }
 
-    // Guardrails Sanitizer
     function runGuardrailTest() {
       const input = document.getElementById('guardrail-test-input').value;
       const output = document.getElementById('guardrail-test-output');
       
       let sanitized = input;
-      // Redact emails
       sanitized = sanitized.replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]');
-      // Redact GitHub tokens
       sanitized = sanitized.replace(/ghp_[a-zA-Z0-9]{36}/g, '[REDACTED_GITHUB_TOKEN]');
+      sanitized = sanitized.replace(/xoxb-[a-zA-Z0-9-]+/g, '[REDACTED_SLACK_TOKEN]');
 
       output.innerText = sanitized;
     }
 
-    // Initialize on page load
+    async function saveIntegration(service) {
+      let payload = {};
+      if (service === 'github') {
+        payload = {
+          token: document.getElementById('input-github-token').value,
+          repos: document.getElementById('input-github-repos').value.split(',').map(s => s.trim())
+        };
+      } else if (service === 'jira') {
+        payload = {
+          instance_url: document.getElementById('input-jira-url').value,
+          email: document.getElementById('input-jira-email').value,
+          token: document.getElementById('input-jira-token').value,
+          project_key: document.getElementById('input-jira-key').value
+        };
+      } else if (service === 'slack') {
+        payload = {
+          token: document.getElementById('input-slack-token').value,
+          channels: document.getElementById('input-slack-channels').value.split(',').map(s => s.trim())
+        };
+      }
+
+      try {
+        const res = await fetch(`/api/v1/integrations/${service}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          showToast(`${service.toUpperCase()} integration securely vaulted in Firestore.`, 'success', 'Credentials Saved');
+        } else {
+          showToast(`Failed to save ${service} integration.`, 'error', 'Error');
+        }
+      } catch (err) {
+        showToast('Network error saving integration.', 'error', 'Error');
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', loadDashboardData);
   </script>
 </body>

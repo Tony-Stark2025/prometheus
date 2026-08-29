@@ -12,7 +12,7 @@ from typing import List, Dict, Any, Optional
 import httpx
 
 try:
-    from prometheus.config import settings
+    from app.config import settings
 except ImportError:
     from app.config import settings
 

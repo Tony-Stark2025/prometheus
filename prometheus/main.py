@@ -74,6 +74,12 @@ class ActionApprovalRequest(BaseModel):
     approver_username: str = "alex-lead"
 
 
+class ActionEditRequest(BaseModel):
+    content: str
+    target: Optional[str] = None
+    approver_username: str = "alex-lead"
+
+
 from prometheus.memory.firestore_store import firestore_store, UserProfile
 from prometheus.auth.oauth import create_session_token, get_google_auth_url, exchange_google_code
 from prometheus.auth.dependencies import get_current_user_optional, UserContext as AuthUserContext
@@ -333,6 +339,24 @@ async def reject_action(draft_id: str, req: ActionApprovalRequest):
         result="Action rejected by user.",
     )
     return {"status": "rejected", "draft_id": draft_id}
+
+
+@app.post("/api/v1/actions/{draft_id}/edit", tags=["Human-in-the-Loop"])
+async def edit_action(draft_id: str, req: ActionEditRequest):
+    """
+    Edits a proposed action draft content or target prior to sign-off.
+    """
+    draft = await state_store.get_draft(draft_id)
+    if not draft:
+        raise HTTPException(status_code=404, detail=f"Draft '{draft_id}' not found.")
+    if draft.status == DraftStatus.EXECUTED:
+        raise HTTPException(status_code=400, detail="Cannot edit an already executed action draft.")
+    updated = await state_store.update_draft_content(
+        draft_id=draft_id,
+        content=req.content,
+        target=req.target,
+    )
+    return {"status": "updated", "draft": updated.model_dump() if updated else None}
 
 
 # ==============================================================================

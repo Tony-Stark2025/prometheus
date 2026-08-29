@@ -6,7 +6,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 
-logger = logging.getLogger('prometheus.memory.firestore')
+logger = logging.getLogger('app.memory.firestore')
 
 class TenantIntegration(BaseModel):
     service: str
