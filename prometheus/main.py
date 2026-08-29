@@ -83,6 +83,7 @@ from prometheus.auth.dependencies import get_current_user_optional, UserContext 
 # ==============================================================================
 DASHBOARD_PATH = os.path.join(os.path.dirname(__file__), "dashboard", "dashboard.html")
 DOCUMENTATION_PATH = os.path.join(os.path.dirname(__file__), "dashboard", "documentation.html")
+BLOG_PATH = os.path.join(os.path.dirname(__file__), "..", "docs", "index.html")
 
 
 @app.get("/", response_class=HTMLResponse, tags=["Dashboard"])
@@ -107,6 +108,18 @@ async def serve_documentation():
         with open(DOCUMENTATION_PATH, "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     return HTMLResponse(content="<h1>Prometheus Documentation: documentation.html not found.</h1>")
+
+
+@app.get("/blog", response_class=HTMLResponse, tags=["Documentation"])
+@app.get("/article", response_class=HTMLResponse, tags=["Documentation"])
+async def serve_blog():
+    """
+    Renders the Prometheus Engineering Blog Post Article.
+    """
+    if os.path.exists(BLOG_PATH):
+        with open(BLOG_PATH, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>Prometheus Blog: docs/index.html not found.</h1>")
 
 
 # ==============================================================================

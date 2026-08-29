@@ -239,11 +239,16 @@ async def test_api_webhooks_endpoints():
 @pytest.mark.asyncio
 async def test_documentation_and_auth_endpoints():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        # 1. Documentation endpoint
+        # 1. Documentation and Blog endpoint
         res_doc = await ac.get("/documentation")
         assert res_doc.status_code == 200
         assert "text/html" in res_doc.headers.get("content-type", "")
         assert "Documentation" in res_doc.text
+
+        res_blog = await ac.get("/blog")
+        assert res_blog.status_code == 200
+        assert "text/html" in res_blog.headers.get("content-type", "")
+        assert "Prometheus" in res_blog.text
 
         # 2. Auth me endpoint
         res_me = await ac.get("/api/v1/auth/me")
