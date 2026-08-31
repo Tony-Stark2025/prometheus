@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+import shutil
+
+DASHBOARD_HTML = """<!DOCTYPE html>
 <html lang="en" class="h-full bg-slate-50">
 <head>
   <meta charset="UTF-8">
@@ -1089,3 +1091,13 @@
 
 </body>
 </html>
+"""
+
+with open('prometheus/dashboard/dashboard.html', 'w', encoding='utf-8') as f:
+    f.write(DASHBOARD_HTML)
+print('Wrote prometheus/dashboard/dashboard.html')
+
+with open('app/dashboard/dashboard.html', 'w', encoding='utf-8') as f:
+    f.write(DASHBOARD_HTML)
+print('Wrote app/dashboard/dashboard.html')
+

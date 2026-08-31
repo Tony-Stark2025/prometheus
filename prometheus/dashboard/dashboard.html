@@ -1,297 +1,219 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="h-full bg-slate-50">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prometheus — Enterprise Workstream Observability & AI Chief of Staff</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Prometheus | Autonomous AI Chief of Staff</title>
+  
+  <!-- Inter & JetBrains Mono Fonts + Tailwind CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            obsidian: {
-              950: '#07090e',
-              900: '#0a0d14',
-              850: '#0f141f',
-              800: '#121722',
-              750: '#171d2b',
-              700: '#1c2333',
-              600: '#263044',
-              500: '#38455e',
+            brand: {
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+              500: '#3B82F6',
+              600: '#2563EB',
+              700: '#1D4ED8',
+              800: '#1E40AF',
+              900: '#1E3A8A',
             },
-            sapphire: {
-              500: '#3b82f6',
-              600: '#2563eb',
-              400: '#60a5fa',
-              300: '#93c5fd',
-              glow: 'rgba(59, 130, 246, 0.25)',
-            }
           }
         }
       }
     }
   </script>
+
   <style>
-    body { background-color: #0a0d14; color: #e2e8f0; }
-    .glass-panel { background: rgba(18, 23, 34, 0.88); backdrop-filter: blur(14px); border: 1px solid #1c2333; }
-    .glass-panel-interactive:hover { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.12); }
-    .glass-input { background: #0f141f; border: 1px solid #1c2333; color: #f8fafc; }
-    .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-    .glow-sapphire { box-shadow: 0 0 30px rgba(59, 130, 246, 0.16); }
-    .glow-emerald { box-shadow: 0 0 30px rgba(16, 185, 129, 0.16); }
-    .glow-crimson { box-shadow: 0 0 30px rgba(239, 68, 68, 0.16); }
-    .glow-amber { box-shadow: 0 0 30px rgba(245, 158, 11, 0.16); }
     .badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(0.92); } }
-    .animate-slide-up { animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0a0d14; }
-    ::-webkit-scrollbar-thumb { background: #1c2333; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
   </style>
 </head>
-<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+<body class="font-sans antialiased min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-blue-100 selection:text-blue-900">
 
   <!-- TOP APP NAVIGATION BAR -->
-  <header class="sticky top-0 z-40 bg-obsidian-900/90 backdrop-blur-md border-b border-obsidian-700">
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- LOGO & BRAND -->
       <div class="flex items-center space-x-3.5">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/25 ring-1 ring-white/20">
-          <i data-lucide="flame" class="w-5 h-5 text-white"></i>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 text-white">
+          <i data-lucide="flame" class="w-5 h-5"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="font-extrabold text-base tracking-wider text-white font-mono">PROMETHEUS</span>
-            <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-400 rounded-md border border-blue-500/25">Chief of Staff</span>
+            <span class="font-extrabold text-base tracking-tight text-slate-900 font-mono">PROMETHEUS</span>
+            <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 rounded-md border border-blue-200/80">Chief of Staff</span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden sm:block">Enterprise Workstream Observability & Multi-Agent DAG</p>
+          <p class="text-[11px] text-slate-500 hidden sm:block">Autonomous Multi-Agent Observability & Alignment Platform</p>
         </div>
       </div>
 
       <!-- LIVE SYSTEM STATUS PILLS -->
-      <div class="hidden lg:flex items-center space-x-2.5">
-        <div class="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-obsidian-800 border border-obsidian-700 text-xs">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
-          <span class="text-slate-400">Jira:</span>
-          <span class="text-white font-mono font-medium" id="nav-jira-status">KAN Cloud</span>
+      <div class="hidden lg:flex items-center space-x-3">
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-slate-100/80 border border-slate-200 text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 badge-pulse"></span>
+          <span class="text-slate-600 font-medium">Fleet:</span>
+          <span class="text-slate-900 font-mono font-semibold" id="nav-fleet-status">Connected</span>
         </div>
-        <div class="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-obsidian-800 border border-obsidian-700 text-xs">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
-          <span class="text-slate-400">GitHub:</span>
-          <span class="text-white font-mono font-medium" id="nav-gh-status">prometheus</span>
-        </div>
-        <div class="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-obsidian-800 border border-obsidian-700 text-xs">
-          <span class="w-2 h-2 rounded-full bg-cyan-400 badge-pulse"></span>
-          <span class="text-slate-400">Reasoning Engine:</span>
-          <span class="text-blue-400 font-mono font-semibold">Gemini 3.7 Flash</span>
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-slate-100/80 border border-slate-200 text-xs">
+          <span class="w-2 h-2 rounded-full bg-blue-500 badge-pulse"></span>
+          <span class="text-slate-600 font-medium">Reasoning:</span>
+          <span class="text-blue-700 font-mono font-semibold">Gemini 3.7 Flash</span>
         </div>
       </div>
 
-      <!-- ACTIONS & USER CONTROLS -->
-      <div class="flex items-center space-x-2.5">
-        <button id="btn-run-fleet" onclick="runFleetWorkflow()" class="relative group flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold rounded-lg shadow-md hover:shadow-blue-500/25 transition-all duration-200 active:scale-95">
-          <i data-lucide="play" class="w-3.5 h-3.5"></i>
+      <!-- ACTIONS & USER AUTH PROFILE -->
+      <div class="flex items-center space-x-3">
+        <button id="btn-run-fleet" onclick="runFleetWorkflow()" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold rounded-lg shadow-sm hover:shadow transition-all duration-150 active:scale-95">
+          <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
           <span>Run Fleet Ingest</span>
         </button>
-        <a href="/documentation" class="p-2 rounded-lg bg-obsidian-800 border border-obsidian-700 hover:bg-obsidian-700 text-slate-400 hover:text-white transition" title="Documentation & Architecture Specs">
+
+        <a href="/documentation" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-200 transition" title="Architecture Whitepaper & Docs">
           <i data-lucide="book-open" class="w-4 h-4"></i>
         </a>
+
+        <!-- GOOGLE AUTH USER CONTAINER -->
+        <div id="user-auth-container" class="flex items-center space-x-2">
+          <!-- Populated dynamically via JS -->
+          <button onclick="handleDemoLogin()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-700 transition">
+            Demo Login
+          </button>
+        </div>
       </div>
 
     </div>
   </header>
 
-  <!-- SUB-NAVIGATION BAR (TABS) -->
-  <div class="bg-obsidian-850/90 border-b border-obsidian-700 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto flex items-center space-x-6 text-xs font-medium overflow-x-auto">
-      <button onclick="switchTab('overview')" id="tab-overview" class="py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold whitespace-nowrap">
+  <!-- SUB-NAVIGATION BAR (CLEAN TABS) -->
+  <div class="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex items-center space-x-8 text-xs font-medium overflow-x-auto">
+      <button onclick="switchTab('overview')" id="tab-overview" class="py-3 border-b-2 border-blue-600 text-blue-600 flex items-center space-x-2 transition font-semibold whitespace-nowrap">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
         <span>Command Center</span>
       </button>
-      <button onclick="switchTab('actions')" id="tab-actions" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
+      <button onclick="switchTab('actions')" id="tab-actions" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center space-x-2 transition whitespace-nowrap">
         <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-        <span>Action Cards (HITL)</span>
-        <span id="badge-action-count" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-blue-500/20 text-blue-300 font-bold">0</span>
+        <span>Action Cards</span>
+        <span id="badge-action-count" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-blue-100 text-blue-700 font-bold">0</span>
       </button>
-      <button onclick="switchTab('telemetry')" id="tab-telemetry" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
+      <button onclick="switchTab('telemetry')" id="tab-telemetry" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center space-x-2 transition whitespace-nowrap">
         <i data-lucide="activity" class="w-4 h-4"></i>
-        <span>Telemetry Streams</span>
+        <span>Delivery Telemetry</span>
       </button>
-      <button onclick="switchTab('agents')" id="tab-agents" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
+      <button onclick="switchTab('agents')" id="tab-agents" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center space-x-2 transition whitespace-nowrap">
         <i data-lucide="bot" class="w-4 h-4"></i>
         <span>Agent Fleet</span>
       </button>
-      <button onclick="switchTab('security')" id="tab-security" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
+      <button onclick="switchTab('settings')" id="tab-settings" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center space-x-2 transition whitespace-nowrap">
         <i data-lucide="shield-check" class="w-4 h-4"></i>
-        <span>Security & ABAC</span>
-      </button>
-      <button onclick="switchTab('settings')" id="tab-settings" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap">
-        <i data-lucide="settings" class="w-4 h-4"></i>
         <span>Integrations Vault</span>
+      </button>
+      <button onclick="switchTab('security')" id="tab-security" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center space-x-2 transition whitespace-nowrap">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        <span>ABAC & Security</span>
       </button>
     </div>
   </div>
 
-  <!-- MAIN CONTAINER -->
+  <!-- MAIN APP CONTAINER -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- WORKFLOW PROGRESS BANNER (DYNAMIC SSE / CRON) -->
-    <div id="workflow-progress" class="hidden glass-panel p-4 rounded-xl border border-blue-500/40 bg-blue-950/20 glow-sapphire animate-slide-up">
-      <div class="flex items-center justify-between mb-2">
-        <div class="flex items-center space-x-3">
-          <div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-          <span class="font-semibold text-xs text-blue-300" id="workflow-status-text">Asynchronous Multi-Agent Ingestion in Progress...</span>
+    <!-- WORKFLOW PROGRESS BANNER -->
+    <div id="workflow-progress" class="hidden p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-3">
+      <div class="flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-2">
+          <div class="w-2 h-2 rounded-full bg-blue-600 badge-pulse"></div>
+          <span class="font-bold text-blue-900" id="workflow-status-text">Ingesting Telemetry across GitHub, Jira, and Slack...</span>
         </div>
-        <span class="text-[11px] font-mono text-blue-400" id="workflow-step-text">agent-01-router</span>
+        <span class="font-mono text-blue-700" id="workflow-step-text">agent-01-router</span>
       </div>
-      <div class="w-full bg-obsidian-800 rounded-full h-1.5 overflow-hidden">
-        <div id="workflow-progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-300 w-1/4"></div>
+      <div class="w-full bg-blue-200/60 rounded-full h-1.5 overflow-hidden">
+        <div id="workflow-progress-bar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style="width: 20%"></div>
       </div>
     </div>
 
-    <!-- TAB 1: COMMAND CENTER (OVERVIEW) -->
+    <!-- TAB 1: COMMAND CENTER -->
     <section id="section-overview" class="space-y-6">
 
-      <!-- HERO EXPLANATION CARD -->
-      <div class="p-4 rounded-xl border border-blue-500/20 bg-blue-950/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div class="flex items-start space-x-3">
-          <div class="p-2 rounded-lg bg-blue-500/20 text-blue-400 mt-0.5">
-            <i data-lucide="sparkles" class="w-4 h-4"></i>
-          </div>
-          <div>
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Multi-Domain Bottleneck Observatory</h3>
-            <p class="text-xs text-slate-300 mt-0.5">
-              1. Ingests signals across GitHub, Jira, and Slack ➔ 2. Gemini 3.7 Flash correlates root causes ➔ 3. Identifies delivery bottlenecks ➔ 4. Drafts safe Slack action cards for 1-click human sign-off.
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2 text-[11px] font-mono text-blue-300 whitespace-nowrap">
-          <span class="px-2.5 py-1 rounded bg-obsidian-800 border border-obsidian-700">Propose, Don't Impose</span>
-        </div>
-      </div>
-
-      <!-- 4-STAGE PIPELINE VISUALIZER -->
-      <div class="glass-panel p-5 rounded-xl border border-obsidian-700">
-        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
-          <span class="flex items-center space-x-2">
-            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-blue-400"></i>
-            <span>Autonomous Cross-Tool Resolution Pipeline</span>
-          </span>
-          <span class="text-emerald-400 font-mono text-[11px] flex items-center space-x-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            <span>FLEET: ACTIVE</span>
-          </span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          
-          <div class="p-3.5 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-blue-400">1. Ingest Telemetry</span>
-              <i data-lucide="radio" class="w-3.5 h-3.5 text-blue-400"></i>
-            </div>
-            <p class="text-slate-300 text-[11px]">GitHub PRs, Jira Issues (KAN), and Slack conversations ingested in parallel.</p>
-            <div class="text-[10px] text-slate-400 font-mono">3 Connected Sources</div>
-          </div>
-
-          <div class="p-3.5 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-indigo-300">2. Correlate Graph</span>
-              <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-400"></i>
-            </div>
-            <p class="text-slate-300 text-[11px]">Gemini 3.7 Flash maps PR review latency directly to blocked Jira sprint epics.</p>
-            <div class="text-[10px] text-indigo-300 font-mono">Vertex AI Reasoning Engine</div>
-          </div>
-
-          <div class="p-3.5 rounded-lg bg-red-950/20 border border-red-500/30 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-red-400">3. Blocker Triaged</span>
-              <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-red-400"></i>
-            </div>
-            <p class="text-slate-300 text-[11px]" id="step-blocker-desc">PR review delays detected blocking milestone delivery.</p>
-            <div class="text-[10px] text-red-400 font-mono font-semibold" id="step-blocker-status">Active Triage</div>
-          </div>
-
-          <div class="p-3.5 rounded-lg bg-emerald-950/20 border border-emerald-500/30 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-emerald-400">4. HITL Resolution</span>
-              <i data-lucide="send" class="w-3.5 h-3.5 text-emerald-400"></i>
-            </div>
-            <p class="text-slate-300 text-[11px]">Action card drafted for reviewer. Awaiting human approval to dispatch.</p>
-            <div class="text-[10px] text-emerald-300 font-mono">1-Click Sign-Off Ready</div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- KEY METRIC SUMMARY CARDS -->
+      <!-- KEY METRICS STATS TILES -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
+        <!-- DELIVERY VELOCITY -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow transition space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Active Blockers</span>
-            <div class="p-1.5 rounded-lg bg-red-500/10 text-red-400">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Delivery Velocity</span>
+            <div class="p-2 rounded-lg bg-blue-50 text-blue-600">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline space-x-2">
+            <span class="text-3xl font-extrabold text-slate-900 font-mono">94%</span>
+            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">On Track</span>
+          </div>
+          <p class="text-xs text-slate-500">Sprint 1 delivery milestone velocity</p>
+        </div>
+
+        <!-- ACTIVE BLOCKERS -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow transition space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Blockers</span>
+            <div class="p-2 rounded-lg bg-red-50 text-red-600">
               <i data-lucide="alert-triangle" class="w-4 h-4"></i>
             </div>
           </div>
-          <div class="mt-2 flex items-baseline space-x-2">
-            <span id="stat-blockers-count" class="text-2xl font-extrabold text-white font-mono">0</span>
-            <span id="stat-blockers-badge" class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">All Clear</span>
+          <div class="flex items-baseline space-x-2">
+            <span id="stat-blockers-count" class="text-3xl font-extrabold text-slate-900 font-mono">0</span>
+            <span id="stat-blockers-badge" class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">All Clear</span>
           </div>
-          <p class="mt-1 text-[11px] text-slate-400">Multi-domain correlated</p>
+          <p class="text-xs text-slate-500">Cross-domain delivery impediments</p>
         </div>
 
-        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
+        <!-- REVIEW BOTTLENECK -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow transition space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Stale PRs (>48h)</span>
-            <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Stale PR Latency</span>
+            <div class="p-2 rounded-lg bg-amber-50 text-amber-600">
               <i data-lucide="git-pull-request" class="w-4 h-4"></i>
             </div>
           </div>
-          <div class="mt-2 flex items-baseline space-x-2">
-            <span id="stat-stale-prs" class="text-2xl font-extrabold text-white font-mono">0</span>
-            <span id="stat-stale-badge" class="text-[10px] font-semibold text-amber-400">0 Stale</span>
+          <div class="flex items-baseline space-x-2">
+            <span id="stat-stale-prs" class="text-3xl font-extrabold text-slate-900 font-mono">0</span>
+            <span id="stat-stale-badge" class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">0 Waiting</span>
           </div>
-          <p class="mt-1 text-[11px] text-slate-400">Review latency tracking</p>
+          <p class="text-xs text-slate-500">Code review latency threshold (>1h)</p>
         </div>
 
-        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
+        <!-- PENDING ACTIONS -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow transition space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pending Action Cards</span>
-            <div class="p-1.5 rounded-lg bg-blue-500/10 text-blue-400">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Pending Actions (HITL)</span>
+            <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600">
               <i data-lucide="send" class="w-4 h-4"></i>
             </div>
           </div>
-          <div class="mt-2 flex items-baseline space-x-2">
-            <span id="stat-pending-actions" class="text-2xl font-extrabold text-white font-mono">0</span>
-            <span class="text-[10px] text-blue-300 font-medium">Ready for Review</span>
+          <div class="flex items-baseline space-x-2">
+            <span id="stat-pending-actions" class="text-3xl font-extrabold text-slate-900 font-mono">0</span>
+            <span class="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">Ready</span>
           </div>
-          <p class="mt-1 text-[11px] text-slate-400">Propose, Don't Impose</p>
-        </div>
-
-        <div class="glass-panel glass-panel-interactive p-4 rounded-xl border border-obsidian-700 transition">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Security Perimeter</span>
-            <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-              <i data-lucide="shield-check" class="w-4 h-4"></i>
-            </div>
-          </div>
-          <div class="mt-2 flex items-baseline space-x-2">
-            <span class="text-2xl font-extrabold text-emerald-400 font-mono">100%</span>
-            <span class="text-[10px] text-emerald-400 font-semibold">ABAC Isolated</span>
-          </div>
-          <p class="mt-1 text-[11px] text-slate-400">Model Armor sanitized</p>
+          <p class="text-xs text-slate-500">Human-in-the-loop sign-off queue</p>
         </div>
 
       </div>
@@ -299,516 +221,468 @@
       <!-- MAIN SPLIT WORKSPACE -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- LEFT: CORRELATED BLOCKERS & EVIDENCE -->
+        <!-- LEFT COLUMN: CORRELATED BLOCKERS & SYNTHESIS (7 COLS) -->
         <div class="lg:col-span-7 space-y-4">
+          
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-              <i data-lucide="network" class="w-3.5 h-3.5 text-blue-400"></i>
-              <span>Delivery Bottlenecks & Root Cause Synthesis</span>
+            <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="network" class="w-4 h-4 text-blue-600"></i>
+              <span>Active Delivery Bottlenecks & Evidence</span>
             </h3>
-            <span class="text-[11px] text-slate-400 font-mono">Correlated Evidence</span>
+            <span class="text-xs text-slate-500 font-mono">Root Cause Synthesis</span>
           </div>
 
           <!-- EXECUTIVE SYNTHESIS BRIEF -->
-          <div class="glass-panel p-4 rounded-xl border border-obsidian-700 space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-obsidian-700 text-xs">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 text-xs">
               <div class="flex items-center space-x-2">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-400"></i>
-                <span class="font-bold text-white">Daily Alignment Briefing</span>
+                <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
+                <span class="font-bold text-slate-900">Daily Alignment Digest</span>
               </div>
-              <span class="text-[10px] font-mono text-slate-400">Scopes: engineering, platform</span>
+              <span class="text-[11px] font-mono text-slate-500">Scope: engineering, platform</span>
             </div>
-            <div class="text-xs text-slate-300 leading-relaxed space-y-2" id="digest-content">
+            <div class="text-xs text-slate-700 leading-relaxed space-y-2" id="digest-content">
               <p>
-                <strong>Observability Active:</strong> Monitoring repositories, Jira sprints, and Slack discussions. Click <span class="text-blue-400 font-semibold">"Run Fleet Ingest"</span> to run asynchronous multi-agent correlation.
+                <strong>Autonomous Engineering Observatory:</strong> Actively monitoring connected workspaces across GitHub, Jira Cloud, and Slack channels.
+              </p>
+              <p class="text-slate-500">
+                Click <span class="text-blue-600 font-semibold">"Run Fleet Ingest"</span> to trigger Vertex AI Gemini 3.7 Flash cross-tool correlation.
               </p>
             </div>
           </div>
 
-          <!-- BLOCKER DETAIL CARDS -->
+          <!-- BLOCKER DETAIL CONTAINER -->
           <div id="blockers-container" class="space-y-3">
-            <!-- Rendered dynamically -->
+            <!-- Populated dynamically via JS -->
           </div>
 
         </div>
 
-        <!-- RIGHT: HITL ACTION CARD -->
+        <!-- RIGHT COLUMN: 1-CLICK HUMAN-IN-THE-LOOP ACTION CARD (5 COLS) -->
         <div class="lg:col-span-5 space-y-4">
+          
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
-              <span>Human Sign-Off Checkpoint</span>
+            <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="send" class="w-4 h-4 text-emerald-600"></i>
+              <span>Proposed Unblocking Action</span>
             </h3>
-            <span class="text-[11px] text-emerald-400 font-mono font-semibold">"Propose, Don't Impose"</span>
+            <span class="text-xs font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Propose, Don't Impose</span>
           </div>
 
-          <!-- OVERVIEW ACTION CARD CONTAINER -->
-          <div id="overview-action-card-container" class="space-y-4">
-            <!-- Rendered dynamically -->
+          <div id="overview-action-card-container">
+            <!-- Populated dynamically via JS -->
           </div>
 
-          <!-- EXPLANATORY FOOTNOTE -->
-          <div class="p-3.5 rounded-xl bg-obsidian-850 border border-obsidian-700 text-xs text-slate-400 space-y-1.5">
-            <div class="flex items-center space-x-1.5 text-slate-300 font-semibold text-[11px]">
-              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-cyan-400"></i>
-              <span>Zero Unilateral Mutations</span>
-            </div>
-            <p class="text-[11px] leading-relaxed text-slate-400">
-              Prometheus drafts high-context unblocking messages with all references attached. You can edit the text or recipient before clicking <strong>Approve & Dispatch</strong>.
-            </p>
-          </div>
         </div>
 
       </div>
 
     </section>
 
-    <!-- TAB 2: ACTION CARDS (HITL) -->
+    <!-- TAB 2: ACTION CARDS -->
     <section id="section-actions" class="hidden space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-            <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-400"></i>
-            <span>Human-in-the-Loop Action Drafting Center</span>
-          </h2>
-          <p class="text-xs text-slate-400 mt-0.5">Review, edit, and authorize actions before any external API mutation occurs.</p>
+          <h2 class="text-base font-bold text-slate-900">Human-in-the-Loop Action Cards</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Pre-drafted unblocking actions requiring explicit human sign-off before dispatch.</p>
         </div>
         <div class="flex items-center space-x-2 text-xs">
-          <button onclick="filterActionCards('ALL')" id="filter-btn-ALL" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold">All</button>
-          <button onclick="filterActionCards('PENDING')" id="filter-btn-PENDING" class="px-3 py-1.5 rounded-lg bg-obsidian-800 text-slate-300 border border-obsidian-700 hover:text-white">Pending</button>
-          <button onclick="filterActionCards('EXECUTED')" id="filter-btn-EXECUTED" class="px-3 py-1.5 rounded-lg bg-obsidian-800 text-slate-300 border border-obsidian-700 hover:text-white">Dispatched</button>
+          <button onclick="filterActionCards('ALL')" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 font-medium text-slate-700 transition">All</button>
+          <button onclick="filterActionCards('PENDING')" class="px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 font-semibold text-amber-800 transition">Pending</button>
+          <button onclick="filterActionCards('EXECUTED')" class="px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 font-semibold text-emerald-800 transition">Dispatched</button>
         </div>
       </div>
 
-      <div id="actions-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Action cards rendered dynamically -->
+      <div id="actions-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered dynamically via JS -->
       </div>
+
     </section>
 
-    <!-- TAB 3: TELEMETRY STREAMS -->
+    <!-- TAB 3: DELIVERY TELEMETRY STREAMS -->
     <section id="section-telemetry" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-            <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
-            <span>Cross-Functional Telemetry Streams</span>
-          </h2>
-          <p class="text-xs text-slate-400 mt-0.5">Raw telemetry ingested asynchronously via MCP within authorized ABAC scopes.</p>
-        </div>
+      
+      <div>
+        <h2 class="text-base font-bold text-slate-900">Live Engineering Telemetry Streams</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Real-time developer telemetry ingested across GitHub, Jira Cloud, and Slack.</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- GITHUB STREAM -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <div class="flex items-center space-x-2">
-              <i data-lucide="github" class="w-4 h-4 text-white"></i>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Git & CI/CD Telemetry</h3>
+              <i data-lucide="github" class="w-4 h-4 text-slate-900"></i>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Git & CI/CD Telemetry</h3>
             </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-02-git</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">agent-02-git</span>
           </div>
-          <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
+          <div class="space-y-3 text-xs" id="telemetry-github-container">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">PR #1 (OAuth 2.1)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 font-semibold">Stale Review</span>
+                <span class="font-semibold text-slate-900 font-mono">PR #1 (OAuth 2.1)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-red-50 text-red-700 font-semibold border border-red-200">Awaiting Review</span>
               </div>
-              <p class="text-slate-400">Reviewer: @brightbutler7 • Target: main</p>
-              <div class="text-[11px] text-amber-400 font-mono pt-1">⚠️ Blocking Jira KAN-4</div>
-            </div>
-            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">PR #2 (Telemetry Pipeline)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold">Healthy</span>
-              </div>
-              <p class="text-slate-400">Reviewer: team-lead • CI passing</p>
-              <div class="text-[11px] text-emerald-400 font-mono pt-1">✓ Ready for merge</div>
+              <p class="text-slate-500">Repository: ecommerce-platform • Target: main</p>
+              <div class="text-[11px] text-amber-700 font-mono pt-1">⚠️ Blocking milestone delivery</div>
             </div>
           </div>
         </div>
 
         <!-- JIRA STREAM -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <div class="flex items-center space-x-2">
-              <i data-lucide="trello" class="w-4 h-4 text-blue-400"></i>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Jira Sprint Telemetry</h3>
+              <i data-lucide="trello" class="w-4 h-4 text-blue-600"></i>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Jira Sprint Telemetry</h3>
             </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-03-jira</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">agent-03-jira</span>
           </div>
-          <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
+          <div class="space-y-3 text-xs" id="telemetry-jira-container">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">KAN-4 (Gateway v2.1)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/10 text-red-400 font-semibold">BLOCKED</span>
+                <span class="font-semibold text-slate-900 font-mono">KAN-4 (Auth Gateway)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-red-50 text-red-700 font-semibold border border-red-200">BLOCKED</span>
               </div>
-              <p class="text-slate-400">Assignee: brightonwe30 • Sprint 1</p>
-              <div class="text-[11px] text-red-400 font-mono pt-1">Blocked by: PR #1</div>
-            </div>
-            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-white font-mono">KAN-2 (Frontend Refactor)</span>
-                <span class="px-2 py-0.5 rounded text-[10px] bg-blue-500/10 text-blue-400 font-semibold">IN PROGRESS</span>
-              </div>
-              <p class="text-slate-400">Assignee: lead-01 • Sprint 1</p>
-              <div class="text-[11px] text-blue-300 font-mono pt-1">Progress: 85%</div>
+              <p class="text-slate-500">Status: In Progress • Sprint 1</p>
+              <div class="text-[11px] text-red-700 font-mono pt-1">Blocked by: PR #1</div>
             </div>
           </div>
         </div>
 
         <!-- SLACK STREAM -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <div class="flex items-center space-x-2">
-              <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Workstream Ingestion</h3>
+              <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Workstream Telemetry</h3>
             </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">agent-04-workstream</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">agent-04-workstream</span>
           </div>
-          <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
+          <div class="space-y-3 text-xs" id="telemetry-slack-container">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-white">#platform-engineering</span>
-                <span class="text-slate-500 font-mono text-[10px]">Recent</span>
+                <span class="font-semibold text-slate-900">#general</span>
+                <span class="text-slate-400 font-mono text-[10px]">Connected</span>
               </div>
-              <p class="text-slate-300 italic">"Is anyone reviewing the auth PR? Gateway release is waiting."</p>
-            </div>
-            <div class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 space-y-1">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-white">#general</span>
-                <span class="text-slate-500 font-mono text-[10px]">Recent</span>
-              </div>
-              <p class="text-slate-300 italic">"Sprint 1 burndown on track, auth unblocker required today."</p>
+              <p class="text-slate-600 italic">"Observability bot active. Action dispatch ready."</p>
             </div>
           </div>
         </div>
 
       </div>
+
     </section>
 
     <!-- TAB 4: AGENT FLEET REGISTRY -->
     <section id="section-agents" class="hidden space-y-6">
+      
       <div>
-        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-          <i data-lucide="bot" class="w-4 h-4 text-blue-400"></i>
-          <span>Sub-Agent Fleet Catalog & Security Bounds</span>
-        </h2>
-        <p class="text-xs text-slate-400 mt-0.5">Central registry cataloging all 6 sub-agents, model specifications, and security controls.</p>
+        <h2 class="text-base font-bold text-slate-900">Sub-Agent Fleet Catalog & Security Bounds</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Specialized autonomous sub-agents with model requirements and guardrails.</p>
       </div>
 
       <div id="fleet-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered dynamically -->
+        <!-- Populated dynamically via JS -->
       </div>
+
     </section>
 
-    <!-- TAB 5: SECURITY & ABAC SANDBOX -->
-    <section id="section-security" class="hidden space-y-6">
+    <!-- TAB 5: ENTERPRISE INTEGRATIONS VAULT (FIRESTORE SECURED) -->
+    <section id="section-settings" class="hidden space-y-6">
+      
       <div>
-        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-          <span>Security Perimeter & ABAC Simulation Sandbox</span>
-        </h2>
-        <p class="text-xs text-slate-400 mt-0.5">Verify Attribute-Based Access Control $P(U,R)$ and Model Armor sanitization.</p>
+        <h2 class="text-base font-bold text-slate-900">Enterprise Integrations Vault</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Configure API credentials vaulted securely in Google Cloud Firestore for your organization.</p>
+      </div>
+
+      <!-- OAUTH / USER STATUS BANNER -->
+      <div id="vault-auth-banner" class="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold" id="vault-user-avatar">U</div>
+          <div>
+            <span class="font-bold text-slate-900 block" id="vault-user-name">Guest / Demo User</span>
+            <span class="text-slate-500 text-[11px]" id="vault-user-email">Sign in with Google to manage your personal workspace vault</span>
+          </div>
+        </div>
+        <button onclick="loginWithGoogle()" class="px-4 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-semibold rounded-lg shadow-xs flex items-center space-x-2 transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          <span>Sign in with Google</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- GITHUB CONNECTOR -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="github" class="w-4 h-4 text-slate-900"></i>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">GitHub Integration</h3>
+            </div>
+            <span id="badge-github-status" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">CONFIGURED</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Personal Access Token (PAT):</label>
+              <input type="password" id="input-github-token" placeholder="ghp_••••••••••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Target Repositories:</label>
+              <input type="text" id="input-github-repos" placeholder="org/repo-name" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <button onclick="saveIntegration('github')" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition text-xs shadow-xs">
+              Vault GitHub Credentials
+            </button>
+          </div>
+        </div>
+
+        <!-- JIRA CLOUD CONNECTOR -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="trello" class="w-4 h-4 text-blue-600"></i>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Jira Cloud</h3>
+            </div>
+            <span id="badge-jira-status" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">CONFIGURED</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Instance URL:</label>
+              <input type="text" id="input-jira-url" placeholder="https://your-domain.atlassian.net" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Account Email:</label>
+              <input type="email" id="input-jira-email" placeholder="engineer@enterprise.com" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">API Token:</label>
+              <input type="password" id="input-jira-token" placeholder="ATATT3••••••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Project Key:</label>
+              <input type="text" id="input-jira-key" placeholder="PROJ" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <button onclick="saveIntegration('jira')" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition text-xs shadow-xs">
+              Vault Jira Credentials
+            </button>
+          </div>
+        </div>
+
+        <!-- SLACK CONNECTOR -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Slack Web API</h3>
+            </div>
+            <span id="badge-slack-status" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">CONFIGURED</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Bot User Token:</label>
+              <input type="password" id="input-slack-token" placeholder="xoxb-••••••••••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">Monitored Channels:</label>
+              <input type="text" id="input-slack-channels" placeholder="general, platform" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <button onclick="saveIntegration('slack')" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition text-xs shadow-xs">
+              Vault Slack Credentials
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 6: SECURITY & ABAC SANDBOX -->
+    <section id="section-security" class="hidden space-y-6">
+      
+      <div>
+        <h2 class="text-base font-bold text-slate-900">Security Perimeter & ABAC Sandbox</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Verify Attribute-Based Access Control and Model Armor PII redaction.</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- ABAC SIMULATOR -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-            <i data-lucide="lock" class="w-3.5 h-3.5 text-blue-400"></i>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="lock" class="w-4 h-4 text-blue-600"></i>
             <span>ABAC Scope Perimeter Evaluation</span>
           </h3>
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block text-slate-400 font-medium mb-1">User Persona Context:</label>
-              <select id="sim-user-persona" onchange="runABACSimulation()" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-                <option value="lead">alex-lead (Scopes: engineering, platform)</option>
-                <option value="dev">dev-bob (Scopes: engineering)</option>
-                <option value="sales">sales-user (Scopes: sales, marketing)</option>
-                <option value="guest">guest (Scopes: none)</option>
+              <label class="block text-slate-600 font-medium mb-1">User Context Persona:</label>
+              <select id="sim-user-persona" onchange="runABACSimulation()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs">
+                <option value="lead">Engineering Lead (Scopes: engineering, platform)</option>
+                <option value="dev">Developer (Scopes: engineering)</option>
+                <option value="guest">External Visitor (Scopes: none)</option>
               </select>
             </div>
             <div>
-              <label class="block text-slate-400 font-medium mb-1">Target Resource:</label>
-              <select id="sim-resource-target" onchange="runABACSimulation()" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-                <option value="pr402">GitHub PR #1 (Required Scope: engineering)</option>
-                <option value="sec_audit">Security Audit Telemetry (Required Scope: platform)</option>
-                <option value="sales_lead">Customer Deal CRM Pipeline (Required Scope: sales)</option>
+              <label class="block text-slate-600 font-medium mb-1">Target Resource:</label>
+              <select id="sim-resource-target" onchange="runABACSimulation()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs">
+                <option value="pr1">GitHub PR #1 (Required Scope: engineering)</option>
+                <option value="sec_audit">Infrastructure Telemetry (Required Scope: platform)</option>
               </select>
             </div>
-            <div id="sim-abac-result" class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 font-mono text-xs">
-              ✓ ACCESS GRANTED: User context permitted for PR #1.
+            <div id="sim-abac-result" class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-xs">
+              ✓ ACCESS GRANTED: User context permitted for target resource.
             </div>
           </div>
         </div>
 
         <!-- MODEL ARMOR SANITIZER -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-cyan-400"></i>
-            <span>Model Armor & PII Masking Sandbox</span>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-indigo-600"></i>
+            <span>Model Armor & PII Sanitization Sandbox</span>
           </h3>
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block text-slate-400 font-medium mb-1">Input Telemetry Payload:</label>
-              <textarea id="guardrail-test-input" oninput="runGuardrailTest()" rows="3" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">Token: ghp_9876543210abcdef1234567890abcdef1234 from engineer alex.lead@enterprise.io</textarea>
+              <label class="block text-slate-600 font-medium mb-1">Input Telemetry Payload:</label>
+              <textarea id="guardrail-test-input" oninput="runGuardrailTest()" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono text-xs">Token: ghp_9876543210abcdef1234567890abcdef1234 from engineer alex.lead@enterprise.io</textarea>
             </div>
             <div>
-              <label class="block text-slate-400 font-medium mb-1">Sanitized Output Payload:</label>
-              <div id="guardrail-test-output" class="p-3 rounded-lg bg-obsidian-850 border border-obsidian-700 text-cyan-300 font-mono text-xs whitespace-pre-wrap">Token: [REDACTED_GITHUB_TOKEN] from engineer [REDACTED_EMAIL]</div>
+              <label class="block text-slate-600 font-medium mb-1">Sanitized Output Payload:</label>
+              <div id="guardrail-test-output" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-indigo-900 font-mono text-xs whitespace-pre-wrap">Token: [REDACTED_GITHUB_TOKEN] from engineer [REDACTED_EMAIL]</div>
             </div>
           </div>
         </div>
 
       </div>
-    </section>
 
-    <!-- TAB 6: SETTINGS & INTEGRATIONS VAULT -->
-    <section id="section-settings" class="hidden space-y-6">
-      <div>
-        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-          <i data-lucide="settings" class="w-4 h-4 text-blue-400"></i>
-          <span>Enterprise Integrations Vault (Firestore)</span>
-        </h2>
-        <p class="text-xs text-slate-400 mt-0.5">Manage encrypted API credentials vaulted securely in Google Cloud Firestore.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- GITHUB -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
-            <div class="flex items-center space-x-2">
-              <i data-lucide="github" class="w-4 h-4 text-white"></i>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">GitHub</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
-          </div>
-          <div class="space-y-3 text-xs">
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">Personal Access Token (PAT):</label>
-              <input type="password" id="input-github-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">Target Repositories:</label>
-              <input type="text" id="input-github-repos" value="Tony-Stark2025/prometheus" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <button onclick="saveIntegration('github')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
-              Save GitHub Token
-            </button>
-          </div>
-        </div>
-
-        <!-- JIRA CLOUD -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
-            <div class="flex items-center space-x-2">
-              <i data-lucide="trello" class="w-4 h-4 text-blue-400"></i>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Jira Cloud</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
-          </div>
-          <div class="space-y-3 text-xs">
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">Instance URL:</label>
-              <input type="text" id="input-jira-url" value="https://brightonwe30.atlassian.net" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">User Email:</label>
-              <input type="email" id="input-jira-email" value="brightonwe30@gmail.com" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">API Token:</label>
-              <input type="password" id="input-jira-token" placeholder="ATATT3xxxxxxxx" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">Project Key:</label>
-              <input type="text" id="input-jira-key" value="KAN" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <button onclick="saveIntegration('jira')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
-              Save Jira Token
-            </button>
-          </div>
-        </div>
-
-        <!-- SLACK -->
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
-            <div class="flex items-center space-x-2">
-              <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Slack</h3>
-            </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400">CONNECTED</span>
-          </div>
-          <div class="space-y-3 text-xs">
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">Bot User OAuth Token:</label>
-              <input type="password" id="input-slack-token" placeholder="xoxb-xxxxxxxxxxxx" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <div>
-              <label class="block text-slate-400 font-medium mb-1">Monitored Channels:</label>
-              <input type="text" id="input-slack-channels" value="general, platform-engineering" class="w-full glass-input rounded-lg p-2 text-white font-mono text-xs">
-            </div>
-            <button onclick="saveIntegration('slack')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition text-xs">
-              Save Slack Token
-            </button>
-          </div>
-        </div>
-
-      </div>
     </section>
 
   </main>
 
-  <!-- INLINE ACTION DRAFT EDITOR MODAL -->
-  <div id="modal-edit-draft" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="glass-panel p-6 rounded-2xl border border-obsidian-600 w-full max-w-xl space-y-4 glow-sapphire animate-slide-up">
-      <div class="flex items-center justify-between pb-3 border-b border-obsidian-700">
-        <div class="flex items-center space-x-2">
-          <i data-lucide="edit-3" class="w-4 h-4 text-blue-400"></i>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Edit Action Draft Proposal</h3>
-        </div>
-        <button onclick="closeEditDraftModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-obsidian-750">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <input type="hidden" id="edit-draft-id" value="">
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block text-slate-400 font-semibold mb-1">Target Recipient or Channel:</label>
-          <input type="text" id="edit-draft-target" class="w-full glass-input rounded-lg p-2.5 text-white font-mono text-xs">
-        </div>
-        <div>
-          <label class="block text-slate-400 font-semibold mb-1">Draft Message Content:</label>
-          <textarea id="edit-draft-content" rows="5" class="w-full glass-input rounded-lg p-2.5 text-white font-sans text-xs leading-relaxed"></textarea>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-obsidian-700 text-xs">
-        <button onclick="closeEditDraftModal()" class="px-4 py-2 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-300 font-semibold transition">
-          Cancel
-        </button>
-        <button onclick="saveDraftEdits(false)" class="px-4 py-2 rounded-lg bg-obsidian-700 hover:bg-obsidian-600 text-white font-semibold transition">
-          Save Changes
-        </button>
-        <button onclick="saveDraftEdits(true)" class="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold transition shadow-md flex items-center space-x-1.5">
-          <i data-lucide="send" class="w-3.5 h-3.5"></i>
-          <span>Save & Dispatch</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
-
-  <!-- FOOTER -->
-  <footer class="mt-auto border-t border-obsidian-700 bg-obsidian-950/80 py-4 px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-      <div class="flex items-center space-x-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-        <span class="text-slate-400">Prometheus Chief of Staff v1.1.0 • All Things Agentic Hackathon</span>
-      </div>
-      <div class="flex items-center space-x-4 font-mono text-[11px]">
-        <span>Model: Gemini 3.7 Flash</span>
-        <span>Vertex AI Agent Engine</span>
-        <span>MCP (stdio / SSE)</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- JAVASCRIPT APPLICATION CONTROLLER -->
   <script>
-    let appState = {
+    const appState = {
+      activeTab: 'overview',
+      filterStatus: 'ALL',
+      currentUser: null,
       blockers: [],
       actionDrafts: [],
-      agents: [],
-      currentTab: 'overview',
-      filterStatus: 'ALL',
-      currentUser: 'alex-lead'
+      integrations: {}
     };
 
-    lucide.createIcons();
+    document.addEventListener('DOMContentLoaded', async () => {
+      lucide.createIcons();
+      await fetchCurrentUser();
+      await loadDashboardData();
+      await loadAgentFleet();
+    });
 
-    function switchTab(tabId) {
-      appState.currentTab = tabId;
-      const tabs = ['overview', 'actions', 'telemetry', 'agents', 'security', 'settings'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tab-${t}`);
-        const sec = document.getElementById(`section-${t}`);
-        if (btn && sec) {
-          if (t === tabId) {
-            btn.className = 'py-3 border-b-2 border-blue-500 text-blue-400 flex items-center space-x-2 transition font-semibold whitespace-nowrap';
-            sec.classList.remove('hidden');
-          } else {
-            btn.className = 'py-3 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-2 transition whitespace-nowrap';
-            sec.classList.add('hidden');
-          }
+    async function fetchCurrentUser() {
+      try {
+        const res = await fetch('/api/v1/auth/me');
+        if (res.ok) {
+          const user = await res.json();
+          appState.currentUser = user;
+          renderUserAuth(user);
+        } else {
+          renderUserAuth(null);
         }
-      });
+      } catch (err) {
+        renderUserAuth(null);
+      }
+    }
+
+    function renderUserAuth(user) {
+      const container = document.getElementById('user-auth-container');
+      const vaultAvatar = document.getElementById('vault-user-avatar');
+      const vaultName = document.getElementById('vault-user-name');
+      const vaultEmail = document.getElementById('vault-user-email');
+
+      if (user && user.is_authenticated) {
+        const displayName = user.name || user.username || user.email.split('@')[0];
+        container.innerHTML = `
+          <div class="flex items-center space-x-2 bg-slate-100 py-1 px-2.5 rounded-lg border border-slate-200 text-xs">
+            <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-[10px]">
+              ${displayName.charAt(0).toUpperCase()}
+            </span>
+            <span class="font-medium text-slate-800">${displayName}</span>
+            <button onclick="handleLogout()" class="text-slate-400 hover:text-slate-600 ml-1" title="Sign Out">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        if (vaultAvatar) vaultAvatar.innerText = displayName.charAt(0).toUpperCase();
+        if (vaultName) vaultName.innerText = displayName;
+        if (vaultEmail) vaultEmail.innerText = `${user.email} (Tenant: ${user.tenant_id})`;
+      } else {
+        container.innerHTML = `
+          <button onclick="handleDemoLogin()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-700 transition">
+            Demo Login
+          </button>
+          <button onclick="loginWithGoogle()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-xs transition">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            <span>Sign in</span>
+          </button>
+        `;
+      }
       lucide.createIcons();
     }
 
-    function showToast(message, type = 'success', title = '') {
-      const container = document.getElementById('toast-container');
-      if (!container) return;
+    async function handleDemoLogin() {
+      try {
+        const res = await fetch('/api/v1/auth/demo-login', { method: 'POST' });
+        if (res.ok) {
+          window.location.reload();
+        }
+      } catch (err) {
+        console.error('Demo login error:', err);
+      }
+    }
 
-      const toast = document.createElement('div');
-      toast.className = `pointer-events-auto p-4 rounded-xl glass-panel border flex items-start space-x-3 shadow-xl max-w-sm animate-slide-up ${
-        type === 'success' ? 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300' :
-        type === 'error' ? 'border-red-500/40 bg-red-950/30 text-red-300' :
-        'border-blue-500/40 bg-blue-950/30 text-blue-300'
-      }`;
+    async function handleLogout() {
+      try {
+        await fetch('/api/v1/auth/logout', { method: 'POST' });
+        window.location.reload();
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+    }
 
-      const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-triangle' : 'info';
-
-      toast.innerHTML = `
-        <i data-lucide="${icon}" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
-        <div class="text-xs">
-          ${title ? `<strong class="block font-semibold text-white mb-0.5">${title}</strong>` : ''}
-          <p class="leading-relaxed">${message}</p>
-        </div>
-      `;
-
-      container.appendChild(toast);
-      lucide.createIcons();
-
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(10px)';
-        toast.style.transition = 'all 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
+    async function loginWithGoogle() {
+      try {
+        const res = await fetch('/api/v1/auth/google/login');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.auth_url) {
+            window.location.href = data.auth_url;
+          }
+        }
+      } catch (err) {
+        console.error('Google login error:', err);
+      }
     }
 
     async function loadDashboardData() {
       try {
-        const agentsRes = await fetch('/api/v1/registry/agents');
-        if (agentsRes.ok) {
-          const agentsData = await agentsRes.json();
-          appState.agents = Array.isArray(agentsData) ? agentsData : (agentsData.agents || []);
-          renderAgentRegistry();
-        }
+        const [blockersRes, actionsRes] = await Promise.all([
+          fetch('/api/v1/blockers'),
+          fetch('/api/v1/actions')
+        ]);
 
-        const actionsRes = await fetch('/api/v1/actions');
-        if (actionsRes.ok) {
-          const actionsData = await actionsRes.json();
-          appState.actionDrafts = Array.isArray(actionsData) ? actionsData : (actionsData.actions || actionsData.drafts || []);
-          renderActionCards();
-          renderOverviewActionCard();
-        }
-
-        const blockersRes = await fetch('/api/v1/blockers');
         if (blockersRes.ok) {
-          const blockersData = await blockersRes.json();
-          appState.blockers = Array.isArray(blockersData) ? blockersData : (blockersData.blockers || []);
+          const bData = await blockersRes.json();
+          appState.blockers = bData.blockers || [];
           renderBlockers(appState.blockers);
         }
 
+        if (actionsRes.ok) {
+          const aData = await actionsRes.json();
+          appState.actionDrafts = aData.actions || aData.drafts || [];
+          renderActionCards();
+          renderOverviewActionCard();
+        }
       } catch (err) {
         console.error('Failed to load dashboard data:', err);
       }
@@ -816,84 +690,69 @@
 
     function renderBlockers(blockers) {
       const container = document.getElementById('blockers-container');
-      if (!container) return;
-
-      const statCount = document.getElementById('stat-blockers-count');
-      const statBadge = document.getElementById('stat-blockers-badge');
-      const statStale = document.getElementById('stat-stale-prs');
-      const statStaleBadge = document.getElementById('stat-stale-badge');
+      const countEl = document.getElementById('stat-blockers-count');
+      const badgeEl = document.getElementById('stat-blockers-badge');
+      const staleEl = document.getElementById('stat-stale-prs');
+      const staleBadgeEl = document.getElementById('stat-stale-badge');
 
       if (!blockers || blockers.length === 0) {
         container.innerHTML = `
-          <div class="p-6 text-center text-slate-400 glass-panel rounded-xl">
-            <i data-lucide="check-circle" class="w-8 h-8 mx-auto text-emerald-400 mb-2"></i>
-            <p class="font-bold text-white text-xs">Zero Active Bottlenecks</p>
-            <p class="text-[11px] mt-1 text-slate-400">All engineering delivery workstreams are healthy and moving at peak velocity.</p>
+          <div class="p-6 text-center text-slate-400 bg-white rounded-2xl border border-slate-200/80">
+            <i data-lucide="check-circle" class="w-8 h-8 mx-auto text-emerald-500 mb-2"></i>
+            <p class="font-semibold text-slate-800 text-sm">Zero Active Bottlenecks</p>
+            <p class="text-xs text-slate-500 mt-1">All engineering delivery workstreams are healthy and moving at peak velocity.</p>
           </div>
         `;
-        if (statCount) statCount.innerText = '0';
-        if (statBadge) {
-          statBadge.className = 'text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20';
-          statBadge.innerText = 'All Clear';
-        }
+        countEl.innerText = '0';
+        badgeEl.innerText = 'All Clear';
+        badgeEl.className = 'text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200';
+        staleEl.innerText = '0';
+        staleBadgeEl.innerText = '0 Waiting';
         lucide.createIcons();
         return;
       }
 
-      if (statCount) statCount.innerText = blockers.length;
-      if (statBadge) {
-        statBadge.className = 'text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20';
-        statBadge.innerText = `${blockers.length} Critical`;
-      }
-      if (statStale) statStale.innerText = '1';
-      if (statStaleBadge) statStaleBadge.innerText = '1 Stale PR';
+      countEl.innerText = blockers.length;
+      badgeEl.innerText = `${blockers.length} CRITICAL`;
+      badgeEl.className = 'text-xs font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded-md border border-red-200';
 
-      container.innerHTML = blockers.map(b => {
-        const isCrit = b.severity === 'CRITICAL';
-        const badgeStyle = isCrit 
-          ? 'bg-red-500/10 text-red-400 border-red-500/30' 
-          : 'bg-amber-500/10 text-amber-400 border-amber-500/30';
-        
-        return `
-          <div class="glass-panel p-4 rounded-xl border border-obsidian-700 hover:border-red-500/40 transition space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${badgeStyle}">${b.severity}</span>
-                <h4 class="text-xs font-bold text-white">${b.title}</h4>
-              </div>
-              <span class="text-[10px] font-mono text-slate-400">${b.blocker_id}</span>
+      staleEl.innerText = '1';
+      staleBadgeEl.innerText = '1 Stale PR';
+
+      container.innerHTML = blockers.map(b => `
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow transition space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${b.severity === 'CRITICAL' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200'}">
+                ${b.severity}
+              </span>
+              <h4 class="text-xs font-bold text-slate-900">${b.title}</h4>
             </div>
-
-            <p class="text-xs text-slate-300 leading-relaxed">${b.description}</p>
-
-            <div class="space-y-2 pt-2 border-t border-obsidian-700 text-xs">
-              <div class="flex flex-wrap items-center gap-1.5">
-                <span class="text-slate-400 text-[11px] font-medium">Evidence Artifacts:</span>
-                ${(b.source_artifacts || []).map(a => `<span class="px-2 py-0.5 rounded bg-obsidian-850 border border-obsidian-700 text-[10px] text-blue-300 font-mono">${a}</span>`).join('')}
-              </div>
-              <div class="flex flex-wrap items-center gap-1.5">
-                <span class="text-slate-400 text-[11px] font-medium">Impacted Squads:</span>
-                ${(b.impacted_squads || []).map(s => `<span class="px-2 py-0.5 rounded bg-obsidian-850 border border-obsidian-700 text-[10px] text-indigo-300 font-mono">${s}</span>`).join('')}
-              </div>
-            </div>
+            <span class="text-[11px] font-mono text-slate-400">${b.blocker_id}</span>
           </div>
-        `;
-      }).join('');
+          <p class="text-xs text-slate-600 leading-relaxed">${b.description}</p>
+          <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
+            <span class="text-[11px] font-medium text-slate-400 mr-1">Correlated Evidence:</span>
+            ${(b.source_artifacts || []).map(art => `
+              <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono text-[10px] border border-slate-200">${art}</span>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
       lucide.createIcons();
     }
 
     function renderOverviewActionCard() {
       const container = document.getElementById('overview-action-card-container');
       if (!container) return;
-
-      const pendingDraft = (appState.actionDrafts || []).find(d => d.status === 'PENDING') || (appState.actionDrafts || [])[0];
+      const pendingDraft = appState.actionDrafts.find(d => d.status === 'PENDING') || appState.actionDrafts[0];
 
       if (!pendingDraft) {
         container.innerHTML = `
-          <div class="p-6 text-center text-slate-400 glass-panel rounded-xl">
-            <i data-lucide="check" class="w-8 h-8 mx-auto text-emerald-400 mb-2"></i>
-            <p class="font-bold text-white text-xs">All Proposed Actions Signed Off</p>
-            <p class="text-[11px] mt-1 text-slate-400">Run fleet ingestion to draft new contextual unblocking actions.</p>
+          <div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-slate-200/80">
+            <i data-lucide="check" class="w-8 h-8 mx-auto text-emerald-500 mb-2"></i>
+            <p class="font-semibold text-slate-800 text-sm">All Action Cards Signed Off</p>
+            <p class="text-xs text-slate-500 mt-1">Run fleet ingestion to draft new contextual unblocking actions.</p>
           </div>
         `;
         lucide.createIcons();
@@ -901,57 +760,52 @@
       }
 
       const isPending = pendingDraft.status === 'PENDING';
-      const actionType = pendingDraft.action_type || '';
-      const iconName = actionType.includes('channel') ? 'hash' : 'at-sign';
 
       container.innerHTML = `
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-4 glow-sapphire">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <div class="w-6 h-6 rounded-md bg-blue-500/10 text-blue-400 flex items-center justify-center">
-                <i data-lucide="${iconName}" class="w-3.5 h-3.5"></i>
+              <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <i data-lucide="${pendingDraft.action_type && pendingDraft.action_type.includes('channel') ? 'hash' : 'at-sign'}" class="w-4 h-4"></i>
               </div>
               <div>
-                <span class="text-xs font-bold text-white font-mono">${pendingDraft.target_channel_or_user}</span>
-                <span class="text-[10px] text-slate-400 block">Target Recipient</span>
+                <span class="text-xs font-bold text-slate-900 font-mono">${pendingDraft.target_channel_or_user}</span>
+                <span class="text-[10px] text-slate-400 block">Recipient</span>
               </div>
             </div>
             ${isPending 
-              ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30">WAITING SIGN-OFF</span>'
-              : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">DISPATCHED TO SLACK</span>'
+              ? '<span class="px-2.5 py-1 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">WAITING SIGN-OFF</span>'
+              : '<span class="px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">DISPATCHED TO SLACK</span>'
             }
           </div>
 
-          <div class="p-3.5 rounded-xl bg-obsidian-950 border border-obsidian-700 text-xs space-y-2">
-            <div class="flex items-center justify-between pb-1.5 border-b border-obsidian-700 text-[11px]">
+          <!-- SLACK MESSAGE PREVIEW BOX -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2.5">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200/60 text-[11px]">
               <div class="flex items-center space-x-2">
                 <div class="w-4 h-4 rounded bg-blue-600 text-white flex items-center justify-center text-[9px] font-bold">P</div>
-                <span class="font-semibold text-white">Prometheus Bot</span>
+                <span class="font-semibold text-slate-800">Prometheus Bot</span>
                 <span class="text-slate-400 font-mono text-[10px]">APP</span>
               </div>
-              ${isPending ? `
-                <button onclick="openEditDraftModal('${pendingDraft.draft_id}')" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center space-x-1">
-                  <i data-lucide="edit-2" class="w-3 h-3"></i>
-                  <span>Edit</span>
-                </button>
-              ` : ''}
+              <span class="text-slate-400 text-[10px]">Slack Preview</span>
             </div>
-            <p class="leading-relaxed text-slate-200 whitespace-pre-wrap">${pendingDraft.content}</p>
+            <p class="leading-relaxed text-slate-700 whitespace-pre-wrap">${pendingDraft.content}</p>
           </div>
 
+          <!-- APPROVAL BUTTONS -->
           ${isPending ? `
-            <div class="pt-1 flex items-center justify-between gap-2.5">
-              <button onclick="rejectActionCard('${pendingDraft.draft_id}')" class="w-1/3 py-2 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-slate-300 hover:text-white text-xs font-semibold transition">
+            <div class="pt-2 flex items-center justify-between gap-3">
+              <button onclick="rejectActionCard('${pendingDraft.draft_id}')" class="w-1/3 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold transition">
                 Discard
               </button>
-              <button onclick="approveActionCard('${pendingDraft.draft_id}')" class="w-2/3 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md hover:shadow-emerald-500/25 transition flex items-center justify-center space-x-1.5">
-                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <button onclick="approveActionCard('${pendingDraft.draft_id}')" class="w-2/3 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition flex items-center justify-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4"></i>
                 <span>Approve & Dispatch</span>
               </button>
             </div>
           ` : `
-            <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-300 flex items-center justify-between">
-              <span>Approved by <strong>${pendingDraft.approved_by || 'alex-lead'}</strong></span>
+            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between">
+              <span>Approved by <strong>${pendingDraft.approved_by || 'Lead'}</strong></span>
               <span class="font-semibold">✓ Dispatched via Slack API</span>
             </div>
           `}
@@ -962,25 +816,21 @@
 
     function renderActionCards() {
       const container = document.getElementById('actions-container');
-      if (!container) return;
+      const pendingCount = appState.actionDrafts.filter(d => d.status === 'PENDING').length;
+      document.getElementById('badge-action-count').innerText = pendingCount;
+      document.getElementById('stat-pending-actions').innerText = pendingCount;
 
-      const filtered = (appState.actionDrafts || []).filter(d => {
+      const filtered = appState.actionDrafts.filter(d => {
         if (appState.filterStatus === 'ALL') return true;
         return d.status === appState.filterStatus;
       });
 
-      const pendingCount = (appState.actionDrafts || []).filter(d => d.status === 'PENDING').length;
-      const countEl = document.getElementById('badge-action-count');
-      const statEl = document.getElementById('stat-pending-actions');
-      if (countEl) countEl.innerText = pendingCount;
-      if (statEl) statEl.innerText = pendingCount;
-
       if (!filtered || filtered.length === 0) {
         container.innerHTML = `
-          <div class="col-span-2 p-8 text-center text-slate-400 glass-panel rounded-xl">
-            <i data-lucide="inbox" class="w-8 h-8 mx-auto text-slate-500 mb-2"></i>
-            <p class="font-bold text-white text-xs">No Action Cards in this View</p>
-            <p class="text-[11px] mt-1 text-slate-400">Run fleet ingestion to generate new contextual drafts.</p>
+          <div class="col-span-2 p-8 text-center text-slate-400 bg-white rounded-2xl border border-slate-200/80">
+            <i data-lucide="inbox" class="w-8 h-8 mx-auto text-slate-400 mb-2"></i>
+            <p class="font-semibold text-slate-800 text-sm">No Action Cards in this View</p>
+            <p class="text-xs text-slate-500 mt-1">Run fleet ingestion to generate new contextual proposals.</p>
           </div>
         `;
         lucide.createIcons();
@@ -989,67 +839,29 @@
 
       container.innerHTML = filtered.map(d => {
         const isPending = d.status === 'PENDING';
-        const actionType = d.action_type || '';
-        const iconName = actionType.includes('channel') ? 'hash' : 'at-sign';
-
-        const statusBadge = isPending
-          ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">PENDING SIGN-OFF</span>'
-          : d.status === 'EXECUTED'
-            ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">DISPATCHED</span>'
-            : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-700/50 text-slate-400 border border-obsidian-600">DISCARDED</span>';
-
         return `
-          <div class="glass-panel p-5 rounded-xl border border-obsidian-700 flex flex-col justify-between space-y-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between space-y-4">
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <div class="w-6 h-6 rounded-md bg-blue-500/10 text-blue-400 flex items-center justify-center">
-                    <i data-lucide="${iconName}" class="w-3.5 h-3.5"></i>
-                  </div>
-                  <span class="text-xs font-bold text-white font-mono">${d.target_channel_or_user}</span>
+                  <span class="font-mono font-bold text-xs text-slate-900">${d.target_channel_or_user}</span>
                 </div>
-                ${statusBadge}
+                ${isPending 
+                  ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">PENDING</span>'
+                  : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">DISPATCHED</span>'
+                }
               </div>
-
-              <div class="p-3.5 rounded-lg bg-obsidian-950 border border-obsidian-700 text-xs font-sans text-slate-200 space-y-2">
-                <div class="flex items-center justify-between text-[10px] text-slate-400 pb-1.5 border-b border-obsidian-700">
-                  <div class="flex items-center space-x-1.5">
-                    <i data-lucide="bot" class="w-3 h-3 text-blue-400"></i>
-                    <span class="font-semibold text-slate-300">Prometheus Bot (Slack Block Kit)</span>
-                  </div>
-                  ${isPending ? `
-                    <button onclick="openEditDraftModal('${d.draft_id}')" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center space-x-1">
-                      <i data-lucide="edit-2" class="w-2.5 h-2.5"></i>
-                      <span>Edit</span>
-                    </button>
-                  ` : ''}
-                </div>
-                <p class="leading-relaxed text-slate-200 whitespace-pre-wrap">${d.content}</p>
-              </div>
-
-              <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                <span>Draft ID: ${d.draft_id}</span>
-                <span>Type: ${actionType}</span>
-              </div>
+              <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-sans text-slate-700 whitespace-pre-wrap">${d.content}</div>
+              <div class="text-[11px] font-mono text-slate-400">ID: ${d.draft_id}</div>
             </div>
-
             ${isPending ? `
-              <div class="pt-3 border-t border-obsidian-700 flex items-center justify-end space-x-2">
-                <button onclick="openEditDraftModal('${d.draft_id}')" class="px-3 py-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-slate-300 hover:text-white text-xs font-medium transition">
-                  Edit
-                </button>
-                <button onclick="rejectActionCard('${d.draft_id}')" class="px-3 py-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-slate-400 hover:text-white text-xs font-medium transition">
-                  Discard
-                </button>
-                <button onclick="approveActionCard('${d.draft_id}')" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold shadow-sm hover:shadow-emerald-500/20 transition flex items-center space-x-1.5">
-                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                  <span>Approve & Dispatch</span>
-                </button>
+              <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+                <button onclick="rejectActionCard('${d.draft_id}')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-medium">Discard</button>
+                <button onclick="approveActionCard('${d.draft_id}')" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs">Approve & Send</button>
               </div>
             ` : `
-              <div class="pt-2 border-t border-obsidian-700 text-[11px] text-slate-400 font-mono flex items-center justify-between">
-                <span>Approver: ${d.approved_by || 'alex-lead'}</span>
-                <span class="text-emerald-400 font-sans font-medium">✓ Dispatched via Slack API</span>
+              <div class="pt-2 border-t border-slate-100 text-[11px] text-emerald-700 font-medium">
+                ✓ Executed (${d.approved_by || 'Lead'})
               </div>
             `}
           </div>
@@ -1058,159 +870,47 @@
       lucide.createIcons();
     }
 
-    function filterActionCards(status) {
-      appState.filterStatus = status;
-      ['ALL', 'PENDING', 'EXECUTED'].forEach(s => {
-        const btn = document.getElementById(`filter-btn-${s}`);
-        if (btn) {
-          if (s === status) {
-            btn.className = 'px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold';
-          } else {
-            btn.className = 'px-3 py-1.5 rounded-lg bg-obsidian-800 text-slate-300 border border-obsidian-700 hover:text-white';
-          }
-        }
-      });
-      renderActionCards();
-    }
-
-    function openEditDraftModal(draftId) {
-      const draft = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
-      if (!draft) return;
-
-      document.getElementById('edit-draft-id').value = draft.draft_id;
-      document.getElementById('edit-draft-target').value = draft.target_channel_or_user;
-      document.getElementById('edit-draft-content').value = draft.content;
-
-      document.getElementById('modal-edit-draft').classList.remove('hidden');
-      lucide.createIcons();
-    }
-
-    function closeEditDraftModal() {
-      document.getElementById('modal-edit-draft').classList.add('hidden');
-    }
-
-    async function saveDraftEdits(andApprove = false) {
-      const draftId = document.getElementById('edit-draft-id').value;
-      const target = document.getElementById('edit-draft-target').value;
-      const content = document.getElementById('edit-draft-content').value;
-
-      try {
-        const res = await fetch(`/api/v1/actions/${draftId}/edit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            content: content,
-            target: target,
-            approver_username: appState.currentUser
-          })
-        });
-
-        if (res.ok) {
-          const draft = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
-          if (draft) {
-            draft.content = content;
-            draft.target_channel_or_user = target;
-          }
-          closeEditDraftModal();
-          showToast(`Draft ${draftId} updated successfully.`, 'success', 'Draft Saved');
-
-          if (andApprove) {
-            await approveActionCard(draftId);
-          } else {
-            renderActionCards();
-            renderOverviewActionCard();
-          }
-        } else {
-          showToast(`Failed to update draft ${draftId}.`, 'error', 'Error');
-        }
-      } catch (err) {
-        console.error('Draft edit failed:', err);
-        showToast('Network error while saving draft edits.', 'error', 'Error');
-      }
-    }
-
     async function approveActionCard(draftId) {
       try {
-        const username = appState.currentUser;
+        const username = (appState.currentUser && appState.currentUser.username) || 'Lead';
         const res = await fetch(`/api/v1/actions/${draftId}/approve`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ approver_username: username })
         });
-
         if (res.ok) {
-          const resData = await res.json();
-          const updated = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
+          const updated = appState.actionDrafts.find(d => d.draft_id === draftId);
           if (updated) {
             updated.status = 'EXECUTED';
             updated.approved_by = username;
           }
           renderActionCards();
           renderOverviewActionCard();
-          showToast(`Dispatched unblocking action to Slack (${draftId}).`, 'success', 'Action Approved');
-        } else {
-          showToast('Failed to approve action card.', 'error', 'Approval Error');
         }
       } catch (err) {
         console.error('Approval failed:', err);
-        showToast('Network error on approval dispatch.', 'error', 'Error');
       }
     }
 
     async function rejectActionCard(draftId) {
       try {
-        const username = appState.currentUser;
+        const username = (appState.currentUser && appState.currentUser.username) || 'Lead';
         const res = await fetch(`/api/v1/actions/${draftId}/reject`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ approver_username: username })
         });
-
         if (res.ok) {
-          const updated = (appState.actionDrafts || []).find(d => d.draft_id === draftId);
+          const updated = appState.actionDrafts.find(d => d.draft_id === draftId);
           if (updated) {
             updated.status = 'REJECTED';
           }
           renderActionCards();
           renderOverviewActionCard();
-          showToast(`Action card ${draftId} discarded.`, 'info', 'Action Dismissed');
         }
       } catch (err) {
         console.error('Rejection failed:', err);
-        showToast('Network error rejecting action.', 'error', 'Error');
       }
-    }
-
-    function renderAgentRegistry() {
-      const container = document.getElementById('fleet-container');
-      if (!container) return;
-
-      container.innerHTML = (appState.agents || []).map(a => `
-        <div class="glass-panel p-5 rounded-xl border border-obsidian-700 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">${a.agent_id}</span>
-            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-obsidian-850 text-slate-400 border border-obsidian-700">${a.tier}</span>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-white">${a.name}</h4>
-            <p class="text-[11px] text-blue-300 font-medium">${a.role}</p>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed">${a.description}</p>
-          <div class="pt-3 border-t border-obsidian-700 space-y-2 text-xs">
-            <div class="flex items-center justify-between font-mono text-[11px]">
-              <span class="text-slate-400">Model:</span>
-              <span class="text-slate-200">${a.model_requirement}</span>
-            </div>
-            <div>
-              <span class="text-slate-400 text-[10px] block mb-1 font-semibold uppercase tracking-wider">Bound Security Controls:</span>
-              <div class="flex flex-wrap gap-1">
-                ${(a.security_controls || []).map(sc => `<span class="px-2 py-0.5 rounded bg-obsidian-850 border border-obsidian-700 text-[10px] text-cyan-300 font-mono">${sc}</span>`).join('')}
-              </div>
-            </div>
-          </div>
-        </div>
-      `).join('');
-      lucide.createIcons();
     }
 
     async function runFleetWorkflow() {
@@ -1234,7 +934,7 @@
       }, 600);
 
       setTimeout(() => {
-        statusText.innerText = "3/4: Correlating Graph & Bottleneck Discovery via Gemini 3.7 Flash...";
+        statusText.innerText = "3/4: Correlating Telemetry & Blocker Discovery via Gemini 3.7 Flash...";
         stepText.innerText = "agent-05-synthesis";
         progressBar.style.width = "75%";
       }, 1200);
@@ -1244,90 +944,87 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            user_id: 'lead-01',
-            username: appState.currentUser,
-            org_scopes: ['engineering', 'platform'],
-            query: 'Scan cross-squad telemetry for active sprint blockers'
+            user_id: (appState.currentUser && appState.currentUser.user_id) || "lead-01",
+            username: (appState.currentUser && appState.currentUser.username) || "alex-lead",
+            org_scopes: (appState.currentUser && appState.currentUser.org_scopes) || ["engineering", "platform"],
           })
         });
 
         if (res.ok) {
           const data = await res.json();
-          progressBar.style.width = "100%";
-          statusText.innerText = "4/4: Ingestion Complete! Action Drafts Ready.";
+          statusText.innerText = "4/4: Alignment Digest Synthesized & Action Cards Generated.";
           stepText.innerText = "agent-06-action";
+          progressBar.style.width = "100%";
 
-          if (data.blockers) {
-            appState.blockers = data.blockers;
-            renderBlockers(data.blockers);
-          }
-          if (data.action_drafts) {
-            appState.actionDrafts = data.action_drafts;
-            renderActionCards();
-            renderOverviewActionCard();
-          }
+          appState.blockers = data.blockers || [];
+          appState.actionDrafts = data.action_drafts || [];
+
           if (data.summary) {
-            const digestBox = document.getElementById('digest-content');
-            if (digestBox) {
-              digestBox.innerHTML = `
-                <p class="text-slate-200">
-                  <strong>Executive Summary:</strong> ${data.summary}
-                </p>
-              `;
-            }
+            document.getElementById('digest-content').innerHTML = `
+              <p><strong>Executive Synthesis:</strong> ${data.summary}</p>
+            `;
           }
 
-          showToast('Multi-agent correlation completed. Contextual action drafts prepared.', 'success', 'Fleet Ingest Complete');
-
-          setTimeout(() => {
-            progressBox.classList.add('hidden');
-            btn.disabled = false;
-          }, 1400);
-        } else {
-          showToast('Fleet ingestion encountered an error.', 'error', 'Error');
-          btn.disabled = false;
-          progressBox.classList.add('hidden');
+          renderBlockers(appState.blockers);
+          renderActionCards();
+          renderOverviewActionCard();
         }
       } catch (err) {
-        console.error('Workflow run failed:', err);
-        btn.disabled = false;
-        progressBox.classList.add('hidden');
-        showToast('Network error during fleet execution.', 'error', 'Error');
+        console.error('Fleet ingestion error:', err);
+      } finally {
+        setTimeout(() => {
+          progressBox.classList.add('hidden');
+          btn.disabled = false;
+        }, 1500);
       }
     }
 
-    function runABACSimulation() {
-      const persona = document.getElementById('sim-user-persona').value;
-      const target = document.getElementById('sim-resource-target').value;
-      const resultBox = document.getElementById('sim-abac-result');
-
-      const permissions = {
-        lead: ['pr402', 'sec_audit'],
-        dev: ['pr402'],
-        sales: ['sales_lead'],
-        guest: []
-      };
-
-      const isAllowed = (permissions[persona] || []).includes(target);
-      if (isAllowed) {
-        resultBox.className = 'p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 font-mono text-xs';
-        resultBox.innerHTML = `✓ ACCESS GRANTED: Scope intersection verified. User context permitted for target resource.`;
-      } else {
-        resultBox.className = 'p-3 rounded-lg bg-red-950/20 border border-red-500/20 text-red-300 font-mono text-xs';
-        resultBox.innerHTML = `⛔ ACCESS DENIED: Scope mismatch. User does not hold authorized scope for target resource.`;
+    async function loadAgentFleet() {
+      try {
+        const res = await fetch('/api/v1/registry/agents');
+        if (res.ok) {
+          const data = await res.json();
+          const container = document.getElementById('fleet-container');
+          container.innerHTML = (data.agents || []).map(a => `
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs font-bold text-slate-900">${a.name}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-50 text-blue-700 border border-blue-200">ACTIVE</span>
+              </div>
+              <p class="text-xs text-slate-600">${a.description}</p>
+              <div class="pt-2 border-t border-slate-100 text-[11px] text-slate-400 space-y-1">
+                <div>Model: <span class="font-mono text-slate-700">${a.model_requirement}</span></div>
+                <div>Controls: <span class="font-mono text-indigo-700">${a.security_controls.join(', ')}</span></div>
+              </div>
+            </div>
+          `).join('');
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Fleet load error:', err);
       }
     }
 
-    function runGuardrailTest() {
-      const input = document.getElementById('guardrail-test-input').value;
-      const output = document.getElementById('guardrail-test-output');
-      
-      let sanitized = input;
-      sanitized = sanitized.replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]');
-      sanitized = sanitized.replace(/ghp_[a-zA-Z0-9]{36}/g, '[REDACTED_GITHUB_TOKEN]');
-      sanitized = sanitized.replace(/xoxb-[a-zA-Z0-9-]+/g, '[REDACTED_SLACK_TOKEN]');
+    function switchTab(tabId) {
+      ['overview', 'actions', 'telemetry', 'agents', 'settings', 'security'].forEach(t => {
+        const sec = document.getElementById(`section-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        if (sec) sec.classList.toggle('hidden', t !== tabId);
+        if (btn) {
+          if (t === tabId) {
+            btn.className = 'py-3 border-b-2 border-blue-600 text-blue-600 flex items-center space-x-2 transition font-semibold whitespace-nowrap';
+          } else {
+            btn.className = 'py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center space-x-2 transition whitespace-nowrap';
+          }
+        }
+      });
+      appState.activeTab = tabId;
+      lucide.createIcons();
+    }
 
-      output.innerText = sanitized;
+    function filterActionCards(status) {
+      appState.filterStatus = status;
+      renderActionCards();
     }
 
     async function saveIntegration(service) {
@@ -1335,19 +1032,19 @@
       if (service === 'github') {
         payload = {
           token: document.getElementById('input-github-token').value,
-          repos: document.getElementById('input-github-repos').value.split(',').map(s => s.trim())
+          repos: document.getElementById('input-github-repos').value
         };
       } else if (service === 'jira') {
         payload = {
-          instance_url: document.getElementById('input-jira-url').value,
+          url: document.getElementById('input-jira-url').value,
           email: document.getElementById('input-jira-email').value,
           token: document.getElementById('input-jira-token').value,
-          project_key: document.getElementById('input-jira-key').value
+          key: document.getElementById('input-jira-key').value
         };
       } else if (service === 'slack') {
         payload = {
           token: document.getElementById('input-slack-token').value,
-          channels: document.getElementById('input-slack-channels').value.split(',').map(s => s.trim())
+          channels: document.getElementById('input-slack-channels').value
         };
       }
 
@@ -1358,16 +1055,37 @@
           body: JSON.stringify(payload)
         });
         if (res.ok) {
-          showToast(`${service.toUpperCase()} integration securely vaulted in Firestore.`, 'success', 'Credentials Saved');
-        } else {
-          showToast(`Failed to save ${service} integration.`, 'error', 'Error');
+          alert(`${service.toUpperCase()} integration credentials successfully vaulted in Google Cloud Firestore!`);
         }
       } catch (err) {
-        showToast('Network error saving integration.', 'error', 'Error');
+        console.error('Save integration error:', err);
       }
     }
 
-    window.addEventListener('DOMContentLoaded', loadDashboardData);
+    function runABACSimulation() {
+      const persona = document.getElementById('sim-user-persona').value;
+      const target = document.getElementById('sim-resource-target').value;
+      const resBox = document.getElementById('sim-abac-result');
+
+      if (persona === 'guest') {
+        resBox.innerHTML = '✗ ACCESS DENIED: Missing required organizational scopes.';
+        resBox.className = 'p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 font-mono text-xs';
+      } else {
+        resBox.innerHTML = '✓ ACCESS GRANTED: User context permitted for target resource.';
+        resBox.className = 'p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-xs';
+      }
+    }
+
+    function runGuardrailTest() {
+      const input = document.getElementById('guardrail-test-input').value;
+      let out = input
+        .replace(/ghp_[A-Za-z0-9_]{16,}/g, '[REDACTED_GITHUB_TOKEN]')
+        .replace(/xoxb-[A-Za-z0-9_-]+/g, '[REDACTED_SLACK_TOKEN]')
+        .replace(/ATATT[A-Za-z0-9_-]+/g, '[REDACTED_JIRA_TOKEN]')
+        .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]');
+      document.getElementById('guardrail-test-output').innerText = out;
+    }
   </script>
+
 </body>
 </html>
